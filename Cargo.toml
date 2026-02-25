@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "nmp-core",
+    "nmp-server",
+    "nmp-client",
+]
+resolver = "2"

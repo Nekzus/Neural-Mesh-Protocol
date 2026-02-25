@@ -1,0 +1,39 @@
+syntax = "proto3";
+package nmp.v1;
+
+// NeuralMesh is the next-generation binary transport protocol for Logic-on-Origin AI
+service NeuralMesh {
+  // Intent negotiation before transferring data or execution logic
+  // Validates Identity, Capability Hashes and Cryptographic signatures
+  rpc NegotiateIntent (IntentRequest) returns (IntentResponse);
+  
+  // Execution of Logic-on-Origin in a secure remote (WASM / WASI) sandbox
+  rpc ExecuteLogic (LogicRequest) returns (stream LogicResponse);
+}
+
+// Request to negotiate an intent to execute a WASM capability
+message IntentRequest {
+  string agent_did = 1;         // Decentralized Identifier (DID) e.g., spiffe:// or Noise PeerID
+  string capability_hash = 2;   // Cryptographic hash of the targeted capability / tool
+  bytes proof_of_intent = 3;    // Cryptographic signature of the task intent
+}
+
+// Response from the host confirming or denying the intent negotiation
+message IntentResponse {
+  bool accepted = 1;            // True if the zero-trust host allows the execution
+  string session_token = 2;     // Ephemeral token to be used on ExecuteLogic stream
+  string error_message = 3;     // Capability Violation message if any
+}
+
+// Request to push a WASM module down to the origin for execution
+message LogicRequest {
+  string session_token = 1;      // Token acquired from NegotiateIntent
+  bytes wasm_binary = 2;         // The compiled .wasm Logic-on-Origin filter code
+  map<string, bytes> inputs = 3; // Encrypted input parameters for local execution
+}
+
+// Streamed Response back to the LLM agent containing reduced, semantically rich semantic responses
+message LogicResponse {
+  string semantic_evidence = 1;  // Condensed semantic result for the LLM
+  bytes cryptographic_proof = 2; // Integrity signature (SHA256) proving the execution was untampered
+}

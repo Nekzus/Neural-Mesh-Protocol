@@ -1,0 +1,14 @@
+[package]
+name = "nmp-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nmp-core = { path = "../nmp-core" }
+
+# gRPC y Async
+tonic = "0.11"
+tokio = { version = "1.37", features = ["rt-multi-thread", "macros"] }
+
+# Networking P2P
+libp2p = { version = "0.53", features = ["tcp", "noise", "yamux", "kad", "macros", "tokio"] }
