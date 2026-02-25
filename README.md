@@ -46,3 +46,11 @@ To bulletproof the protocol against current and future cybersecurity threats, NM
 3. **Hardware Enclaves (TEEs):** Wasmtime executes strictly within Trusted Execution Environments (Intel SGX / AMD SEV). Not even the host OS administrator or Cloud Provider can dump RAM to steal data or spy on the WASM logic.
 4. **Dynamic Capability Revocation (AI-Driven WASI):** An intelligent monitor supervises read rates and memory access patterns. If a WASM behaves like ransomware or attempts covert exfiltration, capabilities are dynamically revoked mid-flight, killing the task instantly.
 5. **Zero-Knowledge Proofs (ZK-SNARKs):** The WASM emits a cryptographic proof certifying exactly what logic was run on what genuine source data, without revealing the underlying data. The network audits the proof before accepting the result.
+
+## Developer Experience (DX) & MCP Migration
+
+For NMP to succeed, migrating from MCP must be trivial (Zero-Friction). The goal is for the NMP API to be a Drop-in Replacement for the MCP API.
+
+The official NMP SDK (e.g., \@neural-mesh/sdk\ for Node.js) is **Phase 2**. A developer defines a Tool exactly as they do today in MCP (using Zod schemas). The SDK's magic is that it takes that TypeScript function, compiles it on-the-fly to a WASM module (via Javy/Component Model), and injects it into the P2P mesh transparently.
+
+The SDK will also include a Bidirectional Adapter (\NmpMcpBridge\) so NMP Agents can talk to legacy JSON-RPC MCP servers during the ecosystem transition.
