@@ -1,0 +1,24 @@
+Business Source License 1.1
+
+License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
+"Business Source License" is a trademark of MariaDB Corporation Ab.
+
+Parameters
+
+Licensor: Neural Mesh Protocol (NMP) Contributors
+Licensed Work: Neural Mesh Protocol (NMP)
+Additional Use Grant: You may read the source code for educational and peer-review purposes. You may not use this code in a production environment, commercial product, or as a competitive protocol prior to the Change Date.
+Change Date: 2029-01-01
+Change License: Apache License, Version 2.0
+
+Terms
+
+The Licensor hereby grants you the right to copy, modify, create derivative works, redistribute, and make non-production use of the Licensed Work. The Licensed Work may not be used for any production or commercial purpose, nor may it be used to create a competitive product or protocol prior to the Change Date.
+
+Effective on the Change Date, or if the Licensor fails to make the source code available under the Change License, this Business Source License will automatically convert to the Change License, and all rights granted under that license will apply.
+
+Any violation of this license including, but not limited to, using the Licensed Work for production or commercial purposes prior to the Change Date will result in immediate termination of this license.
+
+LIMITATION OF LIABILITY
+
+THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE LICENSED WORK OR THE USE OR OTHER DEALINGS IN THE LICENSED WORK.
