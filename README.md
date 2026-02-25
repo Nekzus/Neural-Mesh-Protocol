@@ -36,3 +36,13 @@ Currently in **Alpha** (Active Development). Core prototypes including P2P conne
 
 ---
 *Developed as the next evolution in Agentic Data Context.*
+
+## Extreme Zero-Trust Security & Distributed Intelligence
+
+To bulletproof the protocol against current and future cybersecurity threats, NMP elevates WASI Sandboxing to an autonomous, military-grade level:
+
+1. **Post-Quantum Cryptographic (PQC) Signatures:** Evolving the Noise Protocol to quantum-resistant algorithms (e.g., Kyber/Dilithium) to ensure traffic interception today cannot be decrypted by quantum computers tomorrow.
+2. **AI-Assisted Static AST Inspection:** Before instantiating Wasmtime, the Data Node uses a lightweight local ML model to scan the incoming WASM's Abstract Syntax Tree for obfuscation, aggressive loops, or evasive malware patterns, rejecting payloads in Zero-Time.
+3. **Hardware Enclaves (TEEs):** Wasmtime executes strictly within Trusted Execution Environments (Intel SGX / AMD SEV). Not even the host OS administrator or Cloud Provider can dump RAM to steal data or spy on the WASM logic.
+4. **Dynamic Capability Revocation (AI-Driven WASI):** An intelligent monitor supervises read rates and memory access patterns. If a WASM behaves like ransomware or attempts covert exfiltration, capabilities are dynamically revoked mid-flight, killing the task instantly.
+5. **Zero-Knowledge Proofs (ZK-SNARKs):** The WASM emits a cryptographic proof certifying exactly what logic was run on what genuine source data, without revealing the underlying data. The network audits the proof before accepting the result.
