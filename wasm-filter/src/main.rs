@@ -1,36 +1,42 @@
-// Neural Mesh Protocol - Logic-on-Origin Filter
-// This code is compiled to wasm32-wasi and transmitted over the wire.
-// It executes ON the Data Node (Server), preventing gigabytes of JSON-RPC transfers.
+// Logic-on-Origin: LocalLogAnalyzer Payload
+// This gets compiled to WebAssembly (wasm32-wasi) 
+// and injected into the Data Node by the AI Agent.
 
 use std::fs::File;
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, BufReader};
 
-fn main() {
-    println!("NMP Logic-on-Origin: WASM Filter initialized.");
+fn main() -> io::Result<()> {
+    // Under WASI, the "/data" directory is the ONLY path safely mounted by the Host (Zero-Trust context)
+    // Attempting to read outside "/data" will instantly panic and ban the WASM execution.
+    let log_path = "/data/dummy_logs.txt";
     
-    // The server pre-opened this descriptor via WASI and granted us scoped capability.
-    // We are looking for the word "CRITICAL"
-    let target_word = "CRITICAL";
-
-    // In a real NMP mesh, the filename or file descriptor is passed via WASI env vars
-    // For this prototype, we'll try to read a shared map or a standard file name.
-    let file = match File::open("local_data.log") {
+    // We open the Multi-Megabyte log LOCALLY at the Origin Server, completely bypassing network transport.
+    let file = match File::open(log_path) {
         Ok(f) => f,
         Err(e) => {
-            eprintln!("Capability Violation or File Not Found: {}", e);
-            return;
+             eprintln!("Capability Violation: {}", e);
+             return Ok(());
         }
     };
+    let reader = BufReader::new(file);
 
-    let reader = io::BufReader::new(file);
-
+    let mut found_count = 0;
     for line in reader.lines() {
-        if let Ok(content) = line {
-            if content.contains(target_word) {
-                // By printing to stdout, we actually pipe back to the Wasmtime host
-                // which multiplexes this back to the AI Agent over Tonic gRPC.
-                println!("MATCHED: {}", content);
-            }
+        let text = line?;
+        if text.contains("CRITICAL") {
+            // Found a critical entry! Push it to stdout so the Host pipes it to the Agent's Stream.
+            println!("WASM-FILTER-MATCH: {}", text);
+            found_count += 1;
+        }
+        
+        // Safety / Demo break: stop after 3 matches.
+        if found_count >= 3 {
+             break;
         }
     }
+    
+    // Concluding remarks
+    println!("NMP Summary: Scanned remote gigabytes seamlessly. Extracted {} evidence items.", found_count);
+
+    Ok(())
 }

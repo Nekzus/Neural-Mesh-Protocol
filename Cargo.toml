@@ -3,5 +3,6 @@ members = [
     "nmp-core",
     "nmp-server",
     "nmp-client",
+    "wasm-filter"
 ]
 resolver = "2"

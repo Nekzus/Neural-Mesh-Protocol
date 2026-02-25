@@ -10,4 +10,5 @@ tokio = { version = "1.37", features = ["full"] }
 tokio-stream = "0.1"
 
 [build-dependencies]
+protoc-bin-vendored = "3.2.0"
 tonic-build = "0.11"
