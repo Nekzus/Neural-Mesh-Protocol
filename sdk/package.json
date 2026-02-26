@@ -16,10 +16,10 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
-		"demo:client-quickstart": "tsx examples/client-quickstart/index.ts",
-		"demo:server-quickstart": "tsx examples/server-quickstart/index.ts",
-		"demo:server": "tsx examples/server/index.ts",
-		"demo:client": "tsx examples/client/index.ts"
+		"demo:client-quickstart": "pnpm --filter @neural-mesh/example-client-quickstart start",
+		"demo:server-quickstart": "pnpm --filter @neural-mesh/example-server-quickstart start",
+		"demo:server": "pnpm --filter @neural-mesh/example-server start",
+		"demo:client": "pnpm --filter @neural-mesh/example-client start"
 	},
 	"keywords": [
 		"nmp",

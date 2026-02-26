@@ -8,13 +8,7 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
-		"skipLibCheck": true,
-		"baseUrl": ".",
-		"paths": {
-			"@neural-mesh/sdk": [
-				"src/index.ts"
-			]
-		}
+		"skipLibCheck": true
 	},
 	"include": [
 		"src/**/*"

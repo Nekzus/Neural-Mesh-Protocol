@@ -1,0 +1,16 @@
+{
+    "name": "@neural-mesh/example-client",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "tsx src/index.ts"
+    },
+    "dependencies": {
+        "@neural-mesh/sdk": "workspace:*"
+    },
+    "devDependencies": {
+        "tsx": "^4.7.0",
+        "typescript": "^5.0.0"
+    }
+}
