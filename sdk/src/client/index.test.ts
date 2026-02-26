@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NmpClient } from "../src/index.js";
+import { NmpClient } from "./index.js";
 
 describe("NmpClient", () => {
 	it("should throw an error if attempting to execute without connection", async () => {

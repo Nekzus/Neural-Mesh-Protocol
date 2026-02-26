@@ -10,7 +10,10 @@
 	],
 	"scripts": {
 		"build": "tsc",
-		"test": "vitest run",
+		"test": "vitest run --project core",
+		"test:all": "vitest run",
+		"test:integration": "vitest run --project integration",
+		"test:conformance": "vitest run --project conformance",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"lint": "biome lint .",
@@ -40,5 +43,8 @@
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18",
 		"zod": "^4.3.6"
+	},
+	"dependencies": {
+		"@libp2p/identify": "^4.0.10"
 	}
 }
