@@ -1,14 +1,17 @@
 // Neural Mesh Protocol - Server Node (Data Host)
 // This node holds the data and provides a Zero-Trust Wasmtime sandbox for execution.
 
-use std::error::Error;
 use futures::StreamExt;
 use libp2p::kad::store::RecordStore;
+use std::error::Error;
 
-pub mod p2p;
 pub mod executor;
 pub mod grpc;
 mod guardian; // Added guardian module
+pub mod p2p;
+mod tee;
+
+use tee::{AwsNitroEnclaveStub, EnclaveProvider};
 
 use grpc::NmpService;
 use nmp_core::v1::neural_mesh_server::NeuralMeshServer;
@@ -17,16 +20,21 @@ use tonic::transport::Server;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     println!("NMP Server Node - Initiating Genesis Boot Sequence...");
-    
+
+    // Phase 4: Hardware Enclave (TEE) Bootstrapping Stub
+    let enclave = AwsNitroEnclaveStub;
+    enclave.attest_and_boot()?;
+    let _report = enclave.generate_attestation_report(b"nmp-nonce-1234")?;
+
     // Boot up the Zero-Trust WASM Engine
     println!("Loading Sandbox capabilities (Wasmtime+WASI)...");
 
     let sandbox_engine = executor::create_wasi_engine()?;
-    
+
     // Setup gRPC Server routing
     let addr = "[::1]:50051".parse().unwrap();
     let nmp_service = NmpService::new(sandbox_engine);
-    
+
     println!("[-] Starting NMP gRPC Service on {}", addr);
     let grpc_future = Server::builder()
         .add_service(NeuralMeshServer::new(nmp_service))
@@ -34,7 +42,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Initialize Libp2p generic mesh presence (Kademlia/Noise)
     let mut swarm = p2p::build_mesh_swarm()?;
-    
+
     // Listen on all interfaces, randomized port for prototype testing
     swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
 
@@ -54,7 +62,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             }
         }]
     }"#;
-    
+
     let record_key = libp2p::kad::RecordKey::new(&"nmp:capabilities:LocalLogAnalyzer");
     let record = libp2p::kad::Record {
         key: record_key,
@@ -62,11 +70,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         publisher: None,
         expires: None,
     };
-    
+
     // For local prototype testing we store it directly. In a live mesh, we use `put_record`.
     let _ = swarm.behaviour_mut().kademlia.store_mut().put(record);
     println!("[-] Capabilities cached successfully on the P2P Mesh.");
-    
+
     // Enter the networking event loop
     println!("Entering Agent Mesh Network Loop...");
     let p2p_future = async move {
@@ -89,4 +97,3 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-

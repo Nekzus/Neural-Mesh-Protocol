@@ -20,3 +20,4 @@ Entering Agent Mesh Network Loop...
 [-] ÔÜí DHT Cache Hit! Found schema: { keyword: string }. Zero-latency discovery.
 [-] Connecting to NMP Data Node at [::1]:50051
 [!] Failed to inject WASM Logic: transport error
+error: process didn't exit successfully: `target\debug\nmp-client.exe` (exit code: 0xffffffff)

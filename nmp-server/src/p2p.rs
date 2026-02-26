@@ -4,7 +4,7 @@
 use libp2p::{
     core::upgrade::Version,
     identity, noise,
-    swarm::{NetworkBehaviour, SwarmBuilder, SwarmEvent},
+    swarm::{NetworkBehaviour, SwarmBuilder},
     tcp, yamux, PeerId, Swarm, Transport,
 };
 use std::error::Error;
@@ -18,7 +18,7 @@ pub struct NmpMeshBehaviour {
 
 pub fn build_mesh_swarm() -> Result<Swarm<NmpMeshBehaviour>, Box<dyn Error>> {
     println!("Init Zero-Trust Mesh Crypto...");
-    
+
     // 1. Generate local cryptographic identity (Ed25519)
     // In NMP, this replaces the need for Central mTLS authorities. The PeerId IS the SPIFFE identity loosely.
     let local_key = identity::Keypair::generate_ed25519();
@@ -36,7 +36,7 @@ pub fn build_mesh_swarm() -> Result<Swarm<NmpMeshBehaviour>, Box<dyn Error>> {
     let store = libp2p::kad::record::store::MemoryStore::new(local_peer_id);
     let mut kad_config = libp2p::kad::KademliaConfig::default();
     kad_config.set_query_timeout(Duration::from_secs(5 * 60));
-    
+
     let behaviour = NmpMeshBehaviour {
         kademlia: libp2p::kad::Kademlia::with_config(local_peer_id, store, kad_config),
     };
