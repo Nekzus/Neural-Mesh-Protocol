@@ -16,7 +16,10 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
-		"demo:advanced": "node --no-warnings --loader ts-node/esm examples/2-advanced-tools.ts"
+		"demo:client-quickstart": "node --no-warnings --loader ts-node/esm examples/client-quickstart/index.ts",
+		"demo:server-quickstart": "node --no-warnings --loader ts-node/esm examples/server-quickstart/index.ts",
+		"demo:server": "node --no-warnings --loader ts-node/esm examples/server/index.ts",
+		"demo:client": "node --no-warnings --loader ts-node/esm examples/client/index.ts"
 	},
 	"keywords": [
 		"nmp",
