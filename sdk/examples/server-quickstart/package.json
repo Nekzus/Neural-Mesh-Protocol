@@ -1,21 +1,21 @@
 {
-    "name": "@neural-mesh/example-server-quickstart",
-    "private": true,
-    "version": "1.0.0",
-    "type": "module",
-    "scripts": {
-        "start": "tsx src/index.ts",
-        "test": "vitest run",
-        "build": "tsdown"
-    },
-    "dependencies": {
-        "@neural-mesh/sdk": "workspace:*"
-    },
-    "devDependencies": {
-        "tsx": "^4.7.0",
-        "typescript": "^5.0.0",
-        "zod": "^4.3.0",
-        "vitest": "^4.0.18",
-        "tsdown": "latest"
-    }
+	"name": "@neural-mesh/example-server-quickstart",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"start": "tsx src/index.ts",
+		"test": "vitest run",
+		"build": "tsdown"
+	},
+	"dependencies": {
+		"@neural-mesh/sdk": "workspace:*"
+	},
+	"devDependencies": {
+		"tsx": "^4.7.0",
+		"typescript": "^5.0.0",
+		"zod": "^4.3.0",
+		"vitest": "^4.0.18",
+		"tsdown": "latest"
+	}
 }
