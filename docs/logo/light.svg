@@ -1,30 +1,29 @@
 <svg width="900" height="120" viewBox="0 0 900 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g transform="translate(10, 0)">
 
-        <!-- Octagon & Ribbon Mesh Group -->
+        <!-- Octagon & S-Curve Ribbon Group -->
         <g stroke="#09090b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
 
-            <g transform="rotate(22.5 60 60)">
-                <!-- Octagon -->
-                <polygon points="106,60 92.5,92.5 60,106 27.5,92.5 14,60 27.5,27.5 60,14 92.5,27.5" />
+            <!-- Geometrically regular Octagon aligned orthogonally -->
+            <polygon points="100,76.57 76.57,100 43.43,100 20,76.57 20,43.43 43.43,20 76.57,20 100,43.43" />
 
-                <!-- 8 Soft Sinusoidal Ribbons (S-Curves) communicating the center to each Vertex -->
-                <path d="M 60 60 C 76 46, 90 74, 106 60" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(45 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(90 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(135 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(180 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(225 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(270 60 60)" />
-                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(315 60 60)" />
-            </g>
+            <!-- Central Origin Node (Solid Core) -->
+            <circle cx="60" cy="60" r="10" fill="#09090b" stroke="none" />
 
-            <!-- Central Logic-on-Origin Node -->
-            <circle cx="60" cy="60" r="12" fill="#09090b" stroke="none" />
+            <!-- 8 Mathematically Perfect Cubic Bezier Sine Waves (Ribbons) -->
+            <!-- Smooth tangential merging to the polygon faces and a rotating vortex origin -->
+            <path d="M 60 60 C 60 45, 100 75, 100 60" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(45 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(90 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(135 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(180 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(225 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(270 60 60)" />
+            <path d="M 60 60 C 60 45, 100 75, 100 60" transform="rotate(315 60 60)" />
 
         </g>
 
-        <!-- Ultra-Bold Typography -->
+        <!-- Ultra-Bold Anthology Typography -->
         <text x="145" y="81"
             font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
             font-size="64" font-weight="800" fill="#09090b" letter-spacing="-1.5">Neural Mesh Protocol</text>
