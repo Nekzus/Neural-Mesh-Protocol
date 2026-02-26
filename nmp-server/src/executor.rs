@@ -29,6 +29,10 @@ pub fn execute_sandboxed_logic(
     allowed_dir: &str,
 ) -> Result<(), Box<dyn Error>> {
 
+    // 1. GUARDIAN MODULE: Zero-Time AST Structural Scanning
+    // Rejects malicious structure before the JIT Compiler even sees it.
+    crate::guardian::analyze_ast(wasm_bytes)?;
+
     let mut linker = Linker::new(engine);
     wasmtime_wasi::sync::add_to_linker(&mut linker, |s: &mut AgentExecutionState| &mut s.wasi)?;
 

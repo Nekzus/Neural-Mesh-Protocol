@@ -3,10 +3,12 @@
 
 use std::error::Error;
 use futures::StreamExt;
+use libp2p::kad::store::RecordStore;
 
 pub mod p2p;
 pub mod executor;
 pub mod grpc;
+mod guardian; // Added guardian module
 
 use grpc::NmpService;
 use nmp_core::v1::neural_mesh_server::NeuralMeshServer;
@@ -18,6 +20,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     
     // Boot up the Zero-Trust WASM Engine
     println!("Loading Sandbox capabilities (Wasmtime+WASI)...");
+
     let sandbox_engine = executor::create_wasi_engine()?;
     
     // Setup gRPC Server routing
@@ -34,6 +37,35 @@ async fn main() -> Result<(), Box<dyn Error>> {
     
     // Listen on all interfaces, randomized port for prototype testing
     swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
+
+    // 5. Publish Capabilities to DHT (Zero ListTools Routing)
+    // In NMP, the server unilaterally pushes its schemas to the decentralized table.
+    // The Agent (LLM) reads this from the network RAM cache without pinging the server.
+    println!("[-] Publishing Tool Schemas to Kademlia DHT...");
+    let capabilities_json = r#"{
+        "tools": [{
+            "name": "analyze_logs_in_origin",
+            "description": "Scans voluminous log files directly on the server sandbox",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "keyword": { "type": "string" }
+                }
+            }
+        }]
+    }"#;
+    
+    let record_key = libp2p::kad::RecordKey::new(&"nmp:capabilities:LocalLogAnalyzer");
+    let record = libp2p::kad::Record {
+        key: record_key,
+        value: capabilities_json.as_bytes().to_vec(),
+        publisher: None,
+        expires: None,
+    };
+    
+    // For local prototype testing we store it directly. In a live mesh, we use `put_record`.
+    let _ = swarm.behaviour_mut().kademlia.store_mut().put(record);
+    println!("[-] Capabilities cached successfully on the P2P Mesh.");
     
     // Enter the networking event loop
     println!("Entering Agent Mesh Network Loop...");
