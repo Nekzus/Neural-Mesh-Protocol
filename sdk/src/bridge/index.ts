@@ -1,5 +1,5 @@
-import { NmpServer } from "../server/index.js";
-import { CallToolRequest, CallToolResult } from "../types.js";
+import type { NmpServer } from "../server/index.js";
+import type { CallToolRequest, CallToolResult } from "../types.js";
 
 /**
  * NmpMcpBridge acts as a bidirectional adapter.

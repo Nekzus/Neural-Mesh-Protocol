@@ -7,7 +7,7 @@ import { z } from "zod";
 export const ToolSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
-	inputSchema: z.record(z.any()), // Represents a JSON Schema
+	inputSchema: z.record(z.string(), z.any()), // Represents a JSON Schema
 });
 
 export type Tool = z.infer<typeof ToolSchema>;

@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { NmpServer } from "../src/index.js";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { NmpServer } from "../src/index.js";
 
 describe("NmpServer", () => {
 	it("should initialize correctly with server info", () => {

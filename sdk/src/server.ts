@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 export interface ToolDefinition<T extends z.ZodType<any, any>> {
 	name: string;

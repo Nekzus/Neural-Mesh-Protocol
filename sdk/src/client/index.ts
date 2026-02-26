@@ -1,4 +1,4 @@
-import { CallToolRequest, CallToolResult, ServerInfo } from "../types.js";
+import type { CallToolRequest, CallToolResult, ServerInfo } from "../types.js";
 
 /**
  * NmpClient interfaces with the P2P Mesh (or local Bridge) to dynamically

@@ -1,12 +1,12 @@
-import {
-	Tool,
-	Resource,
-	Prompt,
+import { z } from "zod";
+import type {
 	CallToolRequest,
 	CallToolResult,
+	Prompt,
+	Resource,
 	ServerInfo,
+	Tool,
 } from "../types.js";
-import { z } from "zod";
 
 export type ToolHandler<T extends z.ZodRawShape = z.ZodRawShape> = (
 	args: z.infer<z.ZodObject<T>>,

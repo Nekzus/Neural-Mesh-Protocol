@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { NmpMcpBridge, NmpServer } from "../src/index.js";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { NmpMcpBridge, NmpServer } from "../src/index.js";
 
 describe("NmpMcpBridge", () => {
 	it("should error on invalid JSON-RPC version", async () => {
