@@ -16,10 +16,10 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
-		"demo:client-quickstart": "node --no-warnings --loader ts-node/esm examples/client-quickstart/index.ts",
-		"demo:server-quickstart": "node --no-warnings --loader ts-node/esm examples/server-quickstart/index.ts",
-		"demo:server": "node --no-warnings --loader ts-node/esm examples/server/index.ts",
-		"demo:client": "node --no-warnings --loader ts-node/esm examples/client/index.ts"
+		"demo:client-quickstart": "tsx examples/client-quickstart/index.ts",
+		"demo:server-quickstart": "tsx examples/server-quickstart/index.ts",
+		"demo:server": "tsx examples/server/index.ts",
+		"demo:client": "tsx examples/client/index.ts"
 	},
 	"keywords": [
 		"nmp",
@@ -36,6 +36,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.4",
 		"@types/node": "^25.3.1",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18",
 		"zod": "^4.3.6"
