@@ -12,43 +12,25 @@ NMP introduces a decentralized, Zero-Trust architectural model where AI agents i
 - **Save millions of tokens** by returning only semantically relevant, cryptographically verified evidence from the origin.
 - **Provide Zero-Trust security** natively, ensuring the host is never exposed to arbitrary or unsandboxed agent execution via strict WASI capabilities.
 
-## Key Architectural Pillars (NMP vs Legacy MCP)
+## Architecture
 
-1. **Push-Logic Paradigm (Logic-on-Origin):** Execute WASM logic exactly where the data lives, eliminating Massive Data Transfer.
-2. **High-Performance Binary Transport:** Built on Tonic (gRPC) and Protobuf instead of JSON-RPC over stdout. Payload parsings are reduced by 90%.
-3. **Zero-Trust Sandboxing:** Powered by Wasmtime and WASI Preview 1, with microscopic filesystem/network permissions.
-4. **Decentralized Mesh Topology:** Peer-to-peer agent discovery and routing via \
-ust-libp2p\ (Kademlia DHT) without relying on central authorities.
-5. **Persistent Multiplexing:** QUIC/Yamux transport maintains connections without the need for constant Ping/Heartbeat polling.
+The project is divided into two distinct, highly isolated modules:
 
-## Project Structure (Cargo Workspace)
+### 1. The Rust Application (`rust-app/`)
+The underlying high-performance mesh network, node infrastructure, DHT Kademlia discovery, and the Wasmtime (WASI) sandboxing environment. This is where the core nodes (Client/Agent and Server/Data Source) operate on the metal.
+👉 [Read the Rust App Documentation](./rust-app/README.md)
 
-- **`proto/`**: Contains `nmp_core.proto`, the standardized Protobuf definitions.
-- **`nmp-client/`**: The AI Agent Node. Discovers peers via Kademlia and injects WASM logic over gRPC.
-- **`nmp-server/`**: The Data Node. Receives logic and executes it securely within a Wasmtime sandbox, streaming back results.
-- **`wasm-filter/`**: An example rust-based `wasm32-wasip1` module that acts as the injected logic.
+### 2. The TypeScript SDK (`typescript-sdk/`)
+The developer tooling, designed to act as a direct, Zero-Friction drop-in replacement for the current Model Context Protocol (MCP) APIs. It provides interfaces like `NmpServer` and `NmpClient`, Zod validation schemas, and transparent Javy/WASM compilation to connect Node.js environments to the Neural Mesh.
+👉 [Read the TypeScript SDK Documentation](./typescript-sdk/README.md)
 
-## Status
+## Key Technical Pillars
 
-Currently in **Alpha** (Active Development). Core prototypes including P2P connectivity, WASI isolation, and gRPC execution are operational.
+1. **Push-Logic Paradigm:** Execute WASM logic exactly where the data lives.
+2. **High-Performance Binary Transport:** Built on Tonic (gRPC) and Protobuf instead of JSON over stdout.
+3. **Zero-Trust Sandboxing:** Powered by Wasmtime and WASI Preview 1.
+4. **Decentralized Mesh Topology:** Peer-to-peer agent discovery via libp2p.
+5. **Persistent Multiplexing:** QUIC transport.
 
 ---
 *Developed as the next evolution in Agentic Data Context.*
-
-## Extreme Zero-Trust Security & Distributed Intelligence
-
-To bulletproof the protocol against current and future cybersecurity threats, NMP elevates WASI Sandboxing to an autonomous, military-grade level:
-
-1. **Post-Quantum Cryptographic (PQC) Signatures:** Evolving the Noise Protocol to quantum-resistant algorithms (e.g., Kyber/Dilithium) to ensure traffic interception today cannot be decrypted by quantum computers tomorrow.
-2. **AI-Assisted Static AST Inspection:** Before instantiating Wasmtime, the Data Node uses a lightweight local ML model to scan the incoming WASM's Abstract Syntax Tree for obfuscation, aggressive loops, or evasive malware patterns, rejecting payloads in Zero-Time.
-3. **Hardware Enclaves (TEEs):** Wasmtime executes strictly within Trusted Execution Environments (Intel SGX / AMD SEV). Not even the host OS administrator or Cloud Provider can dump RAM to steal data or spy on the WASM logic.
-4. **Dynamic Capability Revocation (AI-Driven WASI):** An intelligent monitor supervises read rates and memory access patterns. If a WASM behaves like ransomware or attempts covert exfiltration, capabilities are dynamically revoked mid-flight, killing the task instantly.
-5. **Zero-Knowledge Proofs (ZK-SNARKs):** The WASM emits a cryptographic proof certifying exactly what logic was run on what genuine source data, without revealing the underlying data. The network audits the proof before accepting the result.
-
-## Developer Experience (DX) & MCP Migration
-
-For NMP to succeed, migrating from MCP must be trivial (Zero-Friction). The goal is for the NMP API to be a Drop-in Replacement for the MCP API.
-
-The official NMP SDK (e.g., `@neural-mesh/sdk` for Node.js) is **Phase 2**. A developer defines a Tool exactly as they do today in the latest MCP API using `McpServer.tool()` (from `@modelcontextprotocol/sdk/server/mcp.js`) with Zod schemas and text/image content block returns. The SDK's magic is that it intercepts that TypeScript function, compiles it on-the-fly to a WASM module (via Javy/Component Model), and injects it into the P2P mesh transparently.
-
-The SDK will also include a Bidirectional Adapter (`NmpMcpBridge`) so NMP Agents can talk to legacy JSON-RPC MCP servers during the ecosystem transition.
