@@ -4,22 +4,23 @@
         <!-- Octagon & Ribbon Mesh Group -->
         <g stroke="#09090b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
 
-            <!-- Octagon rotated 22.5deg so its flat edges are aligned to horizontal/vertical axes -->
-            <polygon points="106,60 92.5,92.5 60,106 27.5,92.5 14,60 27.5,27.5 60,14 92.5,27.5"
-                transform="rotate(22.5 60 60)" />
+            <g transform="rotate(22.5 60 60)">
+                <!-- Octagon -->
+                <polygon points="106,60 92.5,92.5 60,106 27.5,92.5 14,60 27.5,27.5 60,14 92.5,27.5" />
+
+                <!-- 8 Soft Sinusoidal Ribbons (S-Curves) communicating the center to each Vertex -->
+                <path d="M 60 60 C 76 46, 90 74, 106 60" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(45 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(90 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(135 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(180 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(225 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(270 60 60)" />
+                <path d="M 60 60 C 76 46, 90 74, 106 60" transform="rotate(315 60 60)" />
+            </g>
 
             <!-- Central Logic-on-Origin Node -->
-            <circle cx="60" cy="60" r="10" fill="#09090b" stroke="none" />
-
-            <!-- 8 Soft Sinusoidal Ribbons (S-Curves) communicating the center to each Edge -->
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(45 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(90 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(135 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(180 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(225 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(270 60 60)" />
-            <path d="M 60 60 C 74 48, 88 72, 102.5 60" transform="rotate(315 60 60)" />
+            <circle cx="60" cy="60" r="12" fill="#09090b" stroke="none" />
 
         </g>
 
