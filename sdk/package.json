@@ -15,7 +15,8 @@
 		"test:coverage": "vitest run --coverage",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
-		"check": "biome check ."
+		"check": "biome check .",
+		"demo:advanced": "node --no-warnings --loader ts-node/esm examples/2-advanced-tools.ts"
 	},
 	"keywords": [
 		"nmp",
