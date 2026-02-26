@@ -1,6 +1,0 @@
-[2026-02-25T10:00:00Z] INFO System started
-[2026-02-25T10:01:00Z] WARN Memory usage high
-[2026-02-25T10:02:00Z] CRITICAL Database connection lost
-[2026-02-25T10:03:00Z] INFO Retrying connection...
-[2026-02-25T10:04:00Z] CRITICAL Retry failed, timeout exceeded
-[2026-02-25T10:05:00Z] INFO Initiating shutdown sequence...
