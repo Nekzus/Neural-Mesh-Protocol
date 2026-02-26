@@ -1,0 +1,114 @@
+import {
+	Tool,
+	Resource,
+	Prompt,
+	CallToolRequest,
+	CallToolResult,
+	ServerInfo,
+} from "../types.js";
+import { z } from "zod";
+
+export type ToolHandler<T extends z.ZodRawShape = z.ZodRawShape> = (
+	args: z.infer<z.ZodObject<T>>,
+	extra: { signal?: AbortSignal },
+) => Promise<CallToolResult>;
+
+export class NmpServer {
+	private tools: Map<
+		string,
+		{ tool: Tool; handler: ToolHandler<any>; schema: z.ZodObject<any> }
+	> = new Map();
+	private resources: Map<string, Resource> = new Map();
+	private prompts: Map<string, Prompt> = new Map();
+
+	constructor(
+		private serverInfo: ServerInfo,
+		private config?: { capabilities?: Record<string, unknown> },
+	) {}
+
+	/**
+	 * Register a new Tool
+	 */
+	public tool<T extends z.ZodRawShape>(
+		name: string,
+		description: string,
+		shape: T,
+		handler: ToolHandler<T>,
+	): void {
+		if (this.tools.has(name)) {
+			throw new Error(`Tool already registered: ${name}`);
+		}
+
+		const schema = z.object(shape);
+		// Zod to JSON Schema derivation is mocked here for parity
+		// In production we would use `zod-to-json-schema`
+		const inputSchema = {
+			type: "object",
+			properties: {}, // Would be derived
+		};
+
+		this.tools.set(name, {
+			tool: { name, description, inputSchema },
+			handler,
+			schema,
+		});
+	}
+
+	/**
+	 * Register a dynamic resource
+	 */
+	public resource(
+		name: string,
+		uri: string,
+		description?: string,
+		mimeType?: string,
+	): void {
+		if (this.resources.has(uri)) {
+			throw new Error(`Resource URI already registered: ${uri}`);
+		}
+		this.resources.set(uri, { name, uri, description, mimeType });
+	}
+
+	/**
+	 * Emulates calling a tool (used locally or via NmpMcpBridge)
+	 */
+	public async callTool(request: CallToolRequest): Promise<CallToolResult> {
+		const entry = this.tools.get(request.name);
+		if (!entry) {
+			throw new Error(`Tool not found: ${request.name}`);
+		}
+
+		try {
+			// Validate inputs natively with Zod before execution
+			const parsedArgs = entry.schema.parse(request.arguments || {});
+			const result = await entry.handler(parsedArgs, {});
+			return result;
+		} catch (error: any) {
+			if (error instanceof z.ZodError) {
+				return {
+					content: [
+						{ type: "text", text: `Validation Error: ${error.message}` },
+					],
+					isError: true,
+				};
+			}
+			return {
+				content: [
+					{ type: "text", text: `Internal Execution Error: ${error.message}` },
+				],
+				isError: true,
+			};
+		}
+	}
+
+	/**
+	 * Retrieves registered tools
+	 */
+	public listTools(): Tool[] {
+		return Array.from(this.tools.values()).map((t) => t.tool);
+	}
+
+	public getServerInfo(): ServerInfo {
+		return this.serverInfo;
+	}
+}
