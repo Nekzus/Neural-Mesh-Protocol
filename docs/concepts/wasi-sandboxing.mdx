@@ -1,0 +1,15 @@
+---
+title: "WASI Sandboxing"
+description: "Running untrusted Agent logic securely"
+---
+
+Every payload executed on an NMP Server runs inside a strictly constrained [Wasmtime](https://wasmtime.dev/) environment powered by **WASI Preview 1** (and soon Preview 2 / Component Model).
+
+## Capabilities
+
+By default, an incoming WebAssembly module has:
+- **No network access** (No sockets, no HTTP fetching).
+- **No filesystem access** (except strictly mapped, read-only directories).
+- **No environment variable access**.
+
+This ensures complete **Zero-Trust**. The Data Node owner is never at risk of an AI Agent payload acting maliciously or exploring unpermitted files.

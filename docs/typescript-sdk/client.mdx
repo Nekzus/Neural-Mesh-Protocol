@@ -1,0 +1,18 @@
+---
+title: "NmpClient"
+description: "Building autonomous agents that inject logic"
+---
+
+An Agent uses an `NmpClient` to push WebAssembly tools exactly to where the data resides. Instead of extracting massive contextual data out of the provider, it simply asks the provider to compute its instructions natively.
+
+```typescript
+import { NmpClient } from '@neural-mesh/sdk';
+
+const agent = new NmpClient({
+  name: "ForensicAI",
+  version: "1.0.0"
+});
+
+// Push execution. Result comes back in a flash.
+const result = await agent.executeNatively("P2q...", "filterLogsWasm", { query: "CRITICAL" });
+```

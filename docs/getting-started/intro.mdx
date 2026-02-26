@@ -1,0 +1,38 @@
+---
+title: "Introduction"
+description: "Welcome to the Neural Mesh Protocol (NMP) documentation"
+---
+
+NMP is a next-generation, high-performance binary transport mesh designed for advanced Artificial Intelligence Agent communication. Conceived as a conceptual and technical evolution of existing context protocols (like **Model Context Protocol**), NMP radically shifts the paradigm from pulling massive data towards **secure Logic-on-Origin execution**.
+
+## Why NMP?
+
+In the rapid evolution of autonomous agents, transferring gigabytes of raw data to central AI nodes for filtering, parsing, or reasoning is increasingly inefficient, slow, and expensive.
+
+<CardGroup cols={2}>
+  <Card title="Logic-on-Origin" icon="bolt">
+    Execute WebAssembly (WASM) logic exactly where the data lives, eliminating massive data transfers.
+  </Card>
+  <Card title="Zero-Trust Sandboxing" icon="shield-check">
+    Powered by Wasmtime and WASI Preview 1, with microscopic filesystem/network permissions.
+  </Card>
+  <Card title="High-Performance Transport" icon="rocket">
+    Built on Tonic (gRPC) and Protobuf instead of JSON-RPC over stdout, reducing parsing overhead by 90%.
+  </Card>
+  <Card title="Decentralized Mesh" icon="network-wired">
+    Peer-to-peer agent discovery and routing via libp2p Kademlia DHT without central authorities.
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+Ready to dive in? Choose your path:
+
+<CardGroup cols={2}>
+  <Card title="TypeScript SDK" icon="js" href="/typescript-sdk/overview">
+    Integrate NMP seamlessly into your Node.js apps. A drop-in replacement for MCP APIs.
+  </Card>
+  <Card title="Rust Backend" icon="rust" href="/rust-app/overview">
+    Explore the core engine running Wasmtime, Tonic, and libp2p.
+  </Card>
+</CardGroup>

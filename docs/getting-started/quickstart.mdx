@@ -1,0 +1,46 @@
+---
+title: "Quickstart"
+description: "Start building with NMP in under 5 minutes"
+---
+
+## Initialization
+
+The easiest way to get started is by using the official TypeScript SDK. You can connect to the Neural Mesh, define tools, or inject WASM logic into remote resources seamlessly.
+
+<CodeGroup>
+```bash npm
+npm install @neural-mesh/sdk
+```
+```bash pnpm
+pnpm add @neural-mesh/sdk
+```
+```bash yarn
+yarn add @neural-mesh/sdk
+```
+</CodeGroup>
+
+## Basic Server Configuration
+
+Create an `NmpServer` to expose WASM-accelerated tools.
+
+```typescript index.ts
+import { NmpServer } from '@neural-mesh/sdk';
+import { z } from 'zod';
+
+const server = new NmpServer({
+  name: "MyLocalDataNode",
+  version: "1.0.0"
+});
+
+server.tool(
+  "query_database",
+  "Analyzes giant tables exactly at the origin",
+  { query: z.string() },
+  async ({ query }) => {
+    // Logic runs natively at origin (via WASI sandbox)!
+    return {
+      content: [{ type: "text", text: `Processed query: ${query}` }]
+    };
+  }
+);
+```

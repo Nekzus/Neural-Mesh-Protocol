@@ -1,0 +1,12 @@
+---
+title: "Cargo Backend"
+description: "The core engine powering NMP"
+---
+
+The actual implementation of the P2P Mesh (Noise, Kademlia) and gRPC multiplexing happens in the high-performance Rust foundation (`rust-app`).
+
+## Crates 
+- `nmp-core`: Protobuf interfaces (`tonic` + `prost`)
+- `nmp-client`: Logic injector
+- `nmp-server`: The WASI Sandbox host
+- `wasm-filter`: Edge-logic dummy compilation

@@ -1,0 +1,11 @@
+---
+title: "Compiling Payloads"
+description: "Generating wasm32-wasip1 binaries"
+---
+
+NMP payloads must be compiled explicitly for the WASI Preview 1 target to properly be boxed inside the Zero-Trust `wasmtime` environment on the receiving Data Node.
+
+```bash
+rustup target add wasm32-wasip1
+cargo build --target wasm32-wasip1 --release
+```

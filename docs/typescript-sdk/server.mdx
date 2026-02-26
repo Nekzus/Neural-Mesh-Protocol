@@ -1,0 +1,20 @@
+---
+title: "NmpServer"
+description: "Creating Data Nodes that accept remote logic"
+---
+
+Data Nodes implement an `NmpServer` that utilizes a Wasmtime Sandboxing environment (managed natively or via bridge) to securely orchestrate incoming execution logic from Agents.
+
+```typescript
+import { NmpServer } from '@neural-mesh/sdk';
+import { z } from 'zod';
+
+const ds = new NmpServer({
+  name: "CloudFilesStore",
+  version: "2.1.0"
+});
+
+ds.tool("list_files", "Reads directory", { path: z.string() }, async ({ path }) => {
+    // Isolated secure access
+});
+```

@@ -1,0 +1,67 @@
+{
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "Neural Mesh Protocol",
+    "logo": {
+        "dark": "/logo/dark.png",
+        "light": "/logo/light.png"
+    },
+    "favicon": "/favicon.png",
+    "colors": {
+        "primary": "#00D67D",
+        "light": "#FAFAFA",
+        "dark": "#09090b"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "GitHub",
+                "href": "https://github.com/Nekzus/Neural-Mesh-Protocol"
+            }
+        ]
+    },
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Documentation",
+                "pages": [
+                    {
+                        "group": "Get started",
+                        "pages": [
+                            "getting-started/intro",
+                            "getting-started/quickstart"
+                        ]
+                    },
+                    {
+                        "group": "Core Concepts",
+                        "pages": [
+                            "concepts/architecture",
+                            "concepts/wasi-sandboxing",
+                            "concepts/zero-trust"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "TypeScript SDK",
+                "pages": [
+                    "typescript-sdk/overview",
+                    "typescript-sdk/client",
+                    "typescript-sdk/server"
+                ]
+            },
+            {
+                "tab": "Rust Backend",
+                "pages": [
+                    "rust-app/overview",
+                    "rust-app/compilation"
+                ]
+            }
+        ]
+    },
+    "footer": {
+        "socials": {
+            "github": "https://github.com/Nekzus/Neural-Mesh-Protocol"
+        }
+    }
+}
