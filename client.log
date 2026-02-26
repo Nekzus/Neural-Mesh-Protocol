@@ -1,0 +1,22 @@
+warning: unused variable: `record_key`
+  --> nmp-client\src\main.rs:45:13
+   |
+45 |         let record_key = libp2p::kad::RecordKey::new(&"nmp:capabilit...
+   |             ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_record_key`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `nmp-client` (bin "nmp-client") generated 1 warning (run `cargo fix --bin "nmp-client" -p nmp-client` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.74s
+     Running `target\debug\nmp-client.exe`
+NMP AI Agent Client - Booting Logic-on-Origin injection engine...
+Init Zero-Trust Mesh Crypto...
+[-] Local Agent Identity (PeerID): 12D3KooWRe4WJvkrTbNtnwGdwjKWM8om36rkZwwZA7tfYnUfpQff
+Entering Agent Mesh Network Loop...
+[-] Agent connected to Mesh on: /ip4/192.168.50.122/tcp/31625
+[-] Agent connected to Mesh on: /ip4/127.0.0.1/tcp/31625
+[-] Agent connected to Mesh on: /ip4/172.19.0.1/tcp/31625
+[-] Querying Decentralized Kademlia DHT for 'LocalLogAnalyzer' schemas...
+[-] ÔÜí DHT Cache Hit! Found schema: { keyword: string }. Zero-latency discovery.
+[-] Connecting to NMP Data Node at [::1]:50051
+[!] Failed to inject WASM Logic: transport error

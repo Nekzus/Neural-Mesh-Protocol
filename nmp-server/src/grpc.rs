@@ -57,7 +57,7 @@ impl NeuralMesh for NmpService {
             let allowed_dir = "."; // For testing, allow reading the current dir
 
             // Attempt to run the sandboxed WASM
-            match executor::execute_sandboxed_logic(&engine_clone, &req.wasm_binary, allowed_dir) {
+            match executor::execute_sandboxed_logic(&engine_clone, &req.wasm_binary, allowed_dir, tx.clone()) {
                 Ok(_) => {
                     // Send success proof
                     let res = LogicResponse {

@@ -28,9 +28,9 @@ pub fn analyze_ast(wasm_bytes: &[u8]) -> Result<(), Box<dyn Error>> {
             ImportSection(s) => {
                 for import in s {
                     let import = import?;
-                    // Strict Sandbox Validation: Only allow WASI preview 1 imports.
+                    // Strict Sandbox Validation: Only allow WASI preview 1 and native NMP functions.
                     // Reject any custom or unexpected host imports.
-                    if import.module != "wasi_snapshot_preview1" {
+                    if import.module != "wasi_snapshot_preview1" && import.module != "nmp" {
                         return Err(Box::new(GuardianError(format!(
                             "Banned Host Import Detected: {}/{}",
                             import.module, import.name

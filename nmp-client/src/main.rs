@@ -49,7 +49,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
         // Execute targeting the discovered IP (Default dev NMP port here)
         let target_ip = "[::1]:50051"; // Default dev NMP port
-        let wasm_file = "target/wasm32-wasip1/release/wasm-filter.wasm";
+        let wasm_file = "target/wasm32-wasip1/debug/wasm-watchdog.wasm";
         
         if let Err(e) = injector::inject_logic(target_ip, wasm_file).await {
             eprintln!("[!] Failed to inject WASM Logic: {}", e);

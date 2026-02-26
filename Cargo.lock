@@ -2380,6 +2380,7 @@ dependencies = [
 name = "nmp-server"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "futures",
  "libp2p",
  "nmp-core",
@@ -4103,6 +4104,10 @@ dependencies = [
  "wasm-encoder 0.244.0",
  "wasmparser 0.244.0",
 ]
+
+[[package]]
+name = "wasm-watchdog"
+version = "0.1.0"
 
 [[package]]
 name = "wasmparser"

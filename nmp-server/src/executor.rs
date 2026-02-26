@@ -6,9 +6,14 @@ use wasmtime::{Config, Engine, Linker, Module, Store};
 use wasmtime_wasi::sync::WasiCtxBuilder;
 use wasmtime_wasi::WasiCtx;
 
+use tokio::sync::mpsc::Sender;
+use nmp_core::v1::LogicResponse;
+use tonic::Status;
+
 // Holds the execution state per Agent request.
 pub struct AgentExecutionState {
     pub wasi: WasiCtx,
+    pub tx: Sender<Result<LogicResponse, tonic::Status>>,
 }
 
 pub fn create_wasi_engine() -> Result<Engine, Box<dyn Error>> {
@@ -27,6 +32,7 @@ pub fn execute_sandboxed_logic(
     engine: &Engine,
     wasm_bytes: &[u8],
     allowed_dir: &str,
+    tx: Sender<Result<LogicResponse, tonic::Status>>,
 ) -> Result<(), Box<dyn Error>> {
 
     // 1. GUARDIAN MODULE: Zero-Time AST Structural Scanning
@@ -50,7 +56,30 @@ pub fn execute_sandboxed_logic(
         .preopened_dir(dir, "/data")?
         .build();
 
-    let mut store = Store::new(engine, AgentExecutionState { wasi });
+    let mut store = Store::new(engine, AgentExecutionState { wasi, tx });
+
+    // PUSH EVENT HOST FUNCTION
+    linker.func_wrap(
+        "nmp", "push_event",
+        |mut caller: wasmtime::Caller<'_, AgentExecutionState>, ptr: u32, len: u32| -> anyhow::Result<()> {
+            let mem = match caller.get_export("memory") {
+                Some(wasmtime::Extern::Memory(m)) => m,
+                _ => return Err(anyhow::anyhow!("failed to find host memory")),
+            };
+            let data = mem.data(&caller)
+                .get(ptr as usize..(ptr + len) as usize)
+                .ok_or_else(|| anyhow::anyhow!("OOB memory access"))?;
+            
+            let msg = std::str::from_utf8(data).unwrap_or("BAD_UTF8").to_string();
+            
+            let res = LogicResponse {
+                semantic_evidence: format!("[WATCHDOG PUSH ALERT]: {}", msg),
+                cryptographic_proof: vec![],
+            };
+            let _ = caller.data().tx.blocking_send(Ok(res));
+            Ok(())
+        }
+    )?;
 
     println!("[-] Compiling incoming NMP Logic Module...");
     let module = Module::new(engine, wasm_bytes)?;
