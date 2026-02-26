@@ -1,13 +1,25 @@
 {
+    "include": [
+        "./"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
     "compilerOptions": {
         "target": "es2022",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "strict": true,
         "skipLibCheck": true,
-        "esModuleInterop": true
-    },
-    "include": [
-        "src/**/*"
-    ]
+        "esModuleInterop": true,
+        "paths": {
+            "*": [
+                "./*"
+            ],
+            "@neural-mesh/sdk": [
+                "./node_modules/@neural-mesh/sdk/src/index.ts"
+            ]
+        }
+    }
 }

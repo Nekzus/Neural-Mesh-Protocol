@@ -13,3 +13,7 @@ Thumbs.db
 
 # Confidential / Project specific
 GEMINI.md
+
+# Node.js
+node_modules/
+.pnpm-store/
