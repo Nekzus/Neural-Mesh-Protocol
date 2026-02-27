@@ -1,3 +1,10 @@
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/logo/dark.svg">
+    <img alt="Neural Mesh Protocol Logo" src="./docs/logo/light.svg" width="300">
+  </picture>
+</div>
+
 # NMP: Neural Mesh Protocol (v1.0-alpha)
 
 NMP (Neural Mesh Protocol) is a next-generation, high-performance binary transport mesh designed for advanced Artificial Intelligence Agent communication. Conceived as a conceptual and technical evolution of existing context protocols (like MCP), NMP radically shifts the paradigm from pulling massive data towards secure **Logic-on-Origin** execution.

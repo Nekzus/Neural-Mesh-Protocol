@@ -1,3 +1,10 @@
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../docs/logo/dark.svg">
+    <img alt="Neural Mesh Protocol Logo" src="../docs/logo/light.svg" width="220">
+  </picture>
+</div>
+
 # Neural Mesh Protocol (NMP) - TypeScript SDK
 
 The `@neural-mesh/sdk` is the official TypeScript tooling interface designed to bring NMP logic-on-origin and peer-to-peer context extraction seamlessly to Node.js environments.

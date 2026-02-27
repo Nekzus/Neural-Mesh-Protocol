@@ -1,4 +1,6 @@
 <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="120" height="120" fill="#09090b" rx="20" />
     <!-- Octagon & S-Curve Ribbon Group -->
     <g stroke="#FAFAFA" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
 

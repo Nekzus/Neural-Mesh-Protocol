@@ -1,3 +1,10 @@
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../docs/logo/dark.svg">
+    <img alt="Neural Mesh Protocol Logo" src="../docs/logo/light.svg" width="220">
+  </picture>
+</div>
+
 # Neural Mesh Protocol - Cargo Core (rust-app)
 
 This directory contains the underlying high-performance, system-level components of the NMP mesh network, written cleanly in a Rust 2021 Cargo Workspace.
