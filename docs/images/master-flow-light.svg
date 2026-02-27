@@ -317,7 +317,7 @@
     <text x="165" y="295" text-anchor="middle" class="mfl-text">DHT Peer Discovery</text>
 
     <!-- Extrinsic Connectors (Client) -->
-    <path d="M 270 282.5 L 315 282.5 L 315 180 L 330 180" class="mfl-line" marker-end="url(#arrL)" />
+    <path d="M 270 282.5 L 285 282.5 L 285 180 L 330 180" class="mfl-line" marker-end="url(#arrL)" />
     <path d="M 330 380 L 315 380 L 315 400.5 L 270 400.5" class="mfl-line" marker-end="url(#arrL)" />
 
     <rect x="60" y="378" width="210" height="45" class="mfl-box-zk" />
