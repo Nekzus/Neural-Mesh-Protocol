@@ -18,25 +18,7 @@ When a Node.js or Python tool executes in MCP, it relies on the operating system
 When an Agent Node injects a WebAssembly module into a Data Node, the following security barriers activate:
 
 <Frame>
-```mermaid
-block-beta
-  columns 3
-  
-  AgentLogic["Untrusted WASM Logic"]
-  space
-  HostSystem["Physical Host Drive"]
-
-  block:Sandbox:3
-    columns 3
-    Trap["Immediate WASI Trap"]
-    space
-    FileSys["Virtual /logs"]
-  end
-
-  AgentLogic -- "Reads /etc/shadow" --> Trap
-  AgentLogic -- "Reads /logs/error.txt" --> FileSys
-  FileSys -- "Strict FD Mapping" --> HostSystem
-```
+  <img className="w-full" src="/images/wasi-bounds.svg" alt="WASM Execution Boundaries" />
 </Frame>
 
 ### 1. Capability Verification

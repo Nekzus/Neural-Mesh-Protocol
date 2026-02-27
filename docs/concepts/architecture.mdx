@@ -34,25 +34,7 @@ In the Neural Mesh, every node is a Peer, but they assume distinct roles based o
 To ensure ultra-low latency and maximum security, NMP is strictly divided into two technical layers, orchestrated through mathematically verifiable pipelines.
 
 <Frame>
-```mermaid
-flowchart TD
-    subgraph Agent Node (Client)
-        A1[AI/LLM Engine] -->|Generates Intent| A2(WASM Compiler / Javy)
-        A2 -->|Outputs .wasm payload| A3{NmpClient}
-    end
-
-    subgraph The Neural Mesh (Transport)
-        A3 <-->|Noise + PQC Handshake| M1((Kademlia DHT))
-        M1 <-->|Peer Discovery| M2{QUIC Multiplexer}
-    end
-
-    subgraph Data Node (Server)
-        M2 <-->|gRPC Protobuf Stream| S1{NmpServer}
-        S1 -->|AST Guardian Check| S2[Wasmtime Engine]
-        S2 -->|Spins up| S3((WASI Sandbox))
-        S3 -->|Capabilities Map| S4[(Protected Host Data)]
-    end
-```
+  <img className="w-full" src="/images/architecture.svg" alt="NMP Topology Architecture" />
 </Frame>
 
 ### 1. Transport Layer (libp2p & QUIC)

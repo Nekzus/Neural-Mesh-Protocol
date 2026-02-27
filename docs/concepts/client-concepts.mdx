@@ -14,15 +14,7 @@ In traditional Client-Server architectures, the Client must know the exact IP ad
 Agent Nodes in NMP operate in a purely decentralized topology. Here is how they rapidly discover the resources they need:
 
 <Frame>
-```mermaid
-graph LR
-    A[Agent Node] -->|Query: 'Logs Database'| D(Kademlia DHT)
-    D -->|Searches routing tables| P1{Peer 12x...}
-    D -->|Searches routing tables| P2{Peer 98a...}
-    P1 -.->|Closest XOR Distance| P3((Target Data Node))
-    P2 -.->|Closest XOR Distance| P3
-    A ===>|Direct QUIC Connection Established| P3
-```
+  <img className="w-full" src="/images/client-dht.svg" alt="Distributed Hash Table Routing" />
 </Frame>
 
 - Every Agent and Data Node generates a cryptographic **Ed25519 Peer ID** upon startup.

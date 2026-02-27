@@ -15,22 +15,7 @@ In NMP, the Server does not need to pre-program endless tools. Instead, it expos
 The Agent sends a completely dynamic **WebAssembly Module (`.wasm`)** containing its own novel logic.
 
 <Frame>
-```mermaid
-sequenceDiagram
-    participant A as Agent Node (Remote AI)
-    participant S as NMP Server (Host)
-    participant W as WASI Sandbox (Isolated)
-    
-    A->>S: 1. Streams logic payload (WASM binary)
-    note right of S: AST Guardian inspects binary
-    S->>W: 2. Bootstraps Engine with memory limits
-    A->>S: 3. Streams arguments & intents
-    S->>W: 4. Maps capabilities (Read-Only Data)
-    note right of W: Execution operates strictly on origin data
-    W-->>S: 5. Returns 1KB computed conclusion
-    S->>W: 6. Sandbox Destroyed (Zero-State)
-    S-->>A: 7. Streams semantic response
-```
+  <img className="w-full" src="/images/server-flow.svg" alt="Data Node Execution Flow" />
 </Frame>
 
 ### How it works:

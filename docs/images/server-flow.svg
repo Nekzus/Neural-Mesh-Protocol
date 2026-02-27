@@ -1,0 +1,128 @@
+<svg width="800" height="360" viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="360" fill="#09090b" rx="16" />
+    <!-- Fonts & Styles -->
+    <style>
+        text {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            fill: #FAFAFA;
+            font-size: 13px;
+        }
+
+        .title {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #FFFFFF;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            fill: #A1A1AA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .box {
+            fill: #18181b;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .box-highlight {
+            fill: #27272a;
+            stroke: #FAFAFA;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .box-transparent {
+            fill: none;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .line {
+            stroke: #52525b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .line-active {
+            stroke: #FAFAFA;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .arrow {
+            fill: #52525b;
+        }
+
+        .arrow-active {
+            fill: #FAFAFA;
+        }
+    </style>
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="arrow" />
+        </marker>
+        <marker id="arrow-active" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="arrow-active" />
+        </marker>
+    </defs>
+
+    <!-- Columns -->
+    <rect x="40" y="40" width="220" height="280" class="box-transparent" />
+    <text x="150" y="70" text-anchor="middle" class="title">Agent Client</text>
+
+    <rect x="290" y="40" width="220" height="280" class="box-transparent" />
+    <text x="400" y="70" text-anchor="middle" class="title">NMP Server</text>
+
+    <rect x="540" y="40" width="220" height="280" class="box-transparent" />
+    <text x="650" y="70" text-anchor="middle" class="title">WASI Sandbox</text>
+
+    <!-- Nodes -->
+    <rect x="70" y="100" width="160" height="40" class="box" />
+    <text x="150" y="125" text-anchor="middle">Generates `.wasm`</text>
+
+    <rect x="70" y="240" width="160" height="40" class="box-highlight" />
+    <text x="150" y="265" text-anchor="middle">Receives 1KB Result</text>
+
+    <!-- Middle Nodes -->
+    <rect x="320" y="100" width="160" height="40" class="box-highlight" />
+    <text x="320" y="90" class="subtitle">Guardian</text>
+    <text x="400" y="125" text-anchor="middle">AST Inspection</text>
+
+    <rect x="320" y="170" width="160" height="40" class="box" />
+    <text x="400" y="195" text-anchor="middle">Memory Limits Boot</text>
+
+    <rect x="320" y="240" width="160" height="40" class="box" />
+    <text x="400" y="265" text-anchor="middle">Sandbox Destruction</text>
+
+    <!-- Right Nodes -->
+    <rect x="570" y="170" width="160" height="40" class="box-highlight" />
+    <text x="650" y="195" text-anchor="middle">FD Mapping (Data)</text>
+
+    <!-- Lines -->
+    <!-- 1. Payload Stream -->
+    <path d="M 230 120 L 310 120" class="line-active" marker-end="url(#arrow-active)" />
+    <text x="270" y="110" text-anchor="middle" font-size="10" fill="#FFF">Stream Payload</text>
+
+    <!-- 2. Boot -->
+    <path d="M 400 140 L 400 160" class="line" marker-end="url(#arrowhead)" />
+
+    <!-- 3. Mapping -->
+    <path d="M 480 190 L 560 190" class="line" marker-end="url(#arrowhead)" />
+
+    <!-- 4. Execution Return -->
+    <path d="M 650 210 L 650 260 L 490 260" class="line-active" marker-end="url(#arrow-active)" />
+    <text x="570" y="250" text-anchor="middle" font-size="10" fill="#FFF">Compute & Return</text>
+
+    <!-- 5. Semantic Return -->
+    <path d="M 320 260 L 240 260" class="line-active" marker-end="url(#arrow-active)" />
+    <text x="280" y="250" text-anchor="middle" font-size="10" fill="#FFF">Semantic Output</text>
+
+</svg>
