@@ -1,7 +1,9 @@
+import { yamux } from "@chainsafe/libp2p-yamux";
 import { identify } from "@libp2p/identify";
 import { kadDHT } from "@libp2p/kad-dht";
 import { mplex } from "@libp2p/mplex";
 import { noise } from "@libp2p/noise";
+import { tcp } from "@libp2p/tcp";
 import { webSockets } from "@libp2p/websockets";
 import { createLibp2p, type Libp2p } from "libp2p";
 
@@ -16,7 +18,11 @@ export class MeshNode {
 
 	constructor(config: MeshNodeConfig = {}) {
 		this.config = {
-			listenAddresses: config.listenAddresses || ["/ip4/0.0.0.0/tcp/0/ws"],
+			// Soporte dual TCP (nmp-server nativo en Rust) y WebSockets (Browsers)
+			listenAddresses: config.listenAddresses || [
+				"/ip4/0.0.0.0/tcp/0/ws",
+				"/ip4/0.0.0.0/tcp/0",
+			],
 			bootstrapNodes: config.bootstrapNodes || [],
 		};
 	}
@@ -26,9 +32,9 @@ export class MeshNode {
 			addresses: {
 				listen: this.config.listenAddresses,
 			},
-			transports: [webSockets()],
+			transports: [webSockets(), tcp()],
 			connectionEncrypters: [noise()],
-			streamMuxers: [mplex()],
+			streamMuxers: [yamux(), mplex()],
 			services: {
 				dht: kadDHT({
 					kBucketSize: 20,

@@ -1,7 +1,10 @@
+import crypto from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
+// @ts-expect-error
+import kyber from "crystals-kyber";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,32 +56,58 @@ export class MeshRpcClient {
 
 	public executeLogic(
 		sessionToken: string,
+		kyberPublicKey: Buffer,
 		wasmBinary: Buffer,
 		inputs: Record<string, Buffer>,
 	): Promise<any[]> {
 		return new Promise((resolve, reject) => {
-			const req = {
-				session_token: sessionToken,
-				wasm_binary: wasmBinary,
-				inputs: inputs,
-				pqc_ciphertext: Buffer.from("kyber-enc"),
-				aes_nonce: Buffer.from("12-byte-nonce"),
-			};
+			try {
+				// 1. PQC Encapsulation (ML-KEM-768)
+				const c_ss = kyber.Encrypt768(kyberPublicKey);
+				const pqcCiphertext = Buffer.from(c_ss[0]);
+				const sharedSecret = Buffer.from(c_ss[1]);
 
-			const stream = this.client.ExecuteLogic(req);
-			const chunks: any[] = [];
+				// 2. AES-256-GCM Symmetric Encryption
+				const aesNonce = crypto.randomBytes(12);
+				const cipher = crypto.createCipheriv(
+					"aes-256-gcm",
+					sharedSecret,
+					aesNonce,
+				);
 
-			stream.on("data", (chunk: any) => {
-				chunks.push(chunk);
-			});
+				// Rust aes-gcm crate appends the AuthTag at the end of the ciphertext
+				const encryptedWasm = Buffer.concat([
+					cipher.update(wasmBinary),
+					cipher.final(),
+				]);
+				const authTag = cipher.getAuthTag();
+				const wasmBinaryWithTag = Buffer.concat([encryptedWasm, authTag]);
 
-			stream.on("end", () => {
-				resolve(chunks);
-			});
+				const req = {
+					session_token: sessionToken,
+					wasm_binary: wasmBinaryWithTag,
+					inputs: inputs,
+					pqc_ciphertext: pqcCiphertext,
+					aes_nonce: aesNonce,
+				};
 
-			stream.on("error", (err: any) => {
+				const stream = this.client.ExecuteLogic(req);
+				const chunks: any[] = [];
+
+				stream.on("data", (chunk: any) => {
+					chunks.push(chunk);
+				});
+
+				stream.on("end", () => {
+					resolve(chunks);
+				});
+
+				stream.on("error", (err: any) => {
+					reject(err);
+				});
+			} catch (err: any) {
 				reject(err);
-			});
+			}
 		});
 	}
 

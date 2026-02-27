@@ -35,6 +35,16 @@ The `@neural-mesh/sdk` includes a native compilation bridge (the **Component Bui
 
 The developer never has to manually write or compile Rust/Wasm.
 
+## Vanguard Enterprise Features
+
+The TypeScript SDK operates at strict architectural parity with the high-performance Rust core, ensuring true Zero-Trust enterprise constraints:
+
+- **Post-Quantum Cryptography (ML-KEM-768):** End-to-end asymmetric encapsulation (`crystals-kyber`) and symmetric AES-256-GCM authentication.
+- **Hybrid Mesh Transport:** Unrestricted Node.js & browser peering through dual WebSockets (WS/Mplex) and TCP (Yamux) libp2p listeners.
+- **Guardian-TS (Zero-Time AST Inspection):** Proactive sandbox-escape mitigation that blocks illegal host capabilities *before* `node:wasi` execution logic triggers.
+- **ZK-Receipt Ready:** Native architectural support for trustless Mathematical Execution Proofs against Zero-Knowledge Virtual Machines (zkVMs).
+- **Multi-Core Scaling (Worker Pool):** Hardware-accelerated transactional performance using `piscina`. Bypasses V8's Single-Thread Event Loop bottleneck by offloading PQC decryption, AST inspection, and WASI Sandboxing to isolated OS-level threads.
+
 ## Key Exports
 
 The SDK exports three primary classes for orchestrating Mesh applications:
@@ -50,6 +60,41 @@ The SDK exports three primary classes for orchestrating Mesh applications:
     The Legacy Translator. Instantly makes legacy JSON-RPC MCP clients compatible with your new, high-performance NMP network. 
   </Card>
 </CardGroup>
+
+## Architectural Deep Dive: Multi-Core Transactional Pool
+
+A severe limitation historically cited regarding Node.js was its single-threaded Event Loop bottleneck under grueling CPU workloads. The SDK shatters this limit by routing cryptographic ingestion to isolated OS Threads via `piscina`.
+
+```mermaid
+flowchart TD
+    classDef client fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#fff
+    classDef grpc fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+    classDef main fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    classDef worker fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+    classDef wasi fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+
+    C[NMP Client / Agent]:::client --"PQC Encapsulated Request\n(gRPC / TCP)"--> G{gRPC Server\n(Main Thread)}:::grpc
+    
+    subgraph "Main Thread (Event Loop)"
+        G --> |"Accepts Conn\nNon-Blocking"| M[RPC Dispatcher]:::main
+    end
+
+    subgraph "Hardware CPU Cores"
+        M -.->|"Offload Encrypted Payload\n(Shared Memory)"| W1[Worker Thread 1]:::worker
+        M -.->|Offload| W2[Worker Thread 2]:::worker
+        M -.->|Offload| WN[Worker Thread N]:::worker
+    end
+
+    subgraph "Inside OS Worker Thread"
+        W1 --> |1| D1(Kyber768 & AES Decrypt)
+        D1 --> |2| G1(Guardian-TS AST Inspect)
+        G1 --> |3| V1[WASI Sandbox Execution]:::wasi
+        V1 --> |4| Z1(ZK-Receipt Hasher)
+    end
+
+    W1 -.->|"Return Proof\n& Execution Context"| M
+    M --"LogicResponse\nStream"--> C
+```
 
 ## Getting Started
 

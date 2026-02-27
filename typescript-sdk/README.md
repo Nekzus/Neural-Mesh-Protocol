@@ -17,6 +17,10 @@ This SDK bridges the gap between the complex decentralized mesh (Kademlia/gRPC/W
 
 Through the `NmpServer` and `NmpMcpBridge` classes, developers can declare tools and resources exactly as they used to with standard MCP APIs (`Zod` schemas, text/image blocks). The SDK dynamically intercepts these definitions and injects them into the high-performance binary NMP network.
 
+### Multi-Core Hardware Scaling
+
+Node.js is traditionally bottlenecked by its single-thread V8 Event Loop. This SDK obliterates that limitation. It features a built-in *Zero-Blocking Worker Pool* powered by `piscina`, immediately dispatching extreme algorithmic tasks (Kyber768 Asymmetric Decryption, AES-GCM Authentication, WASM Sandboxing) continuously to parallel Operating System Threads mimicking the unbarred computational scaling previously thought exclusive to Rust.
+
 ## Installation
 
 This workspace uses `pnpm` under a strict configuration. It relies on Biome.js for extreme-speed linting and Vitest for rigorous testing.

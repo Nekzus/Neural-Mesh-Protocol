@@ -3,6 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { WASI } from "node:wasi";
+import { ASTGuardian } from "./guardian.js";
 
 export interface SandboxConfig {
 	allowEnv?: boolean;
@@ -43,6 +44,10 @@ export class WasiSandbox {
 	public async execute(wasmBytes: Buffer): Promise<void> {
 		try {
 			const module = await WebAssembly.compile(new Uint8Array(wasmBytes));
+
+			// Guard against Sandbox Escape using AST Inspection (Logic-on-Origin)
+			ASTGuardian.analyze(module);
+
 			const instance = await WebAssembly.instantiate(
 				module,
 				this.wasi.getImportObject() as any, // Injects safe WASI syscalls
