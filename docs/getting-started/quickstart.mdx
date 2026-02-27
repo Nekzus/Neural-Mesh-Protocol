@@ -1,46 +1,138 @@
 ---
 title: "Quickstart"
-description: "Start building with NMP in under 5 minutes"
+description: "Start building with NMP in under 5 minutes using the official TypeScript SDK"
 ---
 
-## Initialization
+The Neural Mesh Protocol (NMP) provides the `@neural-mesh/sdk`, designed as a powerful yet highly familiar SDK. If you have previously built servers for MCP, transitioning to NMP architecture is almost effortless.
 
-The easiest way to get started is by using the official TypeScript SDK. You can connect to the Neural Mesh, define tools, or inject WASM logic into remote resources seamlessly.
+In this guide, we'll build a basic NMP Server that exposes a tool, and a Client that invokes it.
+
+<Note>
+  Under the hood, NMP is compiling your logic to WebAssembly and injecting it via P2P. However, the SDK abstracts this entirely, letting you focus on writing pure business logic.
+</Note>
+
+## 1. Installation
+
+Install the official SDK in your Node.js or TypeScript project.
 
 <CodeGroup>
 ```bash npm
-npm install @neural-mesh/sdk
+npm install @neural-mesh/sdk zod
 ```
 ```bash pnpm
-pnpm add @neural-mesh/sdk
+pnpm add @neural-mesh/sdk zod
 ```
 ```bash yarn
-yarn add @neural-mesh/sdk
+yarn add @neural-mesh/sdk zod
 ```
 </CodeGroup>
 
-## Basic Server Configuration
+## 2. Create an NMP Server (Data Node)
 
-Create an `NmpServer` to expose WASM-accelerated tools.
+An NMP Server acts as a Data Node. It connects to the mesh and listens for incoming injected logic from remote agents. It exposes secure tools and resources.
 
-```typescript index.ts
+Create a file named `server.ts`:
+
+```typescript server.ts
 import { NmpServer } from '@neural-mesh/sdk';
 import { z } from 'zod';
 
+// Initialize the Server with identity and capabilities
 const server = new NmpServer({
   name: "MyLocalDataNode",
   version: "1.0.0"
 });
 
+// Expose a tool. 
+// Note: In NMP, the async logic provided here is dynamically converted 
+// into an isolated Capability for incoming WASM Agents.
 server.tool(
   "query_database",
-  "Analyzes giant tables exactly at the origin",
+  "Analyzes giant tables exactly at the origin. Pass a SQL-like string.",
   { query: z.string() },
   async ({ query }) => {
-    // Logic runs natively at origin (via WASI sandbox)!
+    console.log(`[Server] Executing Logic-on-Origin for query: ${query}`);
+    
+    // Imagine processing 5GB of local data here.
+    // Only the final result leaves the server.
     return {
-      content: [{ type: "text", text: `Processed query: ${query}` }]
+      content: [{ type: "text", text: `Processed query results for: ${query}` }]
     };
   }
 );
+
+// Start the server and announce it to the Kademlia DHT Mesh
+async function main() {
+  await server.connect();
+  console.log("NMP Server is listening on the Mesh...");
+}
+
+main().catch(console.error);
 ```
+
+## 3. Create an NMP Client (Agent Node)
+
+An NMP Client acts as the Intelligence. It discovers servers on the mesh and pushes compiled requests (intent) to them.
+
+Create a file named `client.ts`:
+
+```typescript client.ts
+import { NmpClient } from '@neural-mesh/sdk';
+
+async function main() {
+  // Initialize the Client
+  const client = new NmpClient({
+    name: "AI_Research_Agent",
+    version: "2.5.1"
+  });
+
+  await client.connect();
+  console.log("Joined Neural Mesh Protocol...");
+
+  // Discover the server and inject logic
+  try {
+    const result = await client.callTool("MyLocalDataNode", "query_database", {
+      query: "SELECT * FROM massive_table WHERE anomaly = true"
+    });
+
+    console.log("Received mathematically-verified result:");
+    console.log(result.content[0].text);
+  } catch (err) {
+    console.error("Agent execution failed:", err);
+  }
+}
+
+main().catch(console.error);
+```
+
+## 4. Run your Mesh
+
+First, start your isolated Server:
+```bash
+npx tsx server.ts
+# Output: NMP Server is listening on the Mesh...
+```
+
+In a separate terminal, unleash your Agent:
+```bash
+npx tsx client.ts
+# Output: Joined Neural Mesh Protocol...
+# Output: Received mathematically-verified result:
+# Output: Processed query results for: SELECT * FROM massive_table WHERE anomaly = true
+```
+
+## What just happened?
+
+Unlike legacy REST APIs or MCP strings parsing:
+1. Your Client discovered the Server instantly via a **P2P Kademlia Routing Table**.
+2. A **Post-Quantum Kyber Handshake** secured the intent.
+3. The query was serialized into an ultra-compact **Protobuf Binary**.
+4. The execution happened inside a microscopic **WASI Sandbox** on the server, safely isolated from your physical host.
+
+## Next Steps
+
+Now that you've run your first Mesh execution, dive deeper into the core architecture to understand how to leverage advanced capabilities like Continuous Watchdogs and Zero-Knowledge Proofs.
+
+<Card title="Core Architecture" icon="sitemap" href="/concepts/architecture">
+  Learn how the Data Layer and Transport Layer synergize in NMP.
+</Card>

@@ -1,13 +1,40 @@
 ---
 title: "Zero-Trust Security"
-description: "Cryptographic identities and capabilities"
+description: "The multi-layered defense architecture protecting the Neural Mesh"
 ---
 
-NMP adopts an **Extreme Zero-Trust** security architecture for AI agent communication.
+In an ecosystem where AI agents freely communicate and execute math on remote servers autonomously, traditional perimeter security (VPNs, IP Whitelisting, Passwords) is completely insufficient.
 
-### Noise Protocol
+The Neural Mesh Protocol (NMP) assumes the network is inherently hostile, embracing a true **Extreme Zero-Trust Architecture**. 
 
-All P2P streams are multiplexed and encrypted using the **Noise Protocol Framework**, mathematically deriving Peer IDs from Ed25519 keypairs. You know exactly what cryptographic entity is connecting to you.
+Every layer of NMP, from the physical connection to the code execution, integrates military-grade theoretical and cryptographic safety nets.
 
-### Future: Guardian Module
-We are actively researching AI-Assisted Static AST Inspection to reject evasive malware patterns before WASM instantiation in Zero-Time.
+## 1. Transport Encryption (Noise & PQC)
+
+Instead of relying on centralized Certificate Authorities (like TLS/HTTPS), NMP utilizes the **Noise Protocol Framework**, pioneered by applications like Signal.
+
+- **Ed25519 Identities**: Every Agent and Server generates an Ed25519 keypair. Your Public Key *is* your Peer ID on the internet.
+- **Mutual Authentication**: Connections in the Kademlia Mesh are mutually authenticated instantly. You know symmetrically who is invoking you, and they know who is answering.
+- **Post-Quantum Cryptography (PQC)**: Elicitation Handshakes in the upcoming v1.1 spec utilize **Kyber (ML-KEM-768)**, shielding all AI logic transmission from "Harvest Now, Decrypt Later" quantum supercomputer attacks.
+
+## 2. Payload Inspection (Zero-Time Guardian)
+
+Before the Data Node even allows `wasmtime` to boot the `.wasm` file, it undergoes static analysis.
+
+The **Guardian Module** inspects the WebAssembly Abstract Syntax Tree (AST). Since WebAssembly is strongly typed and verifiable without execution, the NMP Server mathematically validates that the binary contains no malformed instructions, infinite recursive branching, or unexpected system hook imports. This effectively neutralizes entire classes of evasive malware in *zero-time* before execution begins.
+
+## 3. Sandboxing (WASI)
+
+As detailed in the [WASI Sandboxing](/concepts/wasi-sandboxing) chapter, the execution layer is fundamentally isolated by the CPU restrictions imposed by the bytecode runtime, ensuring zero unauthorized I/O or network escalation.
+
+## 4. Hardware Isolation (TEEs)
+
+Software isolation is never perfect against advanced persistent threats (APT) leveraging hypervisor bypasses or zero-days. NMP's ultimate tier of security defines hooks for **Trusted Execution Environments (TEEs)** like AWS Nitro Enclaves or Intel SGX.
+
+By running the `Wasmtime` engine inside an Enclave, we guarantee that neither the Cloud Provider (e.g., Amazon) nor a compromised root administrator on the Host machine can dump the RAM to steal the proprietary datasets being analyzed by the Agent.
+
+## 5. Computacional Integrity (ZK-SNARKs)
+
+In scenarios where an Agent must trust a dark untrusted Server (e.g., "Did the Server actually execute my sorting algorithm, or did it fake the response?"), NMP is developing architectural proofs for **Zero-Knowledge**.
+
+Alongside the JSON Result, the Data Node can emit a **ZK Receipt** (via systems like `risc0`). The Agent verifies this cryptographic receipt in milliseconds, ensuring deterministic execution of its exact WASM AST over genuine source data without revealing the underlying proprietary data points to the mesh.

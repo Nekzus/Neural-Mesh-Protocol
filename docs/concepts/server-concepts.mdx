@@ -1,0 +1,52 @@
+---
+title: "Server Concepts"
+description: "Understanding how an NMP Data Node protects resources and executes logic"
+---
+
+In the Neural Mesh Protocol, a "Server" is historically termed a **Data Node**. Unlike a traditional web server that passively serves JSON responses upon request, an NMP Server is an active Execution Engine. Its primary duty is to receive foreign logic, strictly isolate it, and allow it to operate on local data.
+
+To accomplish this securely, NMP Servers expose three foundational primitives: **Modules**, **Capabilities**, and **Watchdogs**.
+
+## 1. WebAssembly Modules (The Logic)
+
+In legacy protocols (like MCP), servers define static "Tools" (e.g., `calculate_sum`, `read_log`), and the AI instructs the server to execute them. 
+
+In NMP, the Server does not need to pre-program endless tools. Instead, it exposes an **Execution Interface**.
+The Agent sends a completely dynamic **WebAssembly Module (`.wasm`)** containing its own novel logic.
+
+### How it works:
+*   The Agent complies its reasoning (e.g., "Find all error logs containing IP 192.168.1.1 and group them by timestamp") into a tiny binary cross-platform WASM blob.
+*   The NMP Server receives this blob via gRPC.
+*   Instead of executing it natively, the Server spins up an ephemeral **WASI Sandbox** (using Bytecode Alliance's `Wasmtime`) and injects the WASM module into it.
+
+This allows infinite capabilities without requiring the server administrator to constantly write new tool endpoints.
+
+## 2. Capabilities (The Resources)
+
+If the server executes arbitrary code via WASM, how is it secure? Through **Capabilities-Based Security**.
+
+Capabilities are the NMP equivalent of MCP "Resources", but radically more secure. By default, a running WASM module in NMP has **absolute zero access** to anything:
+- No file system read/write.
+- No network socket access.
+- No environment variables.
+- No system clock.
+
+### Granting Access
+When an Agent sends a Module, it must specify the Capabilities it requires to function. The Server verifies these requests against its configured manifest. If approved, the Server *dynamically maps* specific file descriptors directly into the Sandbox memory space.
+
+For example, a Capability might be: `READ_ONLY_ACCESS: /var/logs/nginx/`. 
+The WASM module can now read the nginx logs at blinding speed, but if the malicious logic attempts to read `/etc/passwd`, the Sandboxing Engine will trigger an immediate, uncatchable `WASI Trap`, instantly terminating the agent's logic.
+
+## 3. Watchdogs (Persistent Asynchronous Events)
+
+One of NMP's most powerful features is **Watchdogs**, superseding the concept of simple prompts or manual polling.
+
+AI applications often need to monitor a server (e.g., "Tell me when memory usage exceeds 90%"). In HTTP/REST or JSON-RPC, the AI must constantly send manual requests every 5 seconds, wasting massive network bandwidth and LLM tokens.
+
+**NMP push architecture solves this:**
+*   The Agent sends a Watchdog WASM Module to the Data Node.
+*   The Server parses it and lets it "sleep" perpetually in a passive, low-resource background thread.
+*   The WASM module connects locally to the system streams.
+*   The moment the condition is met (Memory > 90%), the WASM module wakes up and pushes an asynchronous event straight down the permanently open multiplexed **QUIC connection** back to the Agent.
+
+This creates true real-time autonomous systems with zero polling overhead.

@@ -1,15 +1,35 @@
 ---
 title: "WASI Sandboxing"
-description: "Running untrusted Agent logic securely"
+description: "How NMP isolates execution through the WebAssembly System Interface"
 ---
 
-Every payload executed on an NMP Server runs inside a strictly constrained [Wasmtime](https://wasmtime.dev/) environment powered by **WASI Preview 1** (and soon Preview 2 / Component Model).
+The biggest paradigm shift from MCP to NMP is the concept of **Logic-on-Origin**. However, executing arbitrary binary logic from remote internet agents on your local infrastructure introduces immense security consequences.
 
-## Capabilities
+To solve this, NMP relies entirely on mathematical CPU-level isolation provided by **WASI (WebAssembly System Interface)**, utilizing the Bytecode Alliance's `Wasmtime` engine.
 
-By default, an incoming WebAssembly module has:
-- **No network access** (No sockets, no HTTP fetching).
-- **No filesystem access** (except strictly mapped, read-only directories).
-- **No environment variable access**.
+## What is WASI?
 
-This ensures complete **Zero-Trust**. The Data Node owner is never at risk of an AI Agent payload acting maliciously or exploring unpermitted files.
+When a Node.js or Python tool executes in MCP, it relies on the operating system's broad sandboxing (usually containerization like Docker). If a Python dependency is compromised, it could theoretically attempt full network escalation or escape.
+
+**WASI flips the security model.** WebAssembly is a memory-safe, purely mathematical compute format. By default, a `.wasm` module literally lacks the CPU instructions to talk to the operating system, disk, clock, or network. WASI is the strictly controlled bridge that re-introduces these features exactly, and only, when explicitly granted.
+
+## The NMP Sandbox Lifecycle
+
+When an Agent Node injects a WebAssembly module into a Data Node, the following security barriers activate:
+
+### 1. Capability Verification
+The Agent declares the capabilities it requires upfront (e.g., `requires_capability: ["logs_read", "sql_readonly"]`). The Data Node checks its local manifest to see if it allows this specific Agent to access those capabilities.
+
+### 2. Microscopic Preopens
+If approved, the Data Node does **not** grant the WASM module access to the file system. Instead, it "pre-opens" very specific file descriptors and maps them into the WASM module's virtualized space.
+If the agent asks to read `/var/log/nginx/` and the server allows it as `/logs`, the Agent *only* sees `/logs` as the absolute root of its entire universe.
+
+### 3. Execution & Memory Bounds
+`Wasmtime` boots the engine with strict limiters:
+- **Maximum Execution Time:** If the module enters an infinite loop, the runtime kills it.
+- **Maximum Memory Limit:** If the module attempts a buffer overflow or tries to allocate memory beyond its cap (e.g., 50MB), it triggers an uncatchable OOM Trap.
+- **Zero Sockets:** The Agent logic runs completely offline inside the Server. It cannot open a port, connect to the internet, or exfiltrate data directly over a TCP socket. Its only output is what it `returns` to the NMP invocation orchestrator.
+
+## Moving towards Component Model (Preview 2)
+
+NMP is eagerly adopting **WASI Preview 2 (The Component Model)**. This will allow Agent modules to share complex, strongly-typed JSON and Protobuf structs across the boundary (Agent Language -> Rust Engine), completely eliminating manual string-parsing overhead between the Sandbox and the Host.

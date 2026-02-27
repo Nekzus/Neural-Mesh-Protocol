@@ -1,12 +1,12 @@
 <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- Octagon & S-Curve Ribbon Group -->
-    <g stroke="#09090b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g stroke="#FAFAFA" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
 
         <!-- Geometrically regular Octagon aligned orthogonally -->
         <polygon points="100,76.57 76.57,100 43.43,100 20,76.57 20,43.43 43.43,20 76.57,20 100,43.43" />
 
         <!-- Central Origin Node (Solid Core) -->
-        <circle cx="60" cy="60" r="10" fill="#09090b" stroke="none" />
+        <circle cx="60" cy="60" r="10" fill="#FAFAFA" stroke="none" />
 
         <!-- 8 Mathematically Perfect Cubic Bezier Sine Waves (Ribbons) -->
         <!-- Smooth tangential merging to the polygon faces and a rotating vortex origin -->

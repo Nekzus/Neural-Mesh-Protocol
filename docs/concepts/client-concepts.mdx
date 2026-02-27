@@ -1,0 +1,41 @@
+---
+title: "Client Concepts"
+description: "How Agent Nodes leverage the Neural Mesh for discovery and execution"
+---
+
+In the Neural Mesh Protocol, a "Client" is best understood as an **Agent Node** or an Intelligence orchestrator. While the Server guarantees safe execution, the Client is responsible for discovering data, defining intents, and weaving the logic that traverses the network.
+
+Agent Nodes harness the Mesh through three core mechanisms: **Discovery (DHT)**, **Elicitation Handshakes**, and **Logic Injection**.
+
+## 1. Network Discovery (Kademlia DHT)
+
+In traditional Client-Server architectures, the Client must know the exact IP address or Domain Name System (DNS) entry of the server it wishes to query (e.g., `https://api.internal.corp/`). 
+
+Agent Nodes in NMP operate in a purely decentralized topology:
+- Every Agent and Data Node generates a cryptographic **Ed25519 Peer ID** upon startup.
+- Nodes connect to a peer-to-peer bootstrap network and form a **Kademlia Distributed Hash Table (DHT)**.
+- When an Agent needs to access a specific capability (e.g., `Company_SQL_Database`), it simply queries the entire swarm: *"Which Peer ID currently holds this capability?"*
+- The DHT algorithm mathematically calculates the shortest network path to the target node, resolving its dynamic IP automatically behind NATs and Firewalls without a central registry.
+
+This grants AI ecosystems extreme resilience and automatic load balancing. 
+
+## 2. Elicitation & Trust Handshakes
+
+Because the Mesh is decentralized, trust cannot be derived from standard centralized Certificate Authorities (CAs) used in mTLS.
+
+When an Agent Node locates a Data Node, it initiates a **Zero-Trust Handshake (Elicitation)** before any logic is executed.
+- NMP uses the **Noise Protocol Framework**, meaning connections are encrypted natively at the transport layer (QUIC) using symmetric keys derived from the Agent's identity.
+- **Post-Quantum Cryptography (PQC)**: Advanced drafts of NMP Client Elicitations encapsulate intents using ML-KEM-768. This prevents intercepting adversaries from recording the communication today and decrypting it a decade from now with quantum machines.
+
+If the Data Node requires human consent or specific authorization tokens, it responds to the Elicitation request prompting the Agent/User for the required OAuth scopes natively.
+
+## 3. Logic Injection (The Payload)
+
+Once trust is mathematically established, the Client performs its primary action: **Injecting Logic**.
+
+Instead of dispatching sequential JSON commands to retrieve raw text, the Agent relies on local logic-generation:
+1. **Compilation**: The Agent (often leveraging a Javy/Component Model subsystem provided by the `@neural-mesh/sdk`) translates its high-level logic (JavaScript, Python) into a tiny binary WebAssembly module.
+2. **Payload Stamping**: The Client defines the requirements (e.g., maximum memory, timeout limit, required Capabilities).
+3. **Streaming**: The Client streams the `.wasm` binary via Tonic gRPC to the target exactly once.
+
+By offloading the computation *away* from its own core loop, the Agent Client remains highly lightweight, free to orchestrate hundreds of other concurrent data connections across the Neural Mesh simultaneously while remote servers perform the heavy lifting.

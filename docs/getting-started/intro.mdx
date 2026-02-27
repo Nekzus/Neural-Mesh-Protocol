@@ -3,36 +3,54 @@ title: "Introduction"
 description: "Welcome to the Neural Mesh Protocol (NMP) documentation"
 ---
 
-NMP is a next-generation, high-performance binary transport mesh designed for advanced Artificial Intelligence Agent communication. Conceived as a conceptual and technical evolution of existing context protocols (like **Model Context Protocol**), NMP radically shifts the paradigm from pulling massive data towards **secure Logic-on-Origin execution**.
+NMP is a next-generation, high-performance binary transport mesh designed specifically for advanced Artificial Intelligence Agent communication. Conceived as the conceptual and technical evolution of existing context protocols (like the **Model Context Protocol**), NMP radically shifts the paradigm from pulling massive data chunks towards **secure Logic-on-Origin execution**.
+
+If MCP was built as the "USB-C port for AI applications" to standardize connections, **NMP is the fiber-optic nervous system** that enables true decentralized intelligence.
 
 ## Why NMP?
 
-In the rapid evolution of autonomous agents, transferring gigabytes of raw data to central AI nodes for filtering, parsing, or reasoning is increasingly inefficient, slow, and expensive.
+In the current landscape of autonomous agents, traditional client-server architectures face severe bottlenecks. Transferring gigabytes of raw data (logs, databases, repositories) over HTTP/JSON across the internet for an LLM to parse, reason, and filter is increasingly inefficient, slow, and expensive in terms of token context limits.
+
+NMP solves this by completely inverting the architecture: **We move the math to the data, not the data to the math.**
 
 <CardGroup cols={2}>
   <Card title="Logic-on-Origin" icon="bolt">
-    Execute WebAssembly (WASM) logic exactly where the data lives, eliminating massive data transfers.
+    Instead of downloading giant datasets, Agents dynamically compile their reasoning step into a microscopic WebAssembly (`.wasm`) module and push it exactly where the data lives.
   </Card>
   <Card title="Zero-Trust Sandboxing" icon="shield-check">
-    Powered by Wasmtime and WASI Preview 1, with microscopic filesystem/network permissions.
+    Hosts do not need to blindly trust Agents. Injected WebAssembly runs inside a microscopic `WASI` sandbox powered by `Wasmtime`, instantly killing any malicious capability violations.
   </Card>
-  <Card title="High-Performance Transport" icon="rocket">
-    Built on Tonic (gRPC) and Protobuf instead of JSON-RPC over stdout, reducing parsing overhead by 90%.
+  <Card title="Binary High-Performance" icon="rocket">
+    Built entirely on compiled Protobuf messages multiplexed over Tonic (gRPC). Say goodbye to slow JSON-string parsing blocking your event loops. Payload sizes drop by over 60%.
   </Card>
-  <Card title="Decentralized Mesh" icon="network-wired">
-    Peer-to-peer agent discovery and routing via libp2p Kademlia DHT without central authorities.
+  <Card title="Decentralized DHT Mesh" icon="network-wired">
+    Zero central authorities. Agent and Developer discovery happens instantly and securely over a global `libp2p` Kademlia Distributed Hash Table.
   </Card>
 </CardGroup>
 
+## Who is NMP for?
+
+NMP provides significant benefits across the entire AI ecosystem:
+
+*   **For AI Application Developers:** Enable your agents to analyze remote massive repositories or databases instantly without waiting for megabytes of text to stream across the network.
+*   **For Data Owners & Enterprise:** Expose your local tools and sensitive data securely. Since the Agent's logic runs in a mathematical sandbox (`WASI`) on your machine, your raw proprietary data never leaves your local network. It only exports the final answer.
+*   **For the AI Community:** A universal, open, and mathematically verifiable standard for deploying dynamic intelligence models and autonomous watchers.
+
+## Core Pillars of the Neural Mesh
+
+1.  **Capability-Based Security:** Permissions in NMP are not binary strings. They are File Descriptors actively mapped into the Sandbox. An agent can only see what it was strictly granted.
+2.  **Post-Quantum Handshakes:** Intent negotiations use Kyber (ML-KEM-768) ensuring "Harvest Now, Decrypt Later" state-level attacks are completely mitigated.
+3.  **Real-Time Watchdogs:** Agents can push persistent `.wasm` modules that sleep on the server for free, and asynchronously wake up to stream an alert via gRPC only when an anomaly is detected.
+
 ## Getting Started
 
-Ready to dive in? Choose your path:
+Ready to dive in and modernize your AI architecture? Choose your path:
 
 <CardGroup cols={2}>
-  <Card title="TypeScript SDK" icon="js" href="/typescript-sdk/overview">
-    Integrate NMP seamlessly into your Node.js apps. A drop-in replacement for MCP APIs.
+  <Card title="Quickstart Guide" icon="forward-step" href="/getting-started/quickstart">
+    Launch your first NMP Server and Client in under 5 minutes using the official SDK.
   </Card>
-  <Card title="Rust Backend" icon="rust" href="/rust-app/overview">
-    Explore the core engine running Wasmtime, Tonic, and libp2p.
+  <Card title="Architecture Deep Dive" icon="sitemap" href="/concepts/architecture">
+    Understand how Kademlia, gRPC, and Wasmtime intertwine to create the Logic-on-Origin paradigm.
   </Card>
 </CardGroup>
