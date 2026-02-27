@@ -40,15 +40,21 @@ To ensure ultra-low latency and maximum security, NMP is strictly divided into t
 
 ### 1. Transport Layer (libp2p & QUIC)
 The transport layer handles discovering peers and establishing unbreakable connections.
-- **Network Protocol**: Uses **QUIC**, which natively supports multiplexing without UDP head-of-line blocking.
-- **Cryptography**: Initial handshakes utilize the **Noise Protocol** (Ed25519) combined with **Symmetric Authenticated Envelopes (AES-256-GCM)**. Future drafts incorporate ML-KEM-768 for Post-Quantum readiness.
+- **Network Protocol**: Uses **QUIC**, which natively supports multiplexing without UDP head-of-line blocking, and **TCP/WebSockets** for Edge/Browser compatibility.
+- **Cryptography**: Initial handshakes utilize the **Noise Protocol** (Ed25519) combined with **Symmetric Authenticated Envelopes (AES-256-GCM)**, deeply rooted in **Post-Quantum Cryptography (ML-KEM-768 / Kyber)**.
 - **Routing**: Utilizes a highly optimized **Kademlia Distributed Hash Table (DHT)**. Agent nodes do not need hardcoded IP addresses or centralized DNS; they merely ask the Mesh "Who can fulfill this request?", and Kademlia routes the binary payload autonomously.
 
 ### 2. Data Layer (Protobuf & Tonic)
 Once the transport layer connects the Agent and Data nodes, the Data Layer dictates the structure of the execution request.
 - **Encoding**: Abandons bulky JSON representations. All messages are tightly packed binary Protocol Buffers (`.proto`).
 - **RPC Framework**: Uses **Tonic (gRPC)** for lightning-fast bidirectional streaming.
-- **Payload Structure**: The Data Layer defines the `LogicRequest` and `LogicResponse` primitives, transmitting the WASM AST, capability identifiers, and execution arguments.
+- **Payload Structure**: The Data Layer defines the `LogicRequest` and `LogicResponse` primitives, transmitting the WASM AST, capability identifiers, and cryptographic proofs (`ZK-Receipts`).
+
+### 3. Verification & Isolation Layer (Execution)
+The final boundary before touching bare metal.
+- **Guardian AST Validation**: Scans WebAssembly import trees looking for Host-Escape vulnerabilities before sandbox initialization.
+- **Hardware Enclaves (TEEs)**: Optionally bootstraps the entire `wasmtime` engine inside an Intel SGX or AWS Nitro enclave, shielding the RAM from server administrators.
+- **Zero-Knowledge Evidence**: Optionally leverages zkVMs (like `RISC Zero`) so the server returns the requested insight mathematically sealed, guaranteeing the compute wasn't tampered with.
 
 ## The Logic-on-Origin Journey
 
@@ -58,7 +64,7 @@ Here is the exact lifecycle of an NMP execution, happening in sub-milliseconds:
 2. **Intent Negotiation**: The Mesh routes the request to an available Data Node. A Post-Quantum connection is forged.
 3. **Payload Streaming**: The Agent transmits a microscopic compiled WebAssembly module over gRPC.
 4. **Zero-Time Guardian**: The Data Node parses the WASM's Abstract Syntax Tree (AST), ensuring it requests no illegal operations.
-5. **Execution**: `wasmtime` boots the Sandbox, safely iterating over Gigabytes of local Host data in milliseconds.
-6. **Result Streaming**: The Data Node tears down the Sandbox and streams purely the final byte-sized finding back to the Agent.
+5. **Execution**: `wasmtime` boots the Sandbox, safely iterating over Gigabytes of local Host data in milliseconds. (Highly scalable via SDK **Worker Pools** or native rust concurrency).
+6. **Result Streaming**: The Data Node tears down the Sandbox, generates a Mathematical ZK Cryptographic proof (optional), and streams purely the final byte-sized finding back to the Agent via gRPC.
 
 This architecture ensures theoretical maximum speeds for Autonomous Agents while guaranteeing Enterprise-grade zero-trust privacy.

@@ -15,7 +15,7 @@ Instead of relying on centralized Certificate Authorities (like TLS/HTTPS), NMP 
 
 - **Ed25519 Identities**: Every Agent and Server generates an Ed25519 keypair. Your Public Key *is* your Peer ID on the internet.
 - **Mutual Authentication**: Connections in the Kademlia Mesh are mutually authenticated instantly. You know symmetrically who is invoking you, and they know who is answering.
-- **Post-Quantum Cryptography (PQC)**: Elicitation Handshakes in the upcoming v1.1 spec utilize **Kyber (ML-KEM-768)**, shielding all AI logic transmission from "Harvest Now, Decrypt Later" quantum supercomputer attacks.
+- **Post-Quantum Cryptography (PQC)**: Elicitation Handshakes utilize **Kyber (ML-KEM-768)** to derive the symmetric key for the **AES-256-GCM** payload encapsulation, shielding all AI logic transmission from "Harvest Now, Decrypt Later" quantum supercomputer attacks.
 
 ## 2. Payload Inspection (Zero-Time Guardian)
 
@@ -36,12 +36,12 @@ As detailed in the [WASI Sandboxing](/concepts/wasi-sandboxing) chapter, the exe
 
 ## 4. Hardware Isolation (TEEs)
 
-Software isolation is never perfect against advanced persistent threats (APT) leveraging hypervisor bypasses or zero-days. NMP's ultimate tier of security defines hooks for **Trusted Execution Environments (TEEs)** like AWS Nitro Enclaves or Intel SGX.
+Software isolation is never perfect against advanced persistent threats (APT) leveraging hypervisor bypasses or zero-days. NMP's ultimate tier of security defines native architecture for **Trusted Execution Environments (TEEs)** like AWS Nitro Enclaves or Intel SGX.
 
-By running the `Wasmtime` engine inside an Enclave, we guarantee that neither the Cloud Provider (e.g., Amazon) nor a compromised root administrator on the Host machine can dump the RAM to steal the proprietary datasets being analyzed by the Agent.
+By running the `Wasmtime` engine inside an Enclave, we guarantee that neither the Cloud Provider (e.g., Amazon) nor a compromised root administrator on the Host machine can dump the RAM to steal the proprietary datasets being analyzed by the Agent. This is a baseline requirement for Financial and Healthcare AI agents.
 
 ## 5. Computacional Integrity (ZK-SNARKs)
 
-In scenarios where an Agent must trust a dark untrusted Server (e.g., "Did the Server actually execute my sorting algorithm, or did it fake the response?"), NMP is developing architectural proofs for **Zero-Knowledge**.
+In scenarios where an Agent must trust a dark untrusted Server (e.g., "Did the Server actually execute my sorting algorithm, or did it fake the response?"), NMP implements integrated structural abstractions for **Zero-Knowledge Virtual Machines**.
 
-Alongside the JSON Result, the Data Node can emit a **ZK Receipt** (via systems like `risc0`). The Agent verifies this cryptographic receipt in milliseconds, ensuring deterministic execution of its exact WASM AST over genuine source data without revealing the underlying proprietary data points to the mesh.
+Alongside the Logic Response, the Data Node emits a mathematical **ZK Receipt** (via engines like `risc0-zkvm`). The Agent verifies this cryptographic receipt in milliseconds off-chain, ensuring deterministic execution of its exact WASM AST over genuine source data without the server ever revealing the underlying proprietary data points to the mesh.

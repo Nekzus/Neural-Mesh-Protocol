@@ -23,6 +23,12 @@ NMP solves this by completely inverting the architecture: **We move the math to 
   <Card title="Binary High-Performance" icon="rocket">
     Built entirely on compiled Protobuf messages multiplexed over Tonic (gRPC). Say goodbye to slow JSON-string parsing blocking your event loops. Payload sizes drop by over 60%.
   </Card>
+  <Card title="Multi-Core Scalability" icon="microchip">
+    The Node.js SDK leverages a Native Worker Pool (`piscina`), bypassing the single-threaded V8 limit to achieve transactional parities identical to massive Rust setups.
+  </Card>
+  <Card title="Mathematical Verification" icon="signature">
+    Built-in architectures for Zero-Knowledge Proofs (ZK-SNARKs) allowing origin servers to Cryptographically sign verifiable receipts (ZK-Receipts) of the execution.
+  </Card>
   <Card title="Decentralized DHT Mesh" icon="network-wired">
     Zero central authorities. Agent and Developer discovery happens instantly and securely over a global `libp2p` Kademlia Distributed Hash Table.
   </Card>
@@ -39,8 +45,10 @@ NMP provides significant benefits across the entire AI ecosystem:
 ## Core Pillars of the Neural Mesh
 
 1.  **Capability-Based Security:** Permissions in NMP are not binary strings. They are File Descriptors actively mapped into the Sandbox. An agent can only see what it was strictly granted.
-2.  **Post-Quantum Handshakes:** Intent negotiations use Kyber (ML-KEM-768) ensuring "Harvest Now, Decrypt Later" state-level attacks are completely mitigated.
+2.  **Post-Quantum Handshakes:** Intent negotiations use Kyber (ML-KEM-768) ensuring "Harvest Now, Decrypt Later" state-level attacks are completely mitigated, encapsulating all data via Symmetric `AES-256-GCM`.
 3.  **Real-Time Watchdogs:** Agents can push persistent `.wasm` modules that sleep on the server for free, and asynchronously wake up to stream an alert via gRPC only when an anomaly is detected.
+4.  **Hardware Blind Computing (TEEs):** Future-proof architectural designs ready to execute the `Wasmtime` engine inside AWS Nitro Enclaves, assuring Memory-level encryption for High-Compliance environments.
+5.  **Zero-Time AST Guardians:** The SDK preemptively inspects and destroys `.wasm` binary trees that attempt illegal namespace mappings before they even reach the initialization engine.
 
 ## Getting Started
 

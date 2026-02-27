@@ -23,6 +23,7 @@ The Agent sends a completely dynamic **WebAssembly Module (`.wasm`)** containing
 *   The Agent complies its reasoning (e.g., "Find all error logs containing IP 192.168.1.1 and group them by timestamp") into a tiny binary cross-platform WASM blob.
 *   The NMP Server receives this blob via gRPC.
 *   Instead of executing it natively, the Server spins up an ephemeral **WASI Sandbox** (using Bytecode Alliance's `Wasmtime`) and injects the WASM module into it.
+*   **Extreme Scalability:** Both the Rust backend and the TS SDK leverage advanced threading models (Native OS Threads and Node.js `piscina` Worker Pools) to process thousands of these sandboxes concurrently without blocking the Main Event Loop.
 
 This allows infinite capabilities without requiring the server administrator to constantly write new tool endpoints.
 
@@ -55,3 +56,8 @@ AI applications often need to monitor a server (e.g., "Tell me when memory usage
 *   The moment the condition is met (Memory > 90%), the WASM module wakes up and pushes an asynchronous event straight down the permanently open multiplexed **QUIC connection** back to the Agent.
 
 This creates true real-time autonomous systems with zero polling overhead.
+
+## 4. Trust & Evidence (Enterprise Node Vanguard)
+In Tier-0 Enterprise Environments, the server provides Mathematical and Physical evidence:
+- **Zero-Knowledge Proofs (ZK-SNARKs)**: The logical computation within WASM generates a `Receipt` (using integrations like RISC Zero) that proves the module executed faithfully, without revealing internal Host structure.
+- ** Hardware Enclaves (TEEs)**: Data Nodes can deploy `wasmtime` enveloped in memory-encrypted slices (AWS Nitro Enclaves), assuring absolute RAM concealment (Blind Computing).

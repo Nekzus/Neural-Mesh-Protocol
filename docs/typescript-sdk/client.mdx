@@ -54,7 +54,8 @@ try {
     "execute_complex_sql",
     { 
       query: "SELECT * FROM petabytes_table WHERE anomaly_detected = true" 
-    }
+    },
+    { requireZkReceipt: true } // Mathematically verify the execution!
   );
 
   console.log("Mathematical Result returned:");

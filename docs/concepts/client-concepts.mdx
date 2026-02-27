@@ -42,6 +42,8 @@ Once trust is mathematically established, the Client performs its primary action
 Instead of dispatching sequential JSON commands to retrieve raw text, the Agent relies on local logic-generation:
 1. **Compilation**: The Agent (often leveraging a Javy/Component Model subsystem provided by the `@neural-mesh/sdk`) translates its high-level logic (JavaScript, Python) into a tiny binary WebAssembly module.
 2. **Payload Stamping**: The Client defines the requirements (e.g., maximum memory, timeout limit, required Capabilities).
-3. **Streaming**: The Client streams the `.wasm` binary via Tonic gRPC to the target exactly once.
+3. **AST Guardian Checking**: Before departure or arrival, rigid Heuristic AST rules block malicious instructions, averting "sandbox escape" strategies outright.
+4. **Streaming**: The Client streams the `.wasm` binary via Tonic gRPC to the target exactly once.
+5. **ZK-Verification**: Upon result retrieval, the Agent locally validates the ZK-Receipt, generating absolute trust in the foreign computational output.
 
-By offloading the computation *away* from its own core loop, the Agent Client remains highly lightweight, free to orchestrate hundreds of other concurrent data connections across the Neural Mesh simultaneously while remote servers perform the heavy lifting.
+By offloading the computation *away* from its own core loop, the Agent Client remains highly lightweight, free to orchestrate hundreds of other concurrent data connections across the Neural Mesh simultaneously while remote servers perform the heavy mathematical and memory-intensive lifting.

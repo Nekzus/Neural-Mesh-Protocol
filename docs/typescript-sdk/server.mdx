@@ -16,7 +16,9 @@ import { NmpServer } from "@neural-mesh/sdk";
 
 const server = new NmpServer({
   name: "EnterpriseDatabaseNode",
-  version: "3.2.0"
+  version: "3.2.0",
+  // Scales decryption & WASI sandboxing across all CPU cores instantly
+  workerPool: { enabled: true, maxThreads: 16 }
 });
 ```
 
