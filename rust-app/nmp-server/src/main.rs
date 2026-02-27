@@ -10,6 +10,7 @@ pub mod grpc;
 mod guardian; // Added guardian module
 pub mod p2p;
 mod tee;
+pub mod zk;
 
 use tee::{AwsNitroEnclaveStub, EnclaveProvider};
 

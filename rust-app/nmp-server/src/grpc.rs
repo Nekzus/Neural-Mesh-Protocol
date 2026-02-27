@@ -133,10 +133,21 @@ impl NeuralMesh for NmpService {
             ) {
                 Ok(_) => {
                     // Send success proof
+                    // Generate ZK Receipt using the ZK Execution Engine (Phase 7)
+                    let zk_receipt_bytes =
+                        match crate::zk::ZkExecutionEngine::prove_wasm_execution(&wasm_binary, &[])
+                        {
+                            Ok((_, receipt_bytes)) => receipt_bytes,
+                            Err(e) => {
+                                println!("[ZK] Error generating Proof: {}", e);
+                                vec![]
+                            }
+                        };
+
                     let res = LogicResponse {
                         semantic_evidence: "Execution Completed successfully.".to_string(),
                         cryptographic_proof: vec![0, 1, 2, 3], // Dummy hash
-                        zk_receipt: vec![0xDE, 0xAD, 0xBE, 0xEF], // Stub for risc0 zkVM receipt
+                        zk_receipt: zk_receipt_bytes,
                     };
                     let _ = tx.blocking_send(Ok(res));
                 }
