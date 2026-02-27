@@ -39,11 +39,17 @@ If the Data Node requires human consent or specific authorization tokens, it res
 
 Once trust is mathematically established, the Client performs its primary action: **Injecting Logic**.
 
-Instead of dispatching sequential JSON commands to retrieve raw text, the Agent relies on local logic-generation:
+Instead of dispatching sequential JSON commands to retrieve raw text, the Agent relies on local logic-generation orchestrated natively by the TypeScript SDK:
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/sdk-flow-light.svg" alt="TypeScript SDK E2E Flow" />
+  <img className="hidden dark:block w-full" src="/images/sdk-flow-dark.svg" alt="TypeScript SDK E2E Flow" />
+</Frame>
+
 1. **Compilation**: The Agent (often leveraging a Javy/Component Model subsystem provided by the `@neural-mesh/sdk`) translates its high-level logic (JavaScript, Python) into a tiny binary WebAssembly module.
-2. **Payload Stamping**: The Client defines the requirements (e.g., maximum memory, timeout limit, required Capabilities).
-3. **AST Guardian Checking**: Before departure or arrival, rigid Heuristic AST rules block malicious instructions, averting "sandbox escape" strategies outright.
-4. **Streaming**: The Client streams the `.wasm` binary via Tonic gRPC to the target exactly once.
-5. **ZK-Verification**: Upon result retrieval, the Agent locally validates the ZK-Receipt, generating absolute trust in the foreign computational output.
+2. **Client AST Sentinel (`GuardianTS`)**: Before departure, rigid Heuristic AST rules block malicious instructions within the `.wasm` file, averting "sandbox escape" strategies outright in zero-time.
+3. **Payload Stamping (`Crypto Module`)**: The Client encapsulates the session using `Kyber768` Post-Quantum Cryptography and seals the payload hermetically inside an `AES-256-GCM` envelope.
+4. **Streaming (`MeshNode`)**: The Client multiplexes the connection via `Yamux` along with `Noise` and streams the encrypted `.wasm` binary to the target Mesh exactly once.
+5. **ZK-Verification**: Upon result retrieval via the libp2p ingress, the Agent locally validates the ZK-Receipt, generating absolute trust in the foreign computational output.
 
 By offloading the computation *away* from its own core loop, the Agent Client remains highly lightweight, free to orchestrate hundreds of other concurrent data connections across the Neural Mesh simultaneously while remote servers perform the heavy mathematical and memory-intensive lifting.

@@ -1,0 +1,334 @@
+<svg width="1000" height="480" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1000" height="480" fill="#fafafa" rx="16" />
+    <defs>
+        <pattern id="netBgLSdk" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.5" fill="#10b981" opacity="0.15" />
+        </pattern>
+        <marker id="arrow-outL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+        </marker>
+        <marker id="arrow-inL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a855f7" />
+        </marker>
+    </defs>
+    <style>
+        .sfl-text {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #18181b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .sfl-text-sm {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #71717a;
+            font-size: 11px;
+        }
+
+        .sfl-title {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            fill: #18181b;
+        }
+
+        .sfl-subtitle {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            fill: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sfl-zone {
+            fill: #f4f4f5;
+            stroke: #e4e4e7;
+            stroke-width: 2;
+            rx: 12;
+        }
+
+        .sfl-zone-net {
+            fill: url(#netBgLSdk);
+            stroke: #10b981;
+            stroke-width: 1;
+            rx: 12;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        .sfl-box {
+            fill: #ffffff;
+            stroke-width: 1.5;
+            rx: 8;
+        }
+
+        .sfl-box-amber {
+            stroke: #f59e0b;
+        }
+
+        .sfl-box-purple {
+            stroke: #a855f7;
+        }
+
+        .sfl-box-emerald {
+            stroke: #10b981;
+        }
+
+        .sfl-box-zinc {
+            stroke: #a1a1aa;
+        }
+
+        .sfl-stream-out {
+            stroke: #10b981;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashOutSdkL 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        .sfl-stream-in {
+            stroke: #a855f7;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashInSdkL 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        @keyframes dashOutSdkL {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes dashInSdkL {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes t80OutSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(80px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t35OutSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(35px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t120OutSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(120px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t120InSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-120px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t35InSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-35px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t245InSdkL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-245px);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <!-- Zone: Zero Trust Mesh -->
+    <rect x="830" y="80" width="130" height="320" class="sfl-zone-net" />
+    <text x="895" y="125" class="sfl-title" text-anchor="middle" fill="#10b981">Zero-Trust</text>
+    <text x="895" y="145" class="sfl-title" text-anchor="middle" fill="#10b981">Mesh</text>
+    <circle cx="895" cy="240" r="30" fill="none" stroke="#10b981" stroke-width="1" stroke-dasharray="4 4"
+        opacity="0.5" />
+    <circle cx="895" cy="240" r="10" fill="#10b981" />
+    <text x="895" y="300" class="sfl-text-sm" text-anchor="middle">Kademlia DHT</text>
+
+    <!-- Zone: SDK Container -->
+    <rect x="210" y="80" width="540" height="320" class="sfl-zone" />
+    <rect x="210" y="80" width="540" height="40" fill="#ffffff" style="border-radius: 12px 12px 0 0;" />
+    <path d="M 210 120 L 750 120" stroke="#e4e4e7" stroke-width="2" />
+    <text x="230" y="105" class="sfl-title">TypeScript SDK (@neural-mesh/sdk)</text>
+    <text x="730" y="105" class="sfl-subtitle" text-anchor="end">Node.js Tier-0 Environment</text>
+
+    <!-- Components -->
+    <!-- Agent Box -->
+    <rect x="40" y="170" width="130" height="140" class="sfl-box sfl-box-zinc" />
+    <text x="105" y="210" class="sfl-title" text-anchor="middle">Agent App</text>
+    <text x="105" y="230" class="sfl-subtitle" text-anchor="middle">LLM Emitter</text>
+    <text x="105" y="280" class="sfl-text-sm" text-anchor="middle">CallToolRequest</text>
+
+    <!-- GuardianTS Box -->
+    <rect x="250" y="170" width="130" height="60" class="sfl-box sfl-box-amber" />
+    <text x="315" y="195" class="sfl-title" text-anchor="middle" fill="#d97706">GuardianTS</text>
+    <text x="315" y="215" class="sfl-text-sm" text-anchor="middle">AST Heuristics (V8)</text>
+
+    <!-- Crypto Core Box -->
+    <rect x="415" y="170" width="130" height="140" class="sfl-box sfl-box-purple" />
+    <text x="480" y="195" class="sfl-title" text-anchor="middle" fill="#9333ea">Crypto Module</text>
+    <text x="480" y="215" class="sfl-text-sm" text-anchor="middle">Kyber768 (PQC)</text>
+    <text x="480" y="235" class="sfl-text-sm" text-anchor="middle">AES-256-GCM</text>
+    <line x1="425" y1="250" x2="535" y2="250" stroke="#e4e4e7" stroke-width="1" stroke-dasharray="2 2" />
+    <text x="480" y="270" class="sfl-text-sm" text-anchor="middle">Verify &amp; Decrypt</text>
+    <text x="480" y="290" class="sfl-text-sm" text-anchor="middle">(ZK-Receipt)</text>
+
+    <!-- MeshNode Box -->
+    <rect x="580" y="170" width="130" height="140" class="sfl-box sfl-box-emerald" />
+    <text x="645" y="195" class="sfl-title" text-anchor="middle" fill="#059669">MeshNode</text>
+    <text x="645" y="215" class="sfl-text-sm" text-anchor="middle">Libp2p Transport</text>
+    <text x="645" y="235" class="sfl-text-sm" text-anchor="middle">TCP / Yamux</text>
+    <line x1="590" y1="250" x2="700" y2="250" stroke="#e4e4e7" stroke-width="1" stroke-dasharray="2 2" />
+    <text x="645" y="270" class="sfl-text-sm" text-anchor="middle">Multiplex Egress</text>
+    <text x="645" y="290" class="sfl-text-sm" text-anchor="middle">Multiplex Ingress</text>
+
+    <!-- Lines Output (Green) -->
+    <path d="M 170 200 L 250 200" class="sfl-stream-out" marker-end="url(#arrow-outL)" />
+    <path d="M 380 200 L 415 200" class="sfl-stream-out" marker-end="url(#arrow-outL)" />
+    <path d="M 545 200 L 580 200" class="sfl-stream-out" marker-end="url(#arrow-outL)" />
+    <path d="M 710 200 L 830 200" class="sfl-stream-out" marker-end="url(#arrow-outL)" />
+
+    <!-- Lines Input (Purple) -->
+    <path d="M 830 280 L 710 280" class="sfl-stream-in" marker-end="url(#arrow-inL)" />
+    <path d="M 580 280 L 545 280" class="sfl-stream-in" marker-end="url(#arrow-inL)" />
+    <path d="M 415 280 L 170 280" class="sfl-stream-in" marker-end="url(#arrow-inL)" />
+
+    <!-- Ports Out -->
+    <circle cx="170" cy="200" r="4" fill="#10b981" />
+    <circle cx="250" cy="200" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2" />
+    <circle cx="380" cy="200" r="4" fill="#10b981" />
+    <circle cx="415" cy="200" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2" />
+    <circle cx="545" cy="200" r="4" fill="#10b981" />
+    <circle cx="580" cy="200" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2" />
+    <circle cx="710" cy="200" r="4" fill="#10b981" />
+    <circle cx="830" cy="200" r="4" fill="#ffffff" stroke="#10b981" stroke-width="2" />
+
+    <!-- Ports In -->
+    <circle cx="830" cy="280" r="4" fill="#a855f7" />
+    <circle cx="710" cy="280" r="4" fill="#ffffff" stroke="#a855f7" stroke-width="2" />
+    <circle cx="580" cy="280" r="4" fill="#a855f7" />
+    <circle cx="545" cy="280" r="4" fill="#ffffff" stroke="#a855f7" stroke-width="2" />
+    <circle cx="415" cy="280" r="4" fill="#a855f7" />
+    <circle cx="170" cy="280" r="4" fill="#ffffff" stroke="#a855f7" stroke-width="2" />
+
+    <!-- Animations Out -->
+    <g transform="translate(170, 200)">
+        <circle cx="0" cy="0" r="3" fill="#059669" style="animation: t80OutSdkL 1.8s infinite;" />
+    </g>
+    <g transform="translate(380, 200)">
+        <circle cx="0" cy="0" r="3" fill="#059669" style="animation: t35OutSdkL 1s infinite;" />
+    </g>
+    <g transform="translate(545, 200)">
+        <circle cx="0" cy="0" r="3" fill="#059669" style="animation: t35OutSdkL 1.2s infinite;" />
+    </g>
+    <g transform="translate(710, 200)">
+        <circle cx="0" cy="0" r="3" fill="#059669" style="animation: t120OutSdkL 2s infinite;" />
+    </g>
+
+    <!-- Animations In -->
+    <g transform="translate(830, 280)">
+        <circle cx="0" cy="0" r="3" fill="#9333ea" style="animation: t120InSdkL 2s infinite;" />
+    </g>
+    <g transform="translate(580, 280)">
+        <circle cx="0" cy="0" r="3" fill="#9333ea" style="animation: t35InSdkL 1s infinite;" />
+    </g>
+    <g transform="translate(415, 280)">
+        <circle cx="0" cy="0" r="3" fill="#9333ea" style="animation: t245InSdkL 2.5s infinite;" />
+    </g>
+</svg>
