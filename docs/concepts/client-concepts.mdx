@@ -14,7 +14,8 @@ In traditional Client-Server architectures, the Client must know the exact IP ad
 Agent Nodes in NMP operate in a purely decentralized topology. Here is how they rapidly discover the resources they need:
 
 <Frame>
-  <img className="w-full" src="/images/client-dht.svg" alt="Distributed Hash Table Routing" />
+  <img className="block dark:hidden w-full" src="/images/client-dht-light.svg" alt="Distributed Hash Table Routing" />
+  <img className="hidden dark:block w-full" src="/images/client-dht-dark.svg" alt="Distributed Hash Table Routing" />
 </Frame>
 
 - Every Agent and Data Node generates a cryptographic **Ed25519 Peer ID** upon startup.

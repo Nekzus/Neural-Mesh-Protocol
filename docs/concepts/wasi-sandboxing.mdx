@@ -18,7 +18,8 @@ When a Node.js or Python tool executes in MCP, it relies on the operating system
 When an Agent Node injects a WebAssembly module into a Data Node, the following security barriers activate:
 
 <Frame>
-  <img className="w-full" src="/images/wasi-bounds.svg" alt="WASM Execution Boundaries" />
+  <img className="block dark:hidden w-full" src="/images/wasi-bounds-light.svg" alt="WASM Execution Boundaries" />
+  <img className="hidden dark:block w-full" src="/images/wasi-bounds-dark.svg" alt="WASM Execution Boundaries" />
 </Frame>
 
 ### 1. Capability Verification

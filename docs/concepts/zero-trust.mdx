@@ -22,7 +22,8 @@ Instead of relying on centralized Certificate Authorities (like TLS/HTTPS), NMP 
 Before the Data Node even allows `wasmtime` to boot the `.wasm` file, it undergoes static mathematical analysis.
 
 <Frame>
-  <img className="w-full" src="/images/zero-trust-ast.svg" alt="Guardian AST Inspection" />
+  <img className="block dark:hidden w-full" src="/images/zero-trust-ast-light.svg" alt="Guardian AST Inspection" />
+  <img className="hidden dark:block w-full" src="/images/zero-trust-ast-dark.svg" alt="Guardian AST Inspection" />
 </Frame>
 
 The **Guardian Module** inspects the WebAssembly Abstract Syntax Tree (AST). Since WebAssembly is strongly typed and mathematically verifiable without execution, the NMP Server validates that the binary contains no malformed instructions, infinite recursive branching, or unexpected system hook imports. 

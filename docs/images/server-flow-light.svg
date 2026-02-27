@@ -1,0 +1,120 @@
+<svg width="800" height="360" viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="360" fill="#FAFAFA" rx="16" />
+    <style>
+        .sf-text-light {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            fill: #09090b;
+            font-size: 13px;
+        }
+
+        .sf-title-light {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #09090b;
+        }
+
+        .sf-subtitle-light {
+            font-size: 11px;
+            fill: #71717A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sf-box-light {
+            fill: #F4F4F5;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .sf-box-highlight-light {
+            fill: #FFFFFF;
+            stroke: #A1A1AA;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .sf-box-transparent-light {
+            fill: none;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .sf-line-light {
+            stroke: #A1A1AA;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .sf-line-active-light {
+            stroke: #09090b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .sf-arrow-light {
+            fill: #A1A1AA;
+        }
+
+        .sf-arrow-active-light {
+            fill: #09090b;
+        }
+    </style>
+    <defs>
+        <marker id="sf-arrowhead-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="sf-arrow-light" />
+        </marker>
+        <marker id="sf-arrow-active-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="sf-arrow-active-light" />
+        </marker>
+    </defs>
+
+    <rect x="40" y="40" width="220" height="280" class="sf-box-transparent-light" />
+    <text x="150" y="70" text-anchor="middle" class="sf-text-light sf-title-light">Agent Client</text>
+
+    <rect x="290" y="40" width="220" height="280" class="sf-box-transparent-light" />
+    <text x="400" y="70" text-anchor="middle" class="sf-text-light sf-title-light">NMP Server</text>
+
+    <rect x="540" y="40" width="220" height="280" class="sf-box-transparent-light" />
+    <text x="650" y="70" text-anchor="middle" class="sf-text-light sf-title-light">WASI Sandbox</text>
+
+    <rect x="70" y="100" width="160" height="40" class="sf-box-light" />
+    <text x="150" y="125" text-anchor="middle" class="sf-text-light">Generates `.wasm`</text>
+
+    <rect x="70" y="240" width="160" height="40" class="sf-box-highlight-light" />
+    <text x="150" y="265" text-anchor="middle" class="sf-text-light">Receives 1KB Result</text>
+
+    <rect x="320" y="100" width="160" height="40" class="sf-box-highlight-light" />
+    <text x="320" y="90" class="sf-text-light sf-subtitle-light">Guardian</text>
+    <text x="400" y="125" text-anchor="middle" class="sf-text-light">AST Inspection</text>
+
+    <rect x="320" y="170" width="160" height="40" class="sf-box-light" />
+    <text x="400" y="195" text-anchor="middle" class="sf-text-light">Memory Limits Boot</text>
+
+    <rect x="320" y="240" width="160" height="40" class="sf-box-light" />
+    <text x="400" y="265" text-anchor="middle" class="sf-text-light">Sandbox Destruction</text>
+
+    <rect x="570" y="170" width="160" height="40" class="sf-box-highlight-light" />
+    <text x="650" y="195" text-anchor="middle" class="sf-text-light">FD Mapping (Data)</text>
+
+    <path d="M 230 120 L 310 120" class="sf-line-active-light" marker-end="url(#sf-arrow-active-light)" />
+    <text x="270" y="110" text-anchor="middle" font-size="10" fill="#09090b" font-family="'Inter', sans-serif">Stream
+        Payload</text>
+
+    <path d="M 400 140 L 400 160" class="sf-line-light" marker-end="url(#sf-arrowhead-light)" />
+
+    <path d="M 480 190 L 560 190" class="sf-line-light" marker-end="url(#sf-arrowhead-light)" />
+
+    <path d="M 650 210 L 650 260 L 490 260" class="sf-line-active-light" marker-end="url(#sf-arrow-active-light)" />
+    <text x="570" y="250" text-anchor="middle" font-size="10" fill="#09090b" font-family="'Inter', sans-serif">Compute
+        &amp; Return</text>
+
+    <path d="M 320 260 L 240 260" class="sf-line-active-light" marker-end="url(#sf-arrow-active-light)" />
+    <text x="280" y="250" text-anchor="middle" font-size="10" fill="#09090b" font-family="'Inter', sans-serif">Semantic
+        Output</text>
+
+</svg>

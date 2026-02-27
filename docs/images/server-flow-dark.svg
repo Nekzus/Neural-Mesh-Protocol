@@ -1,0 +1,120 @@
+<svg width="800" height="360" viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="360" fill="#09090b" rx="16" />
+    <style>
+        .sf-text-dark {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            fill: #FAFAFA;
+            font-size: 13px;
+        }
+
+        .sf-title-dark {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #FFFFFF;
+        }
+
+        .sf-subtitle-dark {
+            font-size: 11px;
+            fill: #A1A1AA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sf-box-dark {
+            fill: #18181b;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .sf-box-highlight-dark {
+            fill: #27272a;
+            stroke: #FAFAFA;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .sf-box-transparent-dark {
+            fill: none;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .sf-line-dark {
+            stroke: #52525b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .sf-line-active-dark {
+            stroke: #FAFAFA;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .sf-arrow-dark {
+            fill: #52525b;
+        }
+
+        .sf-arrow-active-dark {
+            fill: #FAFAFA;
+        }
+    </style>
+    <defs>
+        <marker id="sf-arrowhead-dark" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="sf-arrow-dark" />
+        </marker>
+        <marker id="sf-arrow-active-dark" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="sf-arrow-active-dark" />
+        </marker>
+    </defs>
+
+    <rect x="40" y="40" width="220" height="280" class="sf-box-transparent-dark" />
+    <text x="150" y="70" text-anchor="middle" class="sf-text-dark sf-title-dark">Agent Client</text>
+
+    <rect x="290" y="40" width="220" height="280" class="sf-box-transparent-dark" />
+    <text x="400" y="70" text-anchor="middle" class="sf-text-dark sf-title-dark">NMP Server</text>
+
+    <rect x="540" y="40" width="220" height="280" class="sf-box-transparent-dark" />
+    <text x="650" y="70" text-anchor="middle" class="sf-text-dark sf-title-dark">WASI Sandbox</text>
+
+    <rect x="70" y="100" width="160" height="40" class="sf-box-dark" />
+    <text x="150" y="125" text-anchor="middle" class="sf-text-dark">Generates `.wasm`</text>
+
+    <rect x="70" y="240" width="160" height="40" class="sf-box-highlight-dark" />
+    <text x="150" y="265" text-anchor="middle" class="sf-text-dark">Receives 1KB Result</text>
+
+    <rect x="320" y="100" width="160" height="40" class="sf-box-highlight-dark" />
+    <text x="320" y="90" class="sf-text-dark sf-subtitle-dark">Guardian</text>
+    <text x="400" y="125" text-anchor="middle" class="sf-text-dark">AST Inspection</text>
+
+    <rect x="320" y="170" width="160" height="40" class="sf-box-dark" />
+    <text x="400" y="195" text-anchor="middle" class="sf-text-dark">Memory Limits Boot</text>
+
+    <rect x="320" y="240" width="160" height="40" class="sf-box-dark" />
+    <text x="400" y="265" text-anchor="middle" class="sf-text-dark">Sandbox Destruction</text>
+
+    <rect x="570" y="170" width="160" height="40" class="sf-box-highlight-dark" />
+    <text x="650" y="195" text-anchor="middle" class="sf-text-dark">FD Mapping (Data)</text>
+
+    <path d="M 230 120 L 310 120" class="sf-line-active-dark" marker-end="url(#sf-arrow-active-dark)" />
+    <text x="270" y="110" text-anchor="middle" font-size="10" fill="#FFF" font-family="'Inter', sans-serif">Stream
+        Payload</text>
+
+    <path d="M 400 140 L 400 160" class="sf-line-dark" marker-end="url(#sf-arrowhead-dark)" />
+
+    <path d="M 480 190 L 560 190" class="sf-line-dark" marker-end="url(#sf-arrowhead-dark)" />
+
+    <path d="M 650 210 L 650 260 L 490 260" class="sf-line-active-dark" marker-end="url(#sf-arrow-active-dark)" />
+    <text x="570" y="250" text-anchor="middle" font-size="10" fill="#FFF" font-family="'Inter', sans-serif">Compute
+        &amp; Return</text>
+
+    <path d="M 320 260 L 240 260" class="sf-line-active-dark" marker-end="url(#sf-arrow-active-dark)" />
+    <text x="280" y="250" text-anchor="middle" font-size="10" fill="#FFF" font-family="'Inter', sans-serif">Semantic
+        Output</text>
+
+</svg>

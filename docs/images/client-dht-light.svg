@@ -1,0 +1,95 @@
+<svg width="800" height="320" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="320" fill="#FAFAFA" rx="16" />
+    <style>
+        .cd-text-light {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #09090b;
+            font-size: 13px;
+        }
+
+        .cd-title-light {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #09090b;
+        }
+
+        .cd-box-light {
+            fill: #F4F4F5;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 50;
+        }
+
+        .cd-box-target-light {
+            fill: #FFFFFF;
+            stroke: #09090b;
+            stroke-width: 2;
+            rx: 50;
+        }
+
+        .cd-box-agent-light {
+            fill: #09090b;
+            stroke: #09090b;
+            stroke-width: 2;
+            stroke-dasharray: 4 4;
+            rx: 8;
+        }
+
+        .cd-line-light {
+            stroke: #A1A1AA;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 4;
+        }
+
+        .cd-line-direct-light {
+            stroke: #09090b;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        .cd-arrow-light {
+            fill: #09090b;
+        }
+    </style>
+    <defs>
+        <marker id="cd-arrow-direct-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="cd-arrow-light" />
+        </marker>
+    </defs>
+
+    <text x="400" y="40" text-anchor="middle" class="cd-text-light cd-title-light">KADEMLIA DHT TOPOLOGY</text>
+
+    <rect x="50" y="130" width="120" height="60" class="cd-box-agent-light" />
+    <text x="110" y="165" text-anchor="middle" fill="#FFFFFF" font-family="'Inter', sans-serif" font-size="13px">Agent
+        Node</text>
+
+    <circle cx="280" cy="80" r="30" class="cd-box-light" />
+    <text x="280" y="85" text-anchor="middle" class="cd-text-light" font-size="11">Peer 1x</text>
+
+    <circle cx="280" cy="240" r="30" class="cd-box-light" />
+    <text x="280" y="245" text-anchor="middle" class="cd-text-light" font-size="11">Peer 9x</text>
+
+    <circle cx="450" cy="110" r="30" class="cd-box-light" />
+    <text x="450" y="115" text-anchor="middle" class="cd-text-light" font-size="11">Peer 5x</text>
+
+    <circle cx="450" cy="210" r="30" class="cd-box-light" />
+    <text x="450" y="215" text-anchor="middle" class="cd-text-light" font-size="11">Peer 2x</text>
+
+    <circle cx="680" cy="160" r="45" class="cd-box-target-light" />
+    <text x="680" y="155" text-anchor="middle" class="cd-text-light" font-weight="700">Target Server</text>
+    <text x="680" y="175" text-anchor="middle" font-size="10" fill="#71717A" font-family="'Inter', sans-serif">(Logs
+        Database)</text>
+
+    <path d="M 170 150 L 250 90" class="cd-line-light" />
+    <path d="M 170 170 L 250 230" class="cd-line-light" />
+    <path d="M 310 80 L 420 100" class="cd-line-light" />
+    <path d="M 310 240 L 420 220" class="cd-line-light" />
+    <path d="M 480 110 L 640 145" class="cd-line-light" />
+    <path d="M 480 210 L 640 175" class="cd-line-light" />
+
+    <path d="M 170 160 L 625 160" class="cd-line-direct-light" marker-end="url(#cd-arrow-direct-light)" />
+    <rect x="330" y="150" width="150" height="20" fill="#FAFAFA" />
+    <text x="405" y="164" text-anchor="middle" class="cd-text-light" font-size="11" font-weight="700">Direct QUIC
+        Con.</text>
+</svg>

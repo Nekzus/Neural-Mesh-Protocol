@@ -1,0 +1,77 @@
+<svg width="800" height="260" viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="260" fill="#FAFAFA" rx="16" />
+    <style>
+        .zt-text-light {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #09090b;
+            font-size: 13px;
+        }
+
+        .zt-title-light {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #09090b;
+        }
+
+        .zt-box-light {
+            fill: #F4F4F5;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .zt-box-red-light {
+            fill: #FEF2F2;
+            stroke: #FCA5A5;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .zt-box-green-light {
+            fill: #ECFDF5;
+            stroke: #6EE7B7;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .zt-line-light {
+            stroke: #A1A1AA;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .zt-arrow-light {
+            fill: #A1A1AA;
+        }
+    </style>
+    <defs>
+        <marker id="zt-arrow-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="zt-arrow-light" />
+        </marker>
+    </defs>
+
+    <rect x="40" y="110" width="160" height="40" class="zt-box-light" />
+    <text x="120" y="135" text-anchor="middle" class="zt-text-light" font-weight="700">WASM Bytecode</text>
+
+    <polygon points="280,130 360,90 440,130 360,170" class="zt-box-light" />
+    <text x="360" y="134" text-anchor="middle" class="zt-text-light" font-weight="700">AST Parser</text>
+
+    <rect x="600" y="50" width="160" height="40" class="zt-box-red-light" />
+    <text x="680" y="75" text-anchor="middle" fill="#DC2626" font-family="'Inter', sans-serif" font-size="13px">Dropped
+        (Loops > 100)</text>
+
+    <rect x="600" y="110" width="160" height="40" class="zt-box-red-light" />
+    <text x="680" y="135" text-anchor="middle" fill="#DC2626" font-family="'Inter', sans-serif" font-size="13px">Dropped
+        (Socket API)</text>
+
+    <rect x="600" y="170" width="160" height="40" class="zt-box-green-light" />
+    <text x="680" y="195" text-anchor="middle" fill="#059669" font-family="'Inter', sans-serif"
+        font-size="13px">Deterministic Core</text>
+
+    <path d="M 200 130 L 270 130" class="zt-line-light" marker-end="url(#zt-arrow-light)" />
+
+    <path d="M 400 110 L 460 70 L 590 70" class="zt-line-light" marker-end="url(#zt-arrow-light)" />
+    <path d="M 440 130 L 590 130" class="zt-line-light" marker-end="url(#zt-arrow-light)" />
+    <path d="M 400 150 L 460 190 L 590 190" class="zt-line-light" marker-end="url(#zt-arrow-light)" />
+</svg>

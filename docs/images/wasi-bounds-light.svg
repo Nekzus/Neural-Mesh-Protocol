@@ -1,0 +1,115 @@
+<svg width="800" height="320" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="320" fill="#FAFAFA" rx="16" />
+    <style>
+        .wb-text-light {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #09090b;
+            font-size: 13px;
+        }
+
+        .wb-title-light {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #09090b;
+        }
+
+        .wb-box-light {
+            fill: #F4F4F5;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .wb-box-red-light {
+            fill: #FEF2F2;
+            stroke: #FCA5A5;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .wb-box-green-light {
+            fill: #ECFDF5;
+            stroke: #6EE7B7;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .wb-box-transparent-light {
+            fill: none;
+            stroke: #D4D4D8;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .wb-line-light {
+            stroke: #A1A1AA;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .wb-line-red-light {
+            stroke: #EF4444;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .wb-line-green-light {
+            stroke: #10B981;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .wb-arrow-red-light {
+            fill: #EF4444;
+        }
+
+        .wb-arrow-green-light {
+            fill: #10B981;
+        }
+    </style>
+    <defs>
+        <marker id="wb-arrow-red-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="wb-arrow-red-light" />
+        </marker>
+        <marker id="wb-arrow-green-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="wb-arrow-green-light" />
+        </marker>
+    </defs>
+
+    <rect x="40" y="40" width="200" height="240" class="wb-box-transparent-light" />
+    <text x="140" y="65" text-anchor="middle" class="wb-text-light wb-title-light">Untrusted Logic</text>
+
+    <rect x="300" y="40" width="200" height="240" class="wb-box-light" />
+    <text x="400" y="65" text-anchor="middle" class="wb-text-light wb-title-light">WASI Engine</text>
+
+    <rect x="560" y="40" width="200" height="240" class="wb-box-transparent-light" />
+    <text x="660" y="65" text-anchor="middle" class="wb-text-light wb-title-light">Physical Host</text>
+
+    <rect x="60" y="100" width="160" height="40" class="wb-box-light" />
+    <text x="140" y="125" text-anchor="middle" class="wb-text-light">Reads `/etc/shadow`</text>
+
+    <rect x="60" y="200" width="160" height="40" class="wb-box-light" />
+    <text x="140" y="225" text-anchor="middle" class="wb-text-light">Reads `error.txt`</text>
+
+    <rect x="320" y="100" width="160" height="40" class="wb-box-red-light" />
+    <text x="400" y="125" text-anchor="middle" fill="#DC2626" font-family="'Inter', sans-serif"
+        font-size="13px">Immediate Trap</text>
+
+    <rect x="320" y="200" width="160" height="40" class="wb-box-green-light" />
+    <text x="400" y="225" text-anchor="middle" fill="#059669" font-family="'Inter', sans-serif" font-size="13px">Virtual
+        `/logs`</text>
+
+    <rect x="580" y="200" width="160" height="40" class="wb-box-green-light" />
+    <text x="660" y="225" text-anchor="middle" fill="#059669" font-family="'Inter', sans-serif" font-size="13px">Host
+        Sector</text>
+
+    <path d="M 220 120 L 310 120" class="wb-line-red-light" marker-end="url(#wb-arrow-red-light)" />
+    <path d="M 220 220 L 310 220" class="wb-line-green-light" marker-end="url(#wb-arrow-green-light)" />
+    <path d="M 480 220 L 570 220" class="wb-line-green-light" marker-end="url(#wb-arrow-green-light)" />
+    <text x="525" y="210" text-anchor="middle" font-size="10" fill="#10B981" font-family="'Inter', sans-serif">Map
+        FD</text>
+</svg>
