@@ -45,6 +45,7 @@
 		"zod": "^4.3.6"
 	},
 	"dependencies": {
+		"@chainsafe/libp2p-noise": "^17.0.0",
 		"@chainsafe/libp2p-yamux": "^8.0.1",
 		"@grpc/grpc-js": "^1.14.3",
 		"@grpc/proto-loader": "^0.8.0",
