@@ -1,0 +1,91 @@
+<svg width="1000" height="420" viewBox="0 0 1000 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <marker id="arrow-right" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#71717a" />
+        </marker>
+        <marker id="arrow-left" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 10 0 L 0 5 L 10 10 z" fill="#71717a" />
+        </marker>
+    </defs>
+
+    <!-- Title & Subtitles -->
+    <text x="145" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600"
+        fill="#a1a1aa" text-anchor="middle">AI applications</text>
+    <text x="350" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600"
+        fill="#a1a1aa" text-anchor="middle">Unidirectional PUSH flow</text>
+    <text x="350" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="500"
+        fill="#71717a" text-anchor="middle">(WASM logic injection)</text>
+
+    <text x="855" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600"
+        fill="#a1a1aa" text-anchor="middle">Data Sources &amp; Tools</text>
+    <text x="650" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600"
+        fill="#a1a1aa" text-anchor="middle">Bidirectional QUIC streams</text>
+    <text x="650" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="500"
+        fill="#71717a" text-anchor="middle">(Real-time events)</text>
+
+    <!-- Left Box 1 -->
+    <rect x="20" y="40" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="145" y="74" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Chat interfaces</text>
+    <text x="145" y="96" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">Claude Desktop, LibreChat</text>
+
+    <!-- Left Box 2 -->
+    <rect x="20" y="140" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="145" y="174" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">IDEs and code editors</text>
+    <text x="145" y="196" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">Cursor, Cline, Goose</text>
+
+    <!-- Left Box 3 -->
+    <rect x="20" y="240" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="145" y="274" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Autonomous Agents</text>
+    <text x="145" y="296" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">AutoGPT, LangChain, CrewAI</text>
+
+    <!-- Center Box (NMP) -->
+    <rect x="350" y="115" width="300" height="126" rx="6" fill="#0c233f" stroke="#3b82f6" stroke-width="1.5" />
+    <text x="500" y="166" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Neural Mesh Protocol</text>
+    <text x="500" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400"
+        fill="#bfdbfe" text-anchor="middle">Decentralized P2P Zero-Trust</text>
+
+    <!-- Right Box 1 -->
+    <rect x="730" y="40" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="855" y="74" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Data and file systems</text>
+    <text x="855" y="96" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">PostgreSQL, SQLite, Kademlia</text>
+
+    <!-- Right Box 2 -->
+    <rect x="730" y="140" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="855" y="174" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Isolated Compute</text>
+    <text x="855" y="196" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">Wasmtime Enclaves, WASI</text>
+
+    <!-- Right Box 3 -->
+    <rect x="730" y="240" width="250" height="76" rx="6" fill="#18181b" stroke="#3f3f46" stroke-width="1" />
+    <text x="855" y="274" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="700"
+        fill="#fafafa" text-anchor="middle">Productivity tools</text>
+    <text x="855" y="296" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400"
+        fill="#d4d4d8" text-anchor="middle">Slack, GitHub, Stripe APIs</text>
+
+    <!-- Connecting Lines (Left to Center) -->
+    <path d="M 270 78 C 320 78, 300 150, 350 150" stroke="#71717a" stroke-width="2" fill="none"
+        marker-end="url(#arrow-right)" />
+    <path d="M 270 178 L 350 178" stroke="#71717a" stroke-width="2" fill="none" marker-end="url(#arrow-right)" />
+    <path d="M 270 278 C 320 278, 300 206, 350 206" stroke="#71717a" stroke-width="2" fill="none"
+        marker-end="url(#arrow-right)" />
+
+    <!-- Connecting Lines (Center to Right) -->
+    <path d="M 650 150 C 700 150, 680 78, 730 78" stroke="#71717a" stroke-width="2" fill="none"
+        marker-start="url(#arrow-left)" marker-end="url(#arrow-right)" />
+    <path d="M 650 178 L 730 178" stroke="#71717a" stroke-width="2" fill="none" marker-start="url(#arrow-left)"
+        marker-end="url(#arrow-right)" />
+    <path d="M 650 206 C 700 206, 680 278, 730 278" stroke="#71717a" stroke-width="2" fill="none"
+        marker-start="url(#arrow-left)" marker-end="url(#arrow-right)" />
+
+</svg>
