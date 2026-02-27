@@ -1,26 +1,26 @@
 <svg width="1000" height="480" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg">
     <rect width="1000" height="480" fill="#09090b" rx="16" />
     <style>
-        .mf-text {
+        .mfd-text {
             font-family: 'Inter', system-ui, sans-serif;
             fill: #FAFAFA;
             font-size: 13px;
             font-weight: 500;
         }
 
-        .mf-text-sm {
+        .mfd-text-sm {
             font-family: 'Inter', system-ui, sans-serif;
             fill: #A1A1AA;
             font-size: 11px;
         }
 
-        .mf-title {
+        .mfd-title {
             font-weight: 700;
             font-size: 16px;
             fill: #FFFFFF;
         }
 
-        .mf-subtitle {
+        .mfd-subtitle {
             font-size: 11px;
             fill: #A1A1AA;
             text-transform: uppercase;
@@ -29,15 +29,15 @@
         }
 
         /* Zones */
-        .mf-zone {
+        .mfd-zone {
             fill: #0f0f11;
             stroke: #27272a;
             stroke-width: 2;
             rx: 12;
         }
 
-        .mf-zone-net {
-            fill: url(#netBg);
+        .mfd-zone-net {
+            fill: url(#netBgD);
             stroke: #10b981;
             stroke-width: 1;
             rx: 12;
@@ -45,7 +45,7 @@
             opacity: 0.8;
         }
 
-        .mf-zone-sandbox {
+        .mfd-zone-sandbox {
             fill: rgba(245, 158, 11, 0.05);
             stroke: #f59e0b;
             stroke-width: 1.5;
@@ -54,35 +54,35 @@
         }
 
         /* Boxes */
-        .mf-box {
+        .mfd-box {
             fill: #18181b;
             stroke: #3f3f46;
             stroke-width: 1.5;
             rx: 8;
         }
 
-        .mf-box-hi {
+        .mfd-box-hi {
             fill: #27272a;
             stroke: #7dd3fc;
             stroke-width: 1.5;
             rx: 8;
         }
 
-        .mf-box-sec {
+        .mfd-box-sec {
             fill: #18181b;
             stroke: #34d399;
             stroke-width: 1.5;
             rx: 8;
         }
 
-        .mf-box-wasi {
+        .mfd-box-wasi {
             fill: #27272a;
             stroke: #fcd34d;
             stroke-width: 1.5;
             rx: 8;
         }
 
-        .mf-box-zk {
+        .mfd-box-zk {
             fill: #27272a;
             stroke: #c084fc;
             stroke-width: 1.5;
@@ -90,14 +90,15 @@
         }
 
         /* Lines */
-        .mf-line {
+        .mfd-line {
             stroke: #52525b;
             stroke-width: 2;
             fill: none;
             stroke-linejoin: round;
+            stroke-linecap: round;
         }
 
-        .mf-line-flow {
+        .mfd-line-flow {
             stroke: #10b981;
             stroke-width: 2;
             fill: none;
@@ -105,7 +106,7 @@
             stroke-linecap: round;
         }
 
-        .mf-line-return {
+        .mfd-line-return {
             stroke: #c084fc;
             stroke-width: 2;
             fill: none;
@@ -114,26 +115,26 @@
         }
 
         /* Arrows */
-        .mf-arrow {
+        .mfd-arrow {
             fill: #52525b;
         }
 
-        .mf-arrow-flow {
+        .mfd-arrow-flow {
             fill: #10b981;
         }
 
-        .mf-arrow-return {
+        .mfd-arrow-return {
             fill: #c084fc;
         }
 
         /* Node Network */
-        .mf-node {
+        .mfd-node {
             fill: #10b981;
             opacity: 0.8;
         }
 
         /* Animations */
-        @keyframes pulseNet {
+        @keyframes pulseNetD {
             0% {
                 opacity: 0.4;
                 filter: drop-shadow(0 0 2px #10b981);
@@ -141,7 +142,7 @@
 
             50% {
                 opacity: 1;
-                filter: drop-shadow(0 0 8px #34d399);
+                filter: drop-shadow(0 0 6px #34d399);
             }
 
             100% {
@@ -150,31 +151,31 @@
             }
         }
 
-        .mf-anim-node {
-            animation: pulseNet 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .mfd-anim-node {
+            animation: pulseNetD 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        @keyframes marchTx {
+        @keyframes marchTxD {
             to {
                 stroke-dashoffset: -40;
             }
         }
 
-        .mf-anim-march {
-            animation: marchTx 1.5s linear infinite;
+        .mfd-anim-march {
+            animation: marchTxD 1.5s linear infinite;
         }
 
-        @keyframes marchRx {
+        @keyframes marchRxD {
             to {
                 stroke-dashoffset: 40;
             }
         }
 
-        .mf-anim-march-ret {
-            animation: marchRx 1.5s linear infinite;
+        .mfd-anim-march-ret {
+            animation: marchRxD 1.5s linear infinite;
         }
 
-        @keyframes packetTx {
+        @keyframes packetTxD {
             0% {
                 transform: translateX(0);
                 opacity: 0;
@@ -189,20 +190,20 @@
             }
 
             100% {
-                transform: translateX(350px);
+                transform: translateX(340px);
                 opacity: 0;
             }
         }
 
-        .mf-part-tx-1 {
-            animation: packetTx 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        .mfd-part-tx-1 {
+            animation: packetTxD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        .mf-part-tx-2 {
-            animation: packetTx 2s cubic-bezier(0.4, 0, 0.2, 1) infinite -1s;
+        .mfd-part-tx-2 {
+            animation: packetTxD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite -1s;
         }
 
-        @keyframes packetRx {
+        @keyframes packetRxD {
             0% {
                 transform: translateX(0);
                 opacity: 0;
@@ -217,62 +218,62 @@
             }
 
             100% {
-                transform: translateX(-350px);
+                transform: translateX(-340px);
                 opacity: 0;
             }
         }
 
-        .mf-part-rx-1 {
-            animation: packetRx 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        .mfd-part-rx-1 {
+            animation: packetRxD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        .mf-part-rx-2 {
-            animation: packetRx 2s cubic-bezier(0.4, 0, 0.2, 1) infinite -1s;
+        .mfd-part-rx-2 {
+            animation: packetRxD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite -1s;
         }
 
-        @keyframes spinGear {
+        @keyframes spinGearD {
             100% {
                 transform: rotate(360deg);
             }
         }
 
-        .mf-spin {
+        .mfd-spin {
             transform-box: fill-box;
             transform-origin: center;
-            animation: spinGear 3s linear infinite;
+            animation: spinGearD 3s linear infinite;
         }
     </style>
 
     <defs>
-        <pattern id="netBg" width="20" height="20" patternUnits="userSpaceOnUse">
+        <pattern id="netBgD" width="20" height="20" patternUnits="userSpaceOnUse">
             <circle cx="2" cy="2" r="1" fill="#27272a" />
         </pattern>
-        <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" class="mf-arrow" />
+        <marker id="arrD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="mfd-arrow" />
         </marker>
-        <marker id="arr-flow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" class="mf-arrow-flow" />
+        <marker id="arr-flowD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="mfd-arrow-flow" />
         </marker>
-        <marker id="arr-ret" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" class="mf-arrow-return" />
+        <marker id="arr-retD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="mfd-arrow-return" />
         </marker>
 
-        <filter id="glow-tx" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+        <filter id="glow-txD" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
             </feMerge>
         </filter>
-        <filter id="glow-rx" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+        <filter id="glow-rxD" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
             </feMerge>
         </filter>
-        <filter id="glow-amber" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+        <filter id="glow-amberD" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -282,141 +283,143 @@
 
     <!-- ZONES -->
     <!-- 1. Client -->
-    <rect x="30" y="30" width="270" height="420" class="mf-zone" />
-    <text x="165" y="65" text-anchor="middle" class="mf-text mf-title">NMP Agent Node</text>
-    <text x="165" y="80" text-anchor="middle" class="mf-text-sm">Client / Logic Origin</text>
+    <rect x="30" y="30" width="270" height="420" class="mfd-zone" />
+    <text x="165" y="65" text-anchor="middle" class="mfd-text mfd-title">NMP Agent Node</text>
+    <text x="165" y="80" text-anchor="middle" class="mfd-text-sm">Client / Logic Origin</text>
 
     <!-- 2. Network -->
-    <rect x="330" y="30" width="340" height="420" class="mf-zone-net" />
-    <text x="500" y="65" text-anchor="middle" class="mf-text mf-title" fill="#10b981">Zero-Trust Mesh</text>
-    <text x="500" y="80" text-anchor="middle" class="mf-text-sm" fill="#10b981">gRPC / QUIC P2P Network</text>
+    <rect x="330" y="30" width="340" height="420" class="mfd-zone-net" />
+    <text x="500" y="65" text-anchor="middle" class="mfd-text mfd-title" fill="#10b981">Zero-Trust Mesh</text>
+    <text x="500" y="80" text-anchor="middle" class="mfd-text-sm" fill="#10b981">gRPC / QUIC P2P Network</text>
 
     <!-- 3. Server -->
-    <rect x="700" y="30" width="270" height="420" class="mf-zone" />
-    <text x="835" y="65" text-anchor="middle" class="mf-text mf-title">NMP Data Node</text>
-    <text x="835" y="80" text-anchor="middle" class="mf-text-sm">Host Server / Execution</text>
+    <rect x="700" y="30" width="270" height="420" class="mfd-zone" />
+    <text x="835" y="65" text-anchor="middle" class="mfd-text mfd-title">NMP Data Node</text>
+    <text x="835" y="80" text-anchor="middle" class="mfd-text-sm">Host Server / Execution</text>
 
     <!-- ==================== -->
     <!-- ZONE 1: CLIENT       -->
     <!-- ==================== -->
-    <rect x="60" y="110" width="210" height="45" class="mf-box-hi" />
-    <text x="165" y="130" text-anchor="middle" class="mf-text mf-subtitle" fill="#7dd3fc">Orchestrator</text>
-    <text x="165" y="145" text-anchor="middle" class="mf-text">LLM Intent Generation</text>
+    <rect x="60" y="110" width="210" height="45" class="mfd-box-hi" />
+    <text x="165" y="130" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#7dd3fc">Orchestrator</text>
+    <text x="165" y="145" text-anchor="middle" class="mfd-text">LLM Intent Generation</text>
 
-    <path d="M 165 155 L 165 185" class="mf-line" marker-end="url(#arr)" />
+    <path d="M 165 155 L 165 185" class="mfd-line" marker-end="url(#arrD)" />
 
-    <rect x="60" y="185" width="210" height="45" class="mf-box" />
-    <text x="165" y="205" text-anchor="middle" class="mf-text mf-subtitle">Payload Builder</text>
-    <text x="165" y="220" text-anchor="middle" class="mf-text">Logic to .WASM Compile</text>
+    <rect x="60" y="185" width="210" height="45" class="mfd-box" />
+    <text x="165" y="205" text-anchor="middle" class="mfd-text mfd-subtitle">Payload Builder</text>
+    <text x="165" y="220" text-anchor="middle" class="mfd-text">Logic to .WASM Compile</text>
 
-    <path d="M 165 230 L 165 260" class="mf-line" marker-end="url(#arr)" />
+    <path d="M 165 230 L 165 260" class="mfd-line" marker-end="url(#arrD)" />
 
-    <rect x="60" y="260" width="210" height="45" class="mf-box" />
-    <text x="165" y="280" text-anchor="middle" class="mf-text mf-subtitle">Mesh Injector</text>
-    <text x="165" y="295" text-anchor="middle" class="mf-text">DHT Peer Discovery</text>
+    <rect x="60" y="260" width="210" height="45" class="mfd-box" />
+    <text x="165" y="280" text-anchor="middle" class="mfd-text mfd-subtitle">Mesh Injector</text>
+    <text x="165" y="295" text-anchor="middle" class="mfd-text">DHT Peer Discovery</text>
 
-    <!-- Outward Line to Network -->
-    <path d="M 270 282 L 305 282 L 305 180 L 330 180" class="mf-line" marker-end="url(#arr)" />
-    <!-- Inward Line from Network -->
-    <path d="M 330 380 L 305 380 L 305 400 L 270 400" class="mf-line" marker-end="url(#arr)" />
+    <!-- Extrinsic Connectors (Client) -->
+    <path d="M 270 282.5 L 315 282.5 L 315 180 L 330 180" class="mfd-line" marker-end="url(#arrD)" />
+    <path d="M 330 380 L 315 380 L 315 400.5 L 270 400.5" class="mfd-line" marker-end="url(#arrD)" />
 
-    <rect x="60" y="378" width="210" height="45" class="mf-box-zk" />
-    <text x="165" y="398" text-anchor="middle" class="mf-text mf-subtitle" fill="#c084fc">Logic Return</text>
-    <text x="165" y="413" text-anchor="middle" class="mf-text">Consume Final Context</text>
+    <rect x="60" y="378" width="210" height="45" class="mfd-box-zk" />
+    <text x="165" y="398" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#c084fc">Logic Return</text>
+    <text x="165" y="413" text-anchor="middle" class="mfd-text">Consume Final Context</text>
 
     <!-- ==================== -->
     <!-- ZONE 2: NETWORK      -->
     <!-- ==================== -->
     <!-- Topology -->
-    <path d="M 380 260 L 450 140 L 530 250 L 610 130" class="mf-line-flow" style="opacity:0.2; stroke-dasharray:none" />
-    <path d="M 400 360 L 480 280 L 570 350 L 630 270" class="mf-line-flow" style="opacity:0.2; stroke-dasharray:none" />
-    <circle cx="380" cy="260" r="5" class="mf-node mf-anim-node" />
-    <circle cx="450" cy="140" r="7" class="mf-node mf-anim-node" style="animation-delay: -1s" />
-    <circle cx="530" cy="250" r="8" class="mf-node mf-anim-node" style="animation-delay: -2s" />
-    <circle cx="610" cy="130" r="4" class="mf-node mf-anim-node" />
-    <circle cx="400" cy="360" r="6" class="mf-node mf-anim-node" style="animation-delay: -1.5s" />
-    <circle cx="480" cy="280" r="9" class="mf-node mf-anim-node" style="animation-delay: -0.5s" />
-    <circle cx="570" cy="350" r="6" class="mf-node mf-anim-node" style="animation-delay: -2.5s" />
-    <circle cx="630" cy="270" r="5" class="mf-node mf-anim-node" />
+    <path d="M 380 260 L 450 140 L 530 250 L 610 130" class="mfd-line-flow"
+        style="opacity:0.2; stroke-dasharray:none" />
+    <path d="M 400 360 L 480 280 L 570 350 L 630 270" class="mfd-line-flow"
+        style="opacity:0.2; stroke-dasharray:none" />
+    <circle cx="380" cy="260" r="5" class="mfd-node mfd-anim-node" />
+    <circle cx="450" cy="140" r="7" class="mfd-node mfd-anim-node" style="animation-delay: -1s" />
+    <circle cx="530" cy="250" r="8" class="mfd-node mfd-anim-node" style="animation-delay: -2s" />
+    <circle cx="610" cy="130" r="4" class="mfd-node mfd-anim-node" />
+    <circle cx="400" cy="360" r="6" class="mfd-node mfd-anim-node" style="animation-delay: -1.5s" />
+    <circle cx="480" cy="280" r="9" class="mfd-node mfd-anim-node" style="animation-delay: -0.5s" />
+    <circle cx="570" cy="350" r="6" class="mfd-node mfd-anim-node" style="animation-delay: -2.5s" />
+    <circle cx="630" cy="270" r="5" class="mfd-node mfd-anim-node" />
 
     <!-- TX Flow -->
-    <path d="M 330 180 L 700 180" class="mf-line-flow mf-anim-march" marker-end="url(#arr-flow)" />
+    <path d="M 330 180 L 670 180" class="mfd-line-flow mfd-anim-march" marker-end="url(#arr-flowD)" />
 
     <!-- TX Particles -->
-    <g transform="translate(340, 180)">
-        <g class="mf-part-tx-1">
-            <circle cx="0" cy="0" r="5" fill="#10b981" filter="url(#glow-tx)" />
-            <text x="0" y="-12" text-anchor="middle" class="mf-text mf-subtitle" fill="#34d399">Kyber/AES
+    <g transform="translate(330, 180)">
+        <g class="mfd-part-tx-1">
+            <circle cx="0" cy="0" r="5" fill="#10b981" filter="url(#glow-txD)" />
+            <text x="0" y="-12" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#34d399">Kyber/AES
                 Encrypted</text>
         </g>
     </g>
-    <g transform="translate(340, 180)">
-        <g class="mf-part-tx-2">
-            <circle cx="0" cy="0" r="5" fill="#38bdf8" filter="url(#glow-tx)" />
-            <text x="0" y="22" text-anchor="middle" class="mf-text mf-subtitle" fill="#7dd3fc">WASM AST Payload</text>
+    <g transform="translate(330, 180)">
+        <g class="mfd-part-tx-2">
+            <circle cx="0" cy="0" r="5" fill="#38bdf8" filter="url(#glow-txD)" />
+            <text x="0" y="22" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#7dd3fc">WASM AST Payload</text>
         </g>
     </g>
 
     <!-- RX Flow -->
-    <path d="M 700 380 L 330 380" class="mf-line-return mf-anim-march-ret" marker-end="url(#arr-ret)" />
+    <path d="M 670 380 L 330 380" class="mfd-line-return mfd-anim-march-ret" marker-end="url(#arr-retD)" />
 
     <!-- RX Particles -->
-    <g transform="translate(690, 380)">
-        <g class="mf-part-rx-1">
-            <circle cx="0" cy="0" r="5" fill="#c084fc" filter="url(#glow-rx)" />
-            <text x="0" y="-12" text-anchor="middle" class="mf-text mf-subtitle" fill="#c084fc">ZK-Receipt Proof</text>
+    <g transform="translate(670, 380)">
+        <g class="mfd-part-rx-1">
+            <circle cx="0" cy="0" r="5" fill="#c084fc" filter="url(#glow-rxD)" />
+            <text x="0" y="-12" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#c084fc">ZK-Receipt
+                Proof</text>
         </g>
     </g>
-    <g transform="translate(690, 380)">
-        <g class="mf-part-rx-2">
-            <circle cx="0" cy="0" r="5" fill="#FFFFFF" filter="url(#glow-rx)" />
-            <text x="0" y="22" text-anchor="middle" class="mf-text mf-subtitle" fill="#FAFAFA">Semantic Output</text>
+    <g transform="translate(670, 380)">
+        <g class="mfd-part-rx-2">
+            <circle cx="0" cy="0" r="5" fill="#FFFFFF" filter="url(#glow-rxD)" />
+            <text x="0" y="22" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#FAFAFA">Semantic Output</text>
         </g>
     </g>
 
     <!-- ==================== -->
     <!-- ZONE 3: SERVER       -->
     <!-- ==================== -->
-    <rect x="730" y="110" width="210" height="45" class="mf-box" />
-    <text x="835" y="130" text-anchor="middle" class="mf-text mf-subtitle">Transport Terminator</text>
-    <text x="835" y="145" text-anchor="middle" class="mf-text">Kyber / AES Decryption</text>
+    <rect x="730" y="110" width="210" height="45" class="mfd-box" />
+    <text x="835" y="130" text-anchor="middle" class="mfd-text mfd-subtitle">Transport Terminator</text>
+    <text x="835" y="145" text-anchor="middle" class="mfd-text">Kyber / AES Decryption</text>
 
-    <path d="M 835 155 L 835 175" class="mf-line" marker-end="url(#arr)" />
+    <path d="M 835 155 L 835 175" class="mfd-line" marker-end="url(#arrD)" />
 
-    <rect x="730" y="175" width="210" height="45" class="mf-box-sec" />
-    <text x="835" y="195" text-anchor="middle" class="mf-text mf-subtitle" fill="#34d399">Zero-Time Sentinel</text>
-    <text x="835" y="210" text-anchor="middle" class="mf-text">AST Security Validation</text>
+    <rect x="730" y="175" width="210" height="45" class="mfd-box-sec" />
+    <text x="835" y="195" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#34d399">Zero-Time Sentinel</text>
+    <text x="835" y="210" text-anchor="middle" class="mfd-text">AST Security Validation</text>
 
-    <path d="M 835 220 L 835 240" class="mf-line" marker-end="url(#arr)" />
+    <path d="M 835 220 L 835 240" class="mfd-line" marker-end="url(#arrD)" />
 
     <!-- Sandbox Container -->
-    <rect x="720" y="240" width="230" height="120" class="mf-zone-sandbox" />
-    <text x="835" y="258" text-anchor="middle" class="mf-text mf-subtitle" fill="#f59e0b">TEE Execution Sandbox</text>
+    <rect x="720" y="240" width="230" height="120" class="mfd-zone-sandbox" />
+    <text x="835" y="258" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#f59e0b">TEE Execution Sandbox</text>
 
-    <rect x="735" y="270" width="135" height="30" class="mf-box-wasi" />
-    <text x="802" y="290" text-anchor="middle" class="mf-text" font-size="12">WASI Validation</text>
+    <rect x="735" y="270" width="135" height="30" class="mfd-box-wasi" />
+    <text x="802.5" y="290" text-anchor="middle" class="mfd-text" font-size="12">WASI Validation</text>
 
-    <rect x="735" y="310" width="135" height="30" class="mf-box" />
-    <text x="802" y="330" text-anchor="middle" class="mf-text" font-size="12">Logic-on-Origin Exec</text>
+    <rect x="735" y="310" width="135" height="30" class="mfd-box" />
+    <text x="802.5" y="330" text-anchor="middle" class="mfd-text" font-size="12">Logic-on-Origin Exec</text>
 
     <!-- Animated Processor -->
-    <g transform="translate(905, 305)">
-        <g class="mf-spin">
+    <g transform="translate(910, 305)">
+        <g class="mfd-spin">
             <circle cx="0" cy="0" r="20" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="10 5"
                 opacity="0.8" />
             <circle cx="0" cy="0" r="14" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="8 4"
                 opacity="0.6" />
-            <circle cx="0" cy="0" r="4" fill="#fcd34d" filter="url(#glow-amber)" />
+            <circle cx="0" cy="0" r="4" fill="#fcd34d" filter="url(#glow-amberD)" />
         </g>
     </g>
 
-    <path d="M 835 360 L 835 380" class="mf-line" marker-end="url(#arr)" />
+    <path d="M 835 360 L 835 378" class="mfd-line" marker-end="url(#arrD)" />
 
-    <rect x="730" y="380" width="210" height="45" class="mf-box-zk" />
-    <text x="835" y="400" text-anchor="middle" class="mf-text mf-subtitle" fill="#c084fc">Mathematical Proof</text>
-    <text x="835" y="415" text-anchor="middle" class="mf-text">ZK-SNARK Prover &amp; Seal</text>
+    <rect x="730" y="378" width="210" height="45" class="mfd-box-zk" />
+    <text x="835" y="398" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#c084fc">Mathematical Proof</text>
+    <text x="835" y="413" text-anchor="middle" class="mfd-text">ZK-SNARK Prover &amp; Seal</text>
 
-    <!-- Extrinsic Connectors -->
-    <path d="M 700 180 L 720 180 L 720 132 L 730 132" class="mf-line" marker-end="url(#arr)" />
-    <path d="M 730 403 L 720 403 L 720 380 L 700 380" class="mf-line" />
+    <!-- Extrinsic Connectors (Server) -->
+    <path d="M 670 180 L 685 180 L 685 132.5 L 730 132.5" class="mfd-line" marker-end="url(#arrD)" />
+    <path d="M 730 400.5 L 685 400.5 L 685 380 L 670 380" class="mfd-line" marker-end="url(#arrD)" />
 </svg>
