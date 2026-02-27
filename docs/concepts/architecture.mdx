@@ -63,13 +63,25 @@ The final boundary before touching bare metal.
   <img className="hidden dark:block w-full" src="/images/master-flow-dark.svg" alt="Animated Logic-on-Origin Flow" />
 </Frame>
 
-Here is the exact lifecycle of an NMP execution, happening in sub-milliseconds:
+Here is the exact lifecycle of an NMP execution, reflecting a 1:1 parity between our Architectural Models, Rust Backend, and Node.js SDK:
 
-1. **Discovery**: The Agent Node broadcasts a capability signature to the Kademlia DHT.
-2. **Intent Negotiation**: The Mesh routes the request to an available Data Node. A Post-Quantum connection is forged.
-3. **Payload Streaming**: The Agent transmits a microscopic compiled WebAssembly module over gRPC.
-4. **Zero-Time Guardian**: The Data Node parses the WASM's Abstract Syntax Tree (AST), ensuring it requests no illegal operations.
-5. **Execution**: `wasmtime` boots the Sandbox, safely iterating over Gigabytes of local Host data in milliseconds. (Highly scalable via SDK **Worker Pools** or native rust concurrency).
-6. **Result Streaming**: The Data Node tears down the Sandbox, generates a Mathematical ZK Cryptographic proof (optional), and streams purely the final byte-sized finding back to the Agent via gRPC.
+### 1. The Client Emitter (`TypeScript Client`)
+- **WebAssembly Compilation:** The LLM's dynamic logic is evaluated and transformed into a `.wasm` binary stream.
+- **Client AST Sentinel (`GuardianTS`):** Before network emission, a pre-flight heuristic inspection blocks illegal bounds or malicious footprints from polluting the protocol.
+- **Post-Quantum Key Exchange:** The SDK generates a `Kyber768` secret, mathematically defeating *Harvest Now, Decrypt Later* attacks.
+- **Payload Encryption:** The `.wasm` intent is hermetically sealed within an `AES-256-GCM` envelope using random generation nonces.
 
-This architecture ensures theoretical maximum speeds for Autonomous Agents while guaranteeing Enterprise-grade zero-trust privacy.
+### 2. The Kademlia Transit (`Zero-Trust Mesh`)
+- **Libp2p Transport:** Packets traverse the decentralized mesh using ultra-low latency `TCP/QUIC` bounds.
+- **Multiplexed Secure Streams:** `Yamux` orchestrates thousands of parallel requests simultaneously, while raw connection traffic is armored via `Noise` protocol handshakes.
+
+### 3. The Origin Ingestion (`Rust Server`)
+- **Transport Terminator:** The Data Node unwraps the Kyber secret and applies AES-256-GCM decryption natively, extracting the core payload.
+- **AST Guardian (Zero-Time Sentinel):** The Rust `wasmparser` dissects the incoming Abstract Syntax Tree. Any illegal Host imports trap the logic instantly in zero-time.
+- **Wasmtime / WASI Sandboxing:** Bytecode Alliance's engine boots a hyper-constrained memory boundary. The logic loops safely over Gigabytes of Host Data with absolute zero network overhead.
+
+### 4. Mathematical Return (`ZK-Receipt`)
+- **Mathematical Proof:** Optionally, `RISC Zero` a zkVM generates a cryptographic Journal and cryptographically proven Seal (ZK-Receipt) of the execution.
+- **Result Streaming:** The microscopic findings return through the gRPC Yamux Multiplex, empowering the Agent with final mathematical certainty.
+
+This E2E architecture embodies the exact code in production, providing theoretical maximum speeds for Autonomous AI Agents along with Enterprise-grade Zero-Trust privacy that is fully auditable.
