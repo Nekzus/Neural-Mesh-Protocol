@@ -421,5 +421,5 @@
 
     <!-- Extrinsic Connectors (Server) -->
     <path d="M 670 180 L 685 180 L 685 132.5 L 730 132.5" class="mfd-line" marker-end="url(#arrD)" />
-    <path d="M 730 400.5 L 685 400.5 L 685 380 L 670 380" class="mfd-line" marker-end="url(#arrD)" />
+    <path d="M 730 400.5 L 715 400.5 L 715 380 L 670 380" class="mfd-line" marker-end="url(#arrD)" />
 </svg>
