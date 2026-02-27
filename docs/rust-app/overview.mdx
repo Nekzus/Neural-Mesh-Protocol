@@ -1,12 +1,51 @@
 ---
-title: "Cargo Backend"
-description: "The core engine powering NMP"
+title: "Rust Core"
+description: "The high-performance Protocol Buffers and Network foundation"
 ---
 
-The actual implementation of the P2P Mesh (Noise, Kademlia) and gRPC multiplexing happens in the high-performance Rust foundation (`rust-app`).
+While the `@neural-mesh/sdk` provides a beautiful developer experience in Node.js and TypeScript, the absolute truth of the protocol exists in its core **Rust Backend**.
 
-## Crates 
-- `nmp-core`: Protobuf interfaces (`tonic` + `prost`)
-- `nmp-client`: Logic injector
-- `nmp-server`: The WASI Sandbox host
-- `wasm-filter`: Edge-logic dummy compilation
+This workspace (`rust-app/`) contains the hyper-optimized data structures, the `Wasmtime` engine execution loop, and the raw Libp2p network primitives. 
+
+You should only interact with the Rust Core directly if you are:
+- Building an NMP SDK for a new language (e.g., Python, Go, C#).
+- Modifying the mathematical bounds of the Zero-Trust Sandbox.
+- Customizing the Kademlia DHT routing algorithms.
+
+## Workspace Architecture
+
+The Cargo Workspace is strictly modularized into functional components:
+
+<CardGroup cols={2}>
+  <Card title="nmp-core" icon="cube">
+    The Source of Truth. Contains the compiled Protobuf definitions (`nmp_core.proto`) built via `tonic` and `prost`. This crate defines the unalterable binary structure of all network intents.
+  </Card>
+  <Card title="nmp-server" icon="shield-halved">
+    The Data Node. Leverages the `Bytecode Alliance Wasmtime` crate to create the WASI execution boundary for incoming WebAssembly logic.
+  </Card>
+  <Card title="nmp-client" icon="network-wired">
+    The Agent Node. Dispatches logic payloads across the mesh securely utilizing `rust-libp2p` and the Noise protocol framework.
+  </Card>
+  <Card title="wasm-filters" icon="microchip">
+    The isolated payload templates. Contains Rust logic specifically targeted for `wasm32-wasi` compilation to act as the agent's brain.
+  </Card>
+</CardGroup>
+
+## Network Transport Stack
+
+Unlike simple HTTP/REST APIs, NMP requires a persistent, bidirectional, and highly multiplexed connection to support persistent Watchdogs and low-latency logic execution.
+
+The Rust backend implements this by combining two state-of-the-art technologies:
+
+1. **Tonic (gRPC):** 
+   Tonic handles the message framing. Every `LogicRequest` and `LogicResponse` is streamed as binary Protobuf. Tonic automatically manages backpressure and streaming contexts asynchronously using the `tokio` runtime.
+2. **Libp2p (QUIC & Noise):**
+   Instead of running Tonic over standard TCP/TLS, the `nmp-core` tunnels the entirety of the gRPC traffic inside a **QUIC** stream managed by Libp2p. This allows Kademlia Peer discovery and Ed25519 identity verification instantly upon handshake, entirely dispensing the need for centralized CAs or DNS registrars.
+
+## Execution Engine
+
+The core differentiator of the entire Neural Mesh Protocol resides in `nmp-server/src/executor.rs`.
+
+Here, the native Rust binary receives a byte array representing the AI Agent's intention. Before execution, the engine limits the memory dynamically based on the Agent's authorization token, preopens strict file descriptors using `WasiCtxBuilder`, and hands the payload to the virtual CPU.
+
+This ensures total panic-isolation: if the Agent's `.wasm` encounters a memory leak, the Host OS remains unharmed.

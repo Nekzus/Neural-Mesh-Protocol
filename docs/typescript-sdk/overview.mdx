@@ -1,12 +1,59 @@
 ---
 title: "TypeScript SDK Overview"
-description: "Seamless Logic-on-Origin injection for Node.js"
+description: "Bringing the power of the Neural Mesh to the Node.js ecosystem"
 ---
 
-The `@neural-mesh/sdk` connects Node/TypeScript ecosystems with the high-performance binary NMP network. 
+The official `@neural-mesh/sdk` provides a complete, strongly-typed toolkit for building NMP Clients (Agent Nodes) and NMP Servers (Data Nodes) in TypeScript and JavaScript.
 
-## Features
+If you are migrating from the Model Context Protocol (MCP), you will find the API surface remarkably familiar. NMP was designed to provide a **Drop-in Replacement** Developer Experience (DX), abstracting away the immense complexity of Protobuf, WebAssembly, and Kademlia DHT under simple TypeScript classes.
 
-- **Javy Compilation:** Transparently compiles JS tools into WebAssembly.
-- **Zod Schemas:** Define parameters identically to standard MCP servers.
-- **NmpMcpBridge:** Run legacy JSON-RPC MCP servers side-by-side with NMP nodes over the mesh.
+## Package Architecture
+
+The SDK is published to npm as a single unified package containing both Client and Server logic:
+
+<CodeGroup>
+```bash npm
+npm install @neural-mesh/sdk zod
+```
+```bash pnpm
+pnpm add @neural-mesh/sdk zod
+```
+```bash yarn
+yarn add @neural-mesh/sdk zod
+```
+</CodeGroup>
+
+<Note>
+  We strongly recommend installing `zod` alongside the SDK. Just like the official MCP specification, NMP relies on Zod parsing to guarantee that Execution Arguments passed by the AI Agent perfectly match the Server's capability manifest.
+</Note>
+
+## Under the Hood: The Javy Compiler
+
+You might be wondering: *If NMP relies on injecting compiled WebAssembly (`.wasm`) logic, how can I build Agents purely in TypeScript?*
+
+The `@neural-mesh/sdk` includes a native compilation bridge (the **Component Builder**). When your TypeScript Agent invokes `.execute()`, the SDK transparently serializes the JavaScript payload, bundles it utilizing a Javy-like engine into a highly restrictive `.wasm` payload, strings it through the Protobuf `LogicRequest`, and injects it into the Mesh. 
+
+The developer never has to manually write or compile Rust/Wasm.
+
+## Key Exports
+
+The SDK exports three primary classes for orchestrating Mesh applications:
+
+<CardGroup cols={3}>
+  <Card title="NmpServer" icon="server" href="/typescript-sdk/server">
+    The Data Node receiver. Exposes local secure capabilities, files, and handles incoming Logic-on-Origin intent safely.
+  </Card>
+  <Card title="NmpClient" icon="robot" href="/typescript-sdk/client">
+    The Intelligence Node. Searches the DHT Mesh for available capabilities and injects the dynamic WebAssembly payload to process data.
+  </Card>
+  <Card title="NmpMcpBridge" icon="bridge-water" href="/typescript-sdk/server#nmpmcpbridge">
+    The Legacy Translator. Instantly makes legacy JSON-RPC MCP clients compatible with your new, high-performance NMP network. 
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+Ready to write your first line of NMP code? Jump straight into building either side of the Mesh constraint:
+
+- Construct a [Neural Server](/typescript-sdk/server) to protect your data.
+- Design a [Neural Client](/typescript-sdk/client) to search out intelligence.

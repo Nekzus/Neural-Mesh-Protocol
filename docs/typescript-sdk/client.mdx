@@ -1,18 +1,100 @@
 ---
 title: "NmpClient"
-description: "Building autonomous agents that inject logic"
+description: "Routing intent and injecting autonomous logic via the Neural Mesh"
 ---
 
-An Agent uses an `NmpClient` to push WebAssembly tools exactly to where the data resides. Instead of extracting massive contextual data out of the provider, it simply asks the provider to compute its instructions natively.
+The `NmpClient` class is the orchestrator for Agent Nodes. It connects your Node.js or edge application to the Kademlia DHT Mesh, validates cryptographic identities, and dispatches WebAssembly logic payloads directly to remote Data Nodes (Servers).
+
+Unlike traditional REST clients that just `<fetch>` static JSON endpoints, an `NmpClient` literally pushes its logic functions across the internet to be executed natively at the server.
+
+## Initialization
+
+Connecting to the Mesh requires instantiating the client with identifying metadata. This metadata is announced to the DHT.
 
 ```typescript
-import { NmpClient } from '@neural-mesh/sdk';
+import { NmpClient } from "@neural-mesh/sdk";
 
-const agent = new NmpClient({
-  name: "ForensicAI",
-  version: "1.0.0"
-});
+const client = new NmpClient(
+  {
+    name: "ForensicLogAgent",
+    version: "1.0.0",
+  },
+  {
+    // Enable features like Post-Quantum Handshakes
+    capabilities: {
+      roots: { listChanged: true },
+      quantumResistant: true 
+    },
+  }
+);
+```
 
-// Push execution. Result comes back in a flash.
-const result = await agent.executeNatively("P2q...", "filterLogsWasm", { query: "CRITICAL" });
+## Connecting to the Mesh
+
+Unlike MCP which requires a direct stdio pipe or a hardcoded SSE URL, NMP uses decentralized peer-to-peer routing. 
+You provide a **Peer ID** (the unique Ed25519 identity of the Server you want to reach), and libp2p handles NAT traversal automatically.
+
+```typescript
+// Connect to the Mesh network backbone
+await client.connect();
+
+console.log(`Agent Mesh ID: ${client.peerId}`);
+```
+
+## Calling a Server Capability (Tool)
+
+Once connected, you can invoke capabilities exposed by any Data Node you trust. Under the hood, the SDK will bundle your intent into WASM and inject it over gRPC.
+
+```typescript
+try {
+  // Querying a 'remote-database' peer for an intensive SQL task
+  // The server executes the logic natively taking 0 network bandwidth
+  const result = await client.callTool(
+    "PeerID_of_Database_Node_123",
+    "execute_complex_sql",
+    { 
+      query: "SELECT * FROM petabytes_table WHERE anomaly_detected = true" 
+    }
+  );
+
+  console.log("Mathematical Result returned:");
+  console.log(result.content[0].text);
+} catch (error) {
+  console.error("Capability Injection rejected or failed:", error);
+}
+```
+
+## Creating Watchdogs (Push Subscriptions)
+
+The true power of Logic-on-Origin is the ability to spawn **Watchdogs**. Instead of manually polling `client.callTool()` every 5 seconds, you upload a persistent watcher module.
+
+```typescript
+// Deploy a persistent watcher module to a server
+await client.deployWatchdog(
+  "PeerID_Server_999",
+  "cpu_surge_monitor",
+  (event) => {
+    // This callback will only fire when the server pushes an event 
+    // asynchronously over the multiplexed QUIC channel.
+    console.log("🚨 SURGE DETECTED ON REMOTE:", event);
+  }
+);
+```
+
+## Error Handling & Zero-Trust Rejections
+
+Because the Server enforces a strict `WASI` sandbox and uses the *Zero-Time Guardian* to inspect your `.wasm` payload BEFORE execution, your client must be prepared to handle sandbox rejections.
+
+```typescript
+import { NmpError, ErrorCode } from "@neural-mesh/sdk";
+
+try {
+  await client.callTool("PeerID", "read_file", { path: "/etc/passwd" });
+} catch (error) {
+  if (error instanceof NmpError) {
+    if (error.code === ErrorCode.CapabilityViolation) {
+      console.error("🚨 Sandbox Execution Halted: Unauthorized file system access attempted.");
+    }
+  }
+}
 ```

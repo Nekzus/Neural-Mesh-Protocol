@@ -1,20 +1,89 @@
 ---
 title: "NmpServer"
-description: "Creating Data Nodes that accept remote logic"
+description: "Building autonomous Data Nodes and migrating legacy MCP tools"
 ---
 
-Data Nodes implement an `NmpServer` that utilizes a Wasmtime Sandboxing environment (managed natively or via bridge) to securely orchestrate incoming execution logic from Agents.
+The `NmpServer` class is the heart of the Data Node. It represents the host infrastructure that securely orchestrates incoming Logic-on-Origin intent from remote Agents.
+
+Instead of writing custom execution environments to manage WebAssembly, isolation, and networking, you define straightforward JavaScript/TypeScript functions. The SDK abstracts the complex sandboxing automatically.
+
+## Initialization
+
+You create a Data Node by telling the Mesh who you are and providing transport properties.
 
 ```typescript
-import { NmpServer } from '@neural-mesh/sdk';
-import { z } from 'zod';
+import { NmpServer } from "@neural-mesh/sdk";
 
-const ds = new NmpServer({
-  name: "CloudFilesStore",
-  version: "2.1.0"
+const server = new NmpServer({
+  name: "EnterpriseDatabaseNode",
+  version: "3.2.0"
+});
+```
+
+## Creating Capabilities (Tools)
+
+In MCP, these are called Tools. In NMP, we refer to them as **Capabilities**. 
+
+To the developer, defining a Capability in NMP looks virtually identical to defining an MCP Tool. You provide a name, a description, a Zod schema for type-safety, and an execution handler.
+
+```typescript
+import { z } from "zod";
+
+server.tool(
+  "analyze_employee_data",
+  "Analyzes sensitive payroll information inside the Sandbox.",
+  { department: z.string() },
+  async ({ department }) => {
+    // The Agent's injected logic stops here.
+    // The Data Node executes the local request under its own permissions.
+    const result = await database.query(department);
+
+    return {
+      content: [{ type: "text", text: `Payroll evaluated: ${result.summary}` }]
+    };
+  }
+);
+```
+
+### How this differs from MCP
+
+If the code looks exactly the same, what makes it Neural Mesh?
+
+1. **No Polling:** The Data Node announces the `analyze_employee_data` schema cryptographically over the Kademlia DHT. The Agent instantly knows the schema exists without wasting a network request asking for `listTools()`.
+2. **Binary Transport:** When the Agent invokes this Tool, the parameters (e.g., `department: "HR"`) are compressed into pure Protobuf bytes, skipping JSON entirely.
+
+## Bridging Legacy MCP Servers
+
+NMP's primary goal is rapid industry adoption. If you have spent months building a standard Model Context Protocol (MCP) server, you do not need to rewrite it to join the Neural Mesh.
+
+The `@neural-mesh/sdk` ships with the `NmpMcpBridge`.
+
+This powerful adapter intercepts incoming NMP binary mesh requests, translates them into standard JSON-RPC 2.0 locally, forwards them to your unmodified MCP Server via stdio or SSE, and repackages the standard MCP response back into the ultra-fast P2P network.
+
+```typescript
+import { NmpMcpBridge } from "@neural-mesh/sdk/bridge";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+
+// Your standard legacy MCP implementation
+const mcpServer = new Server({ name: "LegacyWeatherApp", version: "1.0" });
+
+// Wrap it in the NMP Bridge
+const bridge = new NmpMcpBridge(mcpServer, {
+  publishToMesh: true,
+  meshIdentity: "WeatherNode_01"
 });
 
-ds.tool("list_files", "Reads directory", { path: z.string() }, async ({ path }) => {
-    // Isolated secure access
-});
+// Start the bridge
+await bridge.connect();
+```
+
+Your legacy application is now fully accessible to Web3, decentralized, Post-Quantum AI agents around the globe without changing a single line of your original MCP logic.
+
+## Starting the Server
+
+Once your tools, watchdogs, and bridges are configured, you launch the Data Node by binding it to the network:
+
+```typescript
+await server.connect();
+console.log(`Neural Node online. Listening for incoming Wasms...`);
 ```
