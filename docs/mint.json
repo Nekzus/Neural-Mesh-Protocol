@@ -1,5 +1,6 @@
 {
     "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
     "name": "Neural Mesh Protocol",
     "logo": {
         "dark": "/logo/dark.svg",
@@ -7,63 +8,70 @@
     },
     "favicon": "/favicon.svg",
     "colors": {
-        "primary": "#00D67D",
+        "primary": "#09090b",
         "light": "#FAFAFA",
         "dark": "#09090b"
     },
-    "topbarLinks": [
-        {
-            "name": "GitHub",
-            "url": "https://github.com/Nekzus/Neural-Mesh-Protocol"
+    "navbar": {
+        "links": [
+            {
+                "label": "GitHub",
+                "href": "https://github.com/Nekzus/Neural-Mesh-Protocol"
+            }
+        ]
+    },
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Documentation",
+                "pages": [
+                    {
+                        "group": "Get started",
+                        "pages": [
+                            "getting-started/intro",
+                            "getting-started/quickstart"
+                        ]
+                    },
+                    {
+                        "group": "Core Concepts",
+                        "pages": [
+                            "concepts/architecture",
+                            "concepts/wasi-sandboxing",
+                            "concepts/zero-trust"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "TypeScript SDK",
+                "pages": [
+                    {
+                        "group": "TypeScript SDK",
+                        "pages": [
+                            "typescript-sdk/overview",
+                            "typescript-sdk/client",
+                            "typescript-sdk/server"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "Rust Backend",
+                "pages": [
+                    {
+                        "group": "Rust Backend",
+                        "pages": [
+                            "rust-app/overview",
+                            "rust-app/compilation"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "footer": {
+        "socials": {
+            "github": "https://github.com/Nekzus/Neural-Mesh-Protocol"
         }
-    ],
-    "tabs": [
-        {
-            "name": "Documentation",
-            "url": "getting-started"
-        },
-        {
-            "name": "TypeScript SDK",
-            "url": "typescript-sdk"
-        },
-        {
-            "name": "Rust Backend",
-            "url": "rust-app"
-        }
-    ],
-    "navigation": [
-        {
-            "group": "Get started",
-            "pages": [
-                "getting-started/intro",
-                "getting-started/quickstart"
-            ]
-        },
-        {
-            "group": "Core Concepts",
-            "pages": [
-                "concepts/architecture",
-                "concepts/wasi-sandboxing",
-                "concepts/zero-trust"
-            ]
-        },
-        {
-            "group": "TypeScript SDK",
-            "pages": [
-                "typescript-sdk/overview",
-                "typescript-sdk/client",
-                "typescript-sdk/server"
-            ]
-        },
-        {
-            "group": "Rust Backend",
-            "pages": [
-                "rust-app/overview",
-                "rust-app/compilation"
-            ]
-        }
-    ],
-    "footerSocials": {
-        "github": "https://github.com/Nekzus/Neural-Mesh-Protocol"
     }
 }
