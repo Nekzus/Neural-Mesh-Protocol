@@ -17,16 +17,38 @@ When a Node.js or Python tool executes in MCP, it relies on the operating system
 
 When an Agent Node injects a WebAssembly module into a Data Node, the following security barriers activate:
 
+<Frame>
+```mermaid
+block-beta
+  columns 3
+  
+  AgentLogic["Untrusted WASM Logic"]
+  space
+  HostSystem["Physical Host Drive"]
+
+  block:Sandbox:3
+    columns 3
+    Trap["Immediate WASI Trap"]
+    space
+    FileSys["Virtual /logs"]
+  end
+
+  AgentLogic -- "Reads /etc/shadow" --> Trap
+  AgentLogic -- "Reads /logs/error.txt" --> FileSys
+  FileSys -- "Strict FD Mapping" --> HostSystem
+```
+</Frame>
+
 ### 1. Capability Verification
 The Agent declares the capabilities it requires upfront (e.g., `requires_capability: ["logs_read", "sql_readonly"]`). The Data Node checks its local manifest to see if it allows this specific Agent to access those capabilities.
 
 ### 2. Microscopic Preopens
 If approved, the Data Node does **not** grant the WASM module access to the file system. Instead, it "pre-opens" very specific file descriptors and maps them into the WASM module's virtualized space.
-If the agent asks to read `/var/log/nginx/` and the server allows it as `/logs`, the Agent *only* sees `/logs` as the absolute root of its entire universe.
+If the agent asks to read `/var/log/nginx/` and the server allows it as `/logs`, the Agent *only* sees `/logs` as the absolute root of its entire universe. Attempting to traverse directories with `../` stops dead at the Sandbox limit.
 
 ### 3. Execution & Memory Bounds
 `Wasmtime` boots the engine with strict limiters:
-- **Maximum Execution Time:** If the module enters an infinite loop, the runtime kills it.
+- **Maximum Execution Time:** If the module enters an infinite loop, the runtime kills it via Out-Of-Fuel exhaustion.
 - **Maximum Memory Limit:** If the module attempts a buffer overflow or tries to allocate memory beyond its cap (e.g., 50MB), it triggers an uncatchable OOM Trap.
 - **Zero Sockets:** The Agent logic runs completely offline inside the Server. It cannot open a port, connect to the internet, or exfiltrate data directly over a TCP socket. Its only output is what it `returns` to the NMP invocation orchestrator.
 

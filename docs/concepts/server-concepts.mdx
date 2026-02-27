@@ -14,6 +14,25 @@ In legacy protocols (like MCP), servers define static "Tools" (e.g., `calculate_
 In NMP, the Server does not need to pre-program endless tools. Instead, it exposes an **Execution Interface**.
 The Agent sends a completely dynamic **WebAssembly Module (`.wasm`)** containing its own novel logic.
 
+<Frame>
+```mermaid
+sequenceDiagram
+    participant A as Agent Node (Remote AI)
+    participant S as NMP Server (Host)
+    participant W as WASI Sandbox (Isolated)
+    
+    A->>S: 1. Streams logic payload (WASM binary)
+    note right of S: AST Guardian inspects binary
+    S->>W: 2. Bootstraps Engine with memory limits
+    A->>S: 3. Streams arguments & intents
+    S->>W: 4. Maps capabilities (Read-Only Data)
+    note right of W: Execution operates strictly on origin data
+    W-->>S: 5. Returns 1KB computed conclusion
+    S->>W: 6. Sandbox Destroyed (Zero-State)
+    S-->>A: 7. Streams semantic response
+```
+</Frame>
+
 ### How it works:
 *   The Agent complies its reasoning (e.g., "Find all error logs containing IP 192.168.1.1 and group them by timestamp") into a tiny binary cross-platform WASM blob.
 *   The NMP Server receives this blob via gRPC.

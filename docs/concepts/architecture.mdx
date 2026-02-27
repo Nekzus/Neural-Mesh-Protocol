@@ -31,7 +31,29 @@ In the Neural Mesh, every node is a Peer, but they assume distinct roles based o
 
 ## System Layers
 
-To ensure ultra-low latency and maximum security, NMP is strictly divided into two technical layers:
+To ensure ultra-low latency and maximum security, NMP is strictly divided into two technical layers, orchestrated through mathematically verifiable pipelines.
+
+<Frame>
+```mermaid
+flowchart TD
+    subgraph Agent Node (Client)
+        A1[AI/LLM Engine] -->|Generates Intent| A2(WASM Compiler / Javy)
+        A2 -->|Outputs .wasm payload| A3{NmpClient}
+    end
+
+    subgraph The Neural Mesh (Transport)
+        A3 <-->|Noise + PQC Handshake| M1((Kademlia DHT))
+        M1 <-->|Peer Discovery| M2{QUIC Multiplexer}
+    end
+
+    subgraph Data Node (Server)
+        M2 <-->|gRPC Protobuf Stream| S1{NmpServer}
+        S1 -->|AST Guardian Check| S2[Wasmtime Engine]
+        S2 -->|Spins up| S3((WASI Sandbox))
+        S3 -->|Capabilities Map| S4[(Protected Host Data)]
+    end
+```
+</Frame>
 
 ### 1. Transport Layer (libp2p & QUIC)
 The transport layer handles discovering peers and establishing unbreakable connections.
@@ -47,11 +69,11 @@ Once the transport layer connects the Agent and Data nodes, the Data Layer dicta
 
 ## The Logic-on-Origin Journey
 
-Here is the exact lifecycle of an NMP execution:
+Here is the exact lifecycle of an NMP execution, happening in sub-milliseconds:
 
 1. **Discovery**: The Agent Node broadcasts a capability signature to the Kademlia DHT.
 2. **Intent Negotiation**: The Mesh routes the request to an available Data Node. A Post-Quantum connection is forged.
-3. **Payload Streaming**: The Agent transmits a 50KB compiled WebAssembly module over gRPC.
+3. **Payload Streaming**: The Agent transmits a microscopic compiled WebAssembly module over gRPC.
 4. **Zero-Time Guardian**: The Data Node parses the WASM's Abstract Syntax Tree (AST), ensuring it requests no illegal operations.
 5. **Execution**: `wasmtime` boots the Sandbox, safely iterating over Gigabytes of local Host data in milliseconds.
 6. **Result Streaming**: The Data Node tears down the Sandbox and streams purely the final byte-sized finding back to the Agent.

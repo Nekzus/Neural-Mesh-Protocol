@@ -19,9 +19,21 @@ Instead of relying on centralized Certificate Authorities (like TLS/HTTPS), NMP 
 
 ## 2. Payload Inspection (Zero-Time Guardian)
 
-Before the Data Node even allows `wasmtime` to boot the `.wasm` file, it undergoes static analysis.
+Before the Data Node even allows `wasmtime` to boot the `.wasm` file, it undergoes static mathematical analysis.
 
-The **Guardian Module** inspects the WebAssembly Abstract Syntax Tree (AST). Since WebAssembly is strongly typed and verifiable without execution, the NMP Server mathematically validates that the binary contains no malformed instructions, infinite recursive branching, or unexpected system hook imports. This effectively neutralizes entire classes of evasive malware in *zero-time* before execution begins.
+<Frame>
+```mermaid
+flowchart LR
+    WASM[Raw WASM Bytecode] --> Parser{AST Parser}
+    Parser -->|Loops > 100| Reject[Malformed / Rejected]
+    Parser -->|Contains Socket Import| Reject
+    Parser -->|100% Deterministic| Accept[Passed to Wasmtime]
+```
+</Frame>
+
+The **Guardian Module** inspects the WebAssembly Abstract Syntax Tree (AST). Since WebAssembly is strongly typed and mathematically verifiable without execution, the NMP Server validates that the binary contains no malformed instructions, infinite recursive branching, or unexpected system hook imports. 
+
+This effectively neutralizes entire classes of evasive malware in *zero-time* before execution begins.
 
 ## 3. Sandboxing (WASI)
 
