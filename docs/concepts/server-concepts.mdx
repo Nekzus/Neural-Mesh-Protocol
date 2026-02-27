@@ -61,3 +61,22 @@ This creates true real-time autonomous systems with zero polling overhead.
 In Tier-0 Enterprise Environments, the server provides Mathematical and Physical evidence:
 - **Zero-Knowledge Proofs (ZK-SNARKs)**: The logical computation within WASM generates a `Receipt` (using integrations like RISC Zero) that proves the module executed faithfully, without revealing internal Host structure.
 - ** Hardware Enclaves (TEEs)**: Data Nodes can deploy `wasmtime` enveloped in memory-encrypted slices (AWS Nitro Enclaves), assuring absolute RAM concealment (Blind Computing).
+
+## 5. TypeScript Server & MCP Bridge (The SDK Node)
+While the Rust Dataplane dominates heavy WASI Sandboxing and Mathematical Evidence, the Neural Mesh Ecosystem also provides a lightweight, pure-TypeScript Server implementation (`@neural-mesh/sdk`). 
+
+This Server acts primarily as a backward-compatibility layer and local endpoint for Agent logic.
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/bridge-flow-light.svg" alt="TypeScript SDK Server and Bridge Flow" />
+  <img className="hidden dark:block w-full" src="/images/bridge-flow-dark.svg" alt="TypeScript SDK Server and Bridge Flow" />
+</Frame>
+
+### How the Bridge handles Legacy MCP Clients:
+1. **JSON-RPC Interception**: Legacy tools (like older MCP Clients) dispatch standard text-heavy `tools/call` JSON-RPC 2.0 requests over traditional network ports.
+2. **NmpMcpBridge Adapter**: The SDK intercepts these primitive payloads and translates them into an internalized `CallToolRequest`.
+3. **NmpServer Zod Validation**: Before any logic touches the Node.js Main Thread, the `NmpServer` imposes strict Zod schema runtime validations ensuring structural integrity.
+4. **Native Node.js Execution**: The registered Tool Handler executes locally (using standard Node.js/TypeScript code) rather than isolating itself in a sandboxed WebAssembly boundary.
+5. **JSON-RPC Response**: The finding returns seamlessly down the pipeline formatted as a legacy `result` block.
+
+This guarantees that developers can immediately adopt `@neural-mesh/sdk` and serve their existing Tools into the NMP ecosystem with **Zero-Code modifications**, slowly transitioning towards full *WASM Logic-on-Origin* payloads when required.

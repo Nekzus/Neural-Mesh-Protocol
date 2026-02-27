@@ -1,0 +1,245 @@
+<svg width="1000" height="480" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1000" height="480" fill="#09090b" rx="16" />
+    <defs>
+        <pattern id="netBgDBridge" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.5" fill="#06b6d4" opacity="0.3" />
+        </pattern>
+        <marker id="arrow-outD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#06b6d4" />
+        </marker>
+        <marker id="arrow-inD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e" />
+        </marker>
+    </defs>
+    <style>
+        .bfd-text {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #FAFAFA;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .bfd-text-sm {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #A1A1AA;
+            font-size: 11px;
+        }
+
+        .bfd-title {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            fill: #FFFFFF;
+        }
+
+        .bfd-subtitle {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            fill: #A1A1AA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .bfd-zone {
+            fill: #0f0f11;
+            stroke: #27272a;
+            stroke-width: 2;
+            rx: 12;
+        }
+
+        .bfd-zone-ext {
+            fill: url(#netBgDBridge);
+            stroke: #06b6d4;
+            stroke-width: 1;
+            rx: 12;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        .bfd-box {
+            fill: #18181b;
+            stroke-width: 1.5;
+            rx: 8;
+        }
+
+        .bfd-box-cyan {
+            stroke: #06b6d4;
+        }
+
+        .bfd-box-violet {
+            stroke: #8b5cf6;
+        }
+
+        .bfd-box-rose {
+            stroke: #f43f5e;
+        }
+
+        .bfd-box-zinc {
+            stroke: #3f3f46;
+        }
+
+        .bfd-stream-out {
+            stroke: #06b6d4;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashOutBfd 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        .bfd-stream-in {
+            stroke: #f43f5e;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashInBfd 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        @keyframes dashOutBfd {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes dashInBfd {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes t80OutBfd {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(80px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t80InBfd {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-80px);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <!-- Zone: Legacy External -->
+    <rect x="40" y="80" width="160" height="320" class="bfd-zone-ext" />
+    <text x="120" y="125" class="bfd-title" text-anchor="middle" fill="#06b6d4">Legacy</text>
+    <text x="120" y="145" class="bfd-title" text-anchor="middle" fill="#06b6d4">Integration</text>
+
+    <!-- Zone: SDK Container -->
+    <rect x="250" y="80" width="710" height="320" class="bfd-zone" />
+    <rect x="250" y="80" width="710" height="40" fill="#18181b" style="border-radius: 12px 12px 0 0;" />
+    <path d="M 250 120 L 960 120" stroke="#27272a" stroke-width="2" />
+    <text x="270" y="105" class="bfd-title">TypeScript Server (@neural-mesh/sdk)</text>
+    <text x="940" y="105" class="bfd-subtitle" text-anchor="end">Local Environment Handler</text>
+
+    <!-- Components -->
+    <!-- Legacy Client Box -->
+    <rect x="55" y="170" width="130" height="140" class="bfd-box bfd-box-zinc" />
+    <text x="120" y="210" class="bfd-title" text-anchor="middle">MCP Client</text>
+    <text x="120" y="230" class="bfd-subtitle" text-anchor="middle">Standard JSON-RPC</text>
+    <text x="120" y="280" class="bfd-text-sm" text-anchor="middle">tools/call</text>
+
+    <!-- Bridge Box -->
+    <rect x="290" y="170" width="160" height="140" class="bfd-box bfd-box-cyan" />
+    <text x="370" y="200" class="bfd-title" text-anchor="middle" fill="#67e8f9">NmpMcpBridge</text>
+    <text x="370" y="220" class="bfd-text-sm" text-anchor="middle">JSON-RPC Adapter</text>
+    <line x1="300" y1="240" x2="440" y2="240" stroke="#3f3f46" stroke-width="1" stroke-dasharray="2 2" />
+    <text x="370" y="260" class="bfd-text-sm" text-anchor="middle">Legacy Converter</text>
+    <text x="370" y="280" class="bfd-text-sm" text-anchor="middle">to CallToolRequest</text>
+
+    <!-- Server Box -->
+    <rect x="530" y="170" width="160" height="140" class="bfd-box bfd-box-violet" />
+    <text x="610" y="200" class="bfd-title" text-anchor="middle" fill="#c4b5fd">NmpServer</text>
+    <text x="610" y="220" class="bfd-text-sm" text-anchor="middle">Validation Layer</text>
+    <line x1="540" y1="240" x2="680" y2="240" stroke="#3f3f46" stroke-width="1" stroke-dasharray="2 2" />
+    <text x="610" y="260" class="bfd-text-sm" text-anchor="middle">Strict Runtime Checks</text>
+    <text x="610" y="280" class="bfd-text-sm" text-anchor="middle">(Zod Payloads)</text>
+
+    <!-- Handler Box -->
+    <rect x="770" y="170" width="160" height="140" class="bfd-box bfd-box-rose" />
+    <text x="850" y="200" class="bfd-title" text-anchor="middle" fill="#fda4af">Native Logic</text>
+    <text x="850" y="220" class="bfd-text-sm" text-anchor="middle">ToolHandler Callback</text>
+    <line x1="780" y1="240" x2="920" y2="240" stroke="#3f3f46" stroke-width="1" stroke-dasharray="2 2" />
+    <text x="850" y="260" class="bfd-text-sm" text-anchor="middle">Node.js Execution</text>
+    <text x="850" y="280" class="bfd-text-sm" text-anchor="middle">Local Environment</text>
+
+    <!-- Lines Output (Cyan) -->
+    <path d="M 185 200 L 290 200" class="bfd-stream-out" marker-end="url(#arrow-outD)" />
+    <path d="M 450 200 L 530 200" class="bfd-stream-out" marker-end="url(#arrow-outD)" />
+    <path d="M 690 200 L 770 200" class="bfd-stream-out" marker-end="url(#arrow-outD)" />
+
+    <!-- Lines Input (Rose) -->
+    <path d="M 770 280 L 690 280" class="bfd-stream-in" marker-end="url(#arrow-inD)" />
+    <path d="M 530 280 L 450 280" class="bfd-stream-in" marker-end="url(#arrow-inD)" />
+    <path d="M 290 280 L 185 280" class="bfd-stream-in" marker-end="url(#arrow-inD)" />
+
+    <!-- Ports Out -->
+    <circle cx="185" cy="200" r="4" fill="#06b6d4" />
+    <circle cx="290" cy="200" r="4" fill="#0f0f11" stroke="#06b6d4" stroke-width="2" />
+    <circle cx="450" cy="200" r="4" fill="#06b6d4" />
+    <circle cx="530" cy="200" r="4" fill="#0f0f11" stroke="#06b6d4" stroke-width="2" />
+    <circle cx="690" cy="200" r="4" fill="#06b6d4" />
+    <circle cx="770" cy="200" r="4" fill="#0f0f11" stroke="#06b6d4" stroke-width="2" />
+
+    <!-- Ports In -->
+    <circle cx="770" cy="280" r="4" fill="#f43f5e" />
+    <circle cx="690" cy="280" r="4" fill="#0f0f11" stroke="#f43f5e" stroke-width="2" />
+    <circle cx="530" cy="280" r="4" fill="#f43f5e" />
+    <circle cx="450" cy="280" r="4" fill="#0f0f11" stroke="#f43f5e" stroke-width="2" />
+    <circle cx="290" cy="280" r="4" fill="#f43f5e" />
+    <circle cx="185" cy="280" r="4" fill="#0f0f11" stroke="#f43f5e" stroke-width="2" />
+
+    <!-- Animations Out -->
+    <g transform="translate(185, 200)">
+        <circle cx="0" cy="0" r="3" fill="#22d3ee" style="animation: t80OutBfd 1.2s infinite;" />
+    </g>
+    <g transform="translate(450, 200)">
+        <circle cx="0" cy="0" r="3" fill="#22d3ee" style="animation: t80OutBfd 1s infinite;" />
+    </g>
+    <g transform="translate(690, 200)">
+        <circle cx="0" cy="0" r="3" fill="#22d3ee" style="animation: t80OutBfd 1s infinite;" />
+    </g>
+
+    <!-- Animations In -->
+    <g transform="translate(770, 280)">
+        <circle cx="0" cy="0" r="3" fill="#fb7185" style="animation: t80InBfd 1s infinite;" />
+    </g>
+    <g transform="translate(530, 280)">
+        <circle cx="0" cy="0" r="3" fill="#fb7185" style="animation: t80InBfd 1.2s infinite;" />
+    </g>
+    <g transform="translate(290, 280)">
+        <circle cx="0" cy="0" r="3" fill="#fb7185" style="animation: t80InBfd 1s infinite;" />
+    </g>
+</svg>
