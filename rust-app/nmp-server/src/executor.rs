@@ -22,6 +22,9 @@ pub fn create_wasi_engine() -> Result<Engine, Box<dyn Error>> {
     // Optimization for Logic-on-Origin speed
     config.cranelift_opt_level(wasmtime::OptLevel::SpeedAndSize);
 
+    // GUARDIAN: Habilitar límite determinista computacional
+    config.consume_fuel(true);
+
     let engine = Engine::new(&config)?;
     Ok(engine)
 }
@@ -53,6 +56,9 @@ pub fn execute_sandboxed_logic(
         .build();
 
     let mut store = Store::new(engine, AgentExecutionState { wasi, tx });
+
+    // GUARDIAN: Asignar límite de Combustible Computacional
+    store.add_fuel(500_000_000)?;
 
     // PUSH EVENT HOST FUNCTION
     linker.func_wrap(
@@ -91,7 +97,25 @@ pub fn execute_sandboxed_logic(
 
     println!("[-] Triggering Logic-on-Origin execution...");
     let start_func = instance.get_typed_func::<(), ()>(&mut store, "_start")?;
-    start_func.call(&mut store, ())?;
 
-    Ok(())
+    match start_func.call(&mut store, ()) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            let err_str = e.to_string();
+            if err_str.contains("all fuel consumed") {
+                println!("[!] GUARDIAN ACTIVE: WASM Execution halted due to CPU Fuel Exhaustion.");
+                let res = LogicResponse {
+                    semantic_evidence:
+                        "[AST Sandbox Halt]: Execution Exceeded Computational Fuel Threshold"
+                            .to_string(),
+                    cryptographic_proof: vec![],
+                    zk_receipt: vec![],
+                };
+                let _ = store.data().tx.blocking_send(Ok(res));
+                Ok(())
+            } else {
+                Err(e.into())
+            }
+        }
+    }
 }

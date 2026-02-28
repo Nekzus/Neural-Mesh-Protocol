@@ -9,6 +9,8 @@
 
 use std::error::Error;
 
+use sha2::{Digest, Sha256};
+
 pub trait EnclaveProvider {
     /// Bootstraps the Wasmtime engine inside the secure enclave memory space.
     fn attest_and_boot(&self) -> Result<(), Box<dyn Error>>;
@@ -25,8 +27,11 @@ impl EnclaveProvider for AwsNitroEnclaveStub {
         Ok(())
     }
 
-    fn generate_attestation_report(&self, _nonce: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
-        println!("[TEE] 🛡️ Generando Attestation Report firmado por Nitro Hypervisor (Stub)...");
-        Ok(vec![0xAA, 0xBB, 0xCC, 0xDD])
+    fn generate_attestation_report(&self, nonce: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+        println!("[TEE] 🛡️ Generando Attestation Report firmado por Nitro Hypervisor (Hyper-realistic Mock)...");
+        let mut hasher = Sha256::new();
+        hasher.update(b"AWS_NITRO_ENCLAVE_V1_COSE_SIGN1");
+        hasher.update(nonce);
+        Ok(hasher.finalize().to_vec())
     }
 }
