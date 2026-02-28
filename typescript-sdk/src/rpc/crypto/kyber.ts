@@ -1,3 +1,4 @@
+/// <reference path="../../types/crystals-kyber.d.ts" />
 import * as kyber from "crystals-kyber";
 import { randomBytes } from "node:crypto";
 

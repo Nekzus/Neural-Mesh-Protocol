@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { describe, expect, it } from "vitest";
 import { NmpClient } from "./index.js";
 import { Buffer } from "node:buffer";
