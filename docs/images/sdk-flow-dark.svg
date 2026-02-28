@@ -4,41 +4,232 @@
         <pattern id="netBgDSdk" width="20" height="20" patternUnits="userSpaceOnUse">
             <circle cx="2" cy="2" r="1.5" fill="#10b981" opacity="0.3" />
         </pattern>
-        <marker id="arrow-outD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker id="arrow-outD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
         </marker>
-        <marker id="arrow-inD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker id="arrow-inD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc" />
         </marker>
     </defs>
     <style>
-        .sfd-text { font-family: 'Inter', system-ui, sans-serif; fill: #FAFAFA; font-size: 13px; font-weight: 500; }
-        .sfd-text-sm { font-family: 'Inter', system-ui, sans-serif; fill: #A1A1AA; font-size: 11px; }
-        .sfd-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 16px; fill: #FFFFFF; }
-        .sfd-subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #A1A1AA; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        
-        .sfd-zone { fill: #0f0f11; stroke: #27272a; stroke-width: 2; rx: 12; }
-        .sfd-zone-net { fill: url(#netBgDSdk); stroke: #10b981; stroke-width: 1; rx: 12; stroke-dasharray: 4 4; opacity: 0.8; }
-        
-        .sfd-box { fill: #18181b; stroke-width: 1.5; rx: 8; }
-        .sfd-box-amber { stroke: #f59e0b; }
-        .sfd-box-purple { stroke: #c084fc; }
-        .sfd-box-emerald { stroke: #34d399; }
-        .sfd-box-zinc { stroke: #3f3f46; }
+        .sfd-text {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #FAFAFA;
+            font-size: 13px;
+            font-weight: 500;
+        }
 
-        .sfd-stream-out { stroke: #10b981; stroke-width: 2; fill: none; stroke-dasharray: 4 6; animation: dashOutSdkD 1s linear infinite; stroke-linecap: round; }
-        .sfd-stream-in { stroke: #c084fc; stroke-width: 2; fill: none; stroke-dasharray: 4 6; animation: dashInSdkD 1s linear infinite; stroke-linecap: round; }
+        .sfd-text-sm {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #A1A1AA;
+            font-size: 11px;
+        }
 
-        @keyframes dashOutSdkD { to { stroke-dashoffset: -20; } }
-        @keyframes dashInSdkD { to { stroke-dashoffset: -20; } }
+        .sfd-title {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            fill: #FFFFFF;
+        }
 
-        @keyframes t80OutSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(80px); opacity: 0; } }
-        @keyframes t35OutSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(35px); opacity: 0; } }
-        @keyframes t120OutSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(120px); opacity: 0; } }
+        .sfd-subtitle {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            fill: #A1A1AA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
 
-        @keyframes t120InSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(-120px); opacity: 0; } }
-        @keyframes t35InSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(-35px); opacity: 0; } }
-        @keyframes t245InSdkD { 0% { transform: translateX(0px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(-245px); opacity: 0; } }
+        .sfd-zone {
+            fill: #0f0f11;
+            stroke: #27272a;
+            stroke-width: 2;
+            rx: 12;
+        }
+
+        .sfd-zone-net {
+            fill: url(#netBgDSdk);
+            stroke: #10b981;
+            stroke-width: 1;
+            rx: 12;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        .sfd-box {
+            fill: #18181b;
+            stroke-width: 1.5;
+            rx: 8;
+        }
+
+        .sfd-box-amber {
+            stroke: #f59e0b;
+        }
+
+        .sfd-box-purple {
+            stroke: #c084fc;
+        }
+
+        .sfd-box-emerald {
+            stroke: #34d399;
+        }
+
+        .sfd-box-zinc {
+            stroke: #3f3f46;
+        }
+
+        .sfd-stream-out {
+            stroke: #10b981;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashOutSdkD 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        .sfd-stream-in {
+            stroke: #c084fc;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 6;
+            animation: dashInSdkD 1s linear infinite;
+            stroke-linecap: round;
+        }
+
+        @keyframes dashOutSdkD {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes dashInSdkD {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        @keyframes t80OutSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(80px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t35OutSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(35px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t120OutSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(120px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t120InSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-120px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t35InSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-35px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes t245InSdkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-245px);
+                opacity: 0;
+            }
+        }
     </style>
 
     <!-- Zone: Zero Trust Mesh -->
@@ -70,8 +261,8 @@
 
     <!-- Crypto Core Box -->
     <rect x="415" y="170" width="130" height="140" class="sfd-box sfd-box-purple" />
-    <text x="480" y="195" class="sfd-title" text-anchor="middle" fill="#e879f9">Crypto Module</text>
-    <text x="480" y="215" class="sfd-text-sm" text-anchor="middle">Kyber768 (PQC)</text>
+    <text x="480" y="195" class="sfd-title" text-anchor="middle" fill="#e879f9">Worker Pool</text>
+    <text x="480" y="215" class="sfd-text-sm" text-anchor="middle">Piscina &amp; PQC</text>
     <text x="480" y="235" class="sfd-text-sm" text-anchor="middle">AES-256-GCM</text>
     <line x1="425" y1="250" x2="535" y2="250" stroke="#3f3f46" stroke-width="1" stroke-dasharray="2 2" />
     <text x="480" y="270" class="sfd-text-sm" text-anchor="middle">Verify &amp; Decrypt</text>

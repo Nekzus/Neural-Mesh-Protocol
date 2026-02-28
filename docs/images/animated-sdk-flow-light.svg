@@ -1,0 +1,202 @@
+<svg viewBox="0 0 800 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="glow-agent-l" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="glow-worker-l" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="glow-mesh-l" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+
+    <style>
+        .text-title-l {
+            font-family: system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            fill: #1e293b;
+        }
+
+        .text-sub-l {
+            font-family: system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            fill: #475569;
+        }
+
+        .text-tiny-l {
+            font-family: monospace;
+            font-size: 11px;
+            fill: #d97706;
+        }
+
+        .conn-line-l {
+            stroke: #cbd5e1;
+            stroke-width: 2;
+            stroke-dasharray: 6, 6;
+            animation: dashAnimL 20s linear infinite;
+        }
+
+        @keyframes dashAnimL {
+            to {
+                stroke-dashoffset: -400;
+            }
+        }
+
+        @keyframes moveTxL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(200px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes moveRxL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-200px);
+                opacity: 0;
+            }
+        }
+
+        .p-tx1-l {
+            animation: moveTxL 1.5s linear infinite;
+        }
+
+        .p-tx2-l {
+            animation: moveTxL 1.5s linear infinite -0.75s;
+        }
+
+        .p-rx1-l {
+            animation: moveRxL 1.5s linear infinite;
+        }
+
+        .p-rx2-l {
+            animation: moveRxL 1.5s linear infinite -0.75s;
+        }
+
+        @keyframes spinGearL {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spin-l {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: spinGearL 3s linear infinite;
+        }
+    </style>
+
+    <!-- Title -->
+    <text x="400" y="40" class="text-title-l" text-anchor="middle" font-size="20" fill="#0284c7">TypeScript SDK Runtime
+        Flow (Node.js Tier-0)</text>
+
+    <!-- Lines -->
+    <line x1="160" y1="200" x2="330" y2="200" class="conn-line-l" />
+    <line x1="490" y1="200" x2="630" y2="200" class="conn-line-l" />
+
+    <!-- 1. Agent App -->
+    <rect x="20" y="140" width="140" height="120" rx="12" fill="#ffffff" stroke="#0ea5e9" stroke-width="2"
+        filter="url(#glow-agent-l)" />
+    <text x="90" y="180" class="text-title-l" text-anchor="middle">Agent App</text>
+    <text x="90" y="200" class="text-sub-l" text-anchor="middle">LLM Logic</text>
+    <text x="90" y="220" class="text-sub-l" text-anchor="middle">Emitter</text>
+
+    <!-- 2. Node.js SDK Container -->
+    <rect x="230" y="80" width="550" height="280" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"
+        stroke-dasharray="10 5" />
+    <text x="505" y="110" class="text-sub-l" text-anchor="middle" fill="#64748b">@neural-mesh/sdk (Node V8
+        Environment)</text>
+
+    <!-- 2A. GuardianTS -->
+    <rect x="250" y="140" width="120" height="120" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="2" />
+    <text x="310" y="180" class="text-title-l" text-anchor="middle" fill="#d97706">GuardianTS</text>
+    <text x="310" y="200" class="text-sub-l" text-anchor="middle">AST Heuristics</text>
+    <text x="310" y="220" class="text-tiny-l" text-anchor="middle">(Cero-time Scan)</text>
+
+    <!-- 2B. Worker Pool (Piscina) -->
+    <rect x="420" y="140" width="140" height="120" rx="8" fill="#ffffff" stroke="#9333ea" stroke-width="2"
+        filter="url(#glow-worker-l)" />
+    <text x="490" y="170" class="text-title-l" text-anchor="middle" fill="#7e22ce">Worker Pool</text>
+    <text x="490" y="190" class="text-sub-l" text-anchor="middle">Parallel Kyber768</text>
+    <text x="490" y="210" class="text-sub-l" text-anchor="middle">&amp; AES-256-GCM</text>
+    <g transform="translate(490, 235)">
+        <g class="spin-l">
+            <circle cx="0" cy="0" r="12" fill="none" stroke="#d946ef" stroke-width="2" stroke-dasharray="6 3" />
+            <circle cx="0" cy="0" r="6" fill="#c084fc" />
+        </g>
+    </g>
+
+    <!-- 2C. MeshNode -->
+    <rect x="610" y="140" width="140" height="120" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="2"
+        filter="url(#glow-mesh-l)" />
+    <text x="680" y="180" class="text-title-l" text-anchor="middle" fill="#059669">MeshNode</text>
+    <text x="680" y="200" class="text-sub-l" text-anchor="middle">Libp2p Yamux</text>
+    <text x="680" y="220" class="text-tiny-l" text-anchor="middle" fill="#047857">Multiplex Egress</text>
+
+    <!-- Particles -->
+    <circle cx="150" cy="190" r="4" fill="#0284c7" class="p-tx1-l" />
+    <circle cx="150" cy="190" r="4" fill="#0284c7" class="p-tx2-l" />
+
+    <circle cx="380" cy="200" r="4" fill="#d97706" class="p-tx1-l" />
+    <circle cx="380" cy="200" r="4" fill="#d97706" class="p-tx2-l" />
+
+    <circle cx="580" cy="210" r="4" fill="#9333ea" class="p-tx1-l" />
+    <circle cx="580" cy="210" r="4" fill="#9333ea" class="p-tx2-l" />
+
+    <circle cx="750" cy="190" r="4" fill="#059669" class="p-tx1-l" />
+    <circle cx="750" cy="190" r="4" fill="#059669" class="p-tx2-l" />
+
+    <!-- Return Flow -->
+    <path d="M 680 260 L 680 320 L 90 320 L 90 260" fill="none" stroke="#9333ea" stroke-width="2"
+        stroke-dasharray="6 6" />
+    <text x="385" y="340" class="text-sub-l" text-anchor="middle" fill="#7e22ce">ZK-Receipt / AES Payload Return</text>
+
+    <g transform="translate(680, 260)">
+        <circle cx="0" cy="0" r="5" fill="#9333ea" class="p-rx1-l" />
+        <circle cx="0" cy="0" r="5" fill="#9333ea" class="p-rx2-l" />
+    </g>
+    <g transform="translate(480, 260)">
+        <circle cx="0" cy="0" r="5" fill="#9333ea" class="p-rx1-l" />
+        <circle cx="0" cy="0" r="5" fill="#9333ea" class="p-rx2-l" />
+    </g>
+</svg>

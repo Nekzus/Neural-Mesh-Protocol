@@ -307,8 +307,8 @@
     <path d="M 165 155 L 165 185" class="mfl-line" marker-end="url(#arrL)" />
 
     <rect x="60" y="185" width="210" height="45" class="mfl-box" />
-    <text x="165" y="205" text-anchor="middle" class="mfl-text mfl-subtitle">Payload Builder</text>
-    <text x="165" y="220" text-anchor="middle" class="mfl-text">Logic to .WASM Compile</text>
+    <text x="165" y="205" text-anchor="middle" class="mfl-text mfl-subtitle">Worker Pool (Piscina)</text>
+    <text x="165" y="220" text-anchor="middle" class="mfl-text">WASM Compile &amp; PQC Encrypt</text>
 
     <path d="M 165 230 L 165 260" class="mfl-line" marker-end="url(#arrL)" />
 

@@ -53,3 +53,12 @@ Instead of dispatching sequential JSON commands to retrieve raw text, the Agent 
 5. **ZK-Verification**: Upon result retrieval via the libp2p ingress, the Agent locally validates the ZK-Receipt, generating absolute trust in the foreign computational output.
 
 By offloading the computation *away* from its own core loop, the Agent Client remains highly lightweight, free to orchestrate hundreds of other concurrent data connections across the Neural Mesh simultaneously while remote servers perform the heavy mathematical and memory-intensive lifting.
+
+### Execution Runtime Model (Node.js Tier-0)
+
+Once the data is flowing, the Node.js Host orchestrates the process leveraging extreme concurrency. Unlike Legacy architectures, NMP doesn't block the main thread for PQC/AES operations, opting to spawn a `piscina` Worker Pool instead, ensuring native throughput parity.
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/animated-sdk-flow-light.svg" alt="Animated SDK Runtime Flow" />
+  <img className="hidden dark:block w-full" src="/images/animated-sdk-flow-dark.svg" alt="Animated SDK Runtime Flow" />
+</Frame>

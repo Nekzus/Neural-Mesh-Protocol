@@ -262,8 +262,8 @@
 
     <!-- Crypto Core Box -->
     <rect x="415" y="170" width="130" height="140" class="sfl-box sfl-box-purple" />
-    <text x="480" y="195" class="sfl-title" text-anchor="middle" fill="#9333ea">Crypto Module</text>
-    <text x="480" y="215" class="sfl-text-sm" text-anchor="middle">Kyber768 (PQC)</text>
+    <text x="480" y="195" class="sfl-title" text-anchor="middle" fill="#9333ea">Worker Pool</text>
+    <text x="480" y="215" class="sfl-text-sm" text-anchor="middle">Piscina &amp; PQC</text>
     <text x="480" y="235" class="sfl-text-sm" text-anchor="middle">AES-256-GCM</text>
     <line x1="425" y1="250" x2="535" y2="250" stroke="#e4e4e7" stroke-width="1" stroke-dasharray="2 2" />
     <text x="480" y="270" class="sfl-text-sm" text-anchor="middle">Verify &amp; Decrypt</text>

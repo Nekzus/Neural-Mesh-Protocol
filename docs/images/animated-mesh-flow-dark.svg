@@ -172,8 +172,8 @@
 
   <rect x="40" y="200" width="160" height="120" rx="6" fill="#1e293b" />
   <text x="120" y="225" class="text-sub" text-anchor="middle">1. Build WebAssembly</text>
-  <text x="120" y="255" class="text-sub" text-anchor="middle">2. Guardian AST Check</text>
-  <text x="120" y="285" class="text-sub" text-anchor="middle">3. Stream Data</text>
+  <text x="120" y="255" class="text-sub" text-anchor="middle">2. PQC Encrypt</text>
+  <text x="120" y="285" class="text-sub" text-anchor="middle">3. Stream Logic</text>
 
   <!-- Data Node -->
   <rect x="580" y="100" width="200" height="240" rx="12" fill="#0f172a" stroke="#8b5cf6" stroke-width="2"
@@ -183,8 +183,9 @@
 
   <rect x="600" y="180" width="160" height="140" rx="8" fill="#450a0a" stroke="#f43f5e" stroke-width="2" />
   <text x="680" y="205" class="text-tiny" text-anchor="middle">TEE ENCLAVE / WASI</text>
-  <text x="680" y="240" class="text-sub" text-anchor="middle" fill="#fecdd3">Blind Computing</text>
-  <text x="680" y="260" class="text-sub" text-anchor="middle" fill="#fecdd3">Generating ZK Proof</text>
+  <text x="680" y="235" class="text-sub" text-anchor="middle" fill="#fecdd3">1. Guardian AST</text>
+  <text x="680" y="255" class="text-sub" text-anchor="middle" fill="#fecdd3">2. Blind Computing</text>
+  <text x="680" y="275" class="text-sub" text-anchor="middle" fill="#fecdd3">3. Gen ZK Proof</text>
 
   <!-- Animated Circulating Particles -->
   <!-- Request Packets (Blue) -->
