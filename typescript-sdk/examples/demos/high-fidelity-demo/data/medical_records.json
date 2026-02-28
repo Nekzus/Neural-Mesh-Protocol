@@ -1,0 +1,86 @@
+[
+    {
+        "id": "P001",
+        "age": 65,
+        "condition": "Hypertension",
+        "riskScore": 0.85,
+        "lastVisit": "2025-01-15T10:00:00Z"
+    },
+    {
+        "id": "P002",
+        "age": 42,
+        "condition": "Asthma",
+        "riskScore": 0.30,
+        "lastVisit": "2025-02-10T14:30:00Z"
+    },
+    {
+        "id": "P003",
+        "age": 71,
+        "condition": "Diabetes Type 2",
+        "riskScore": 0.92,
+        "lastVisit": "2025-02-20T09:15:00Z"
+    },
+    {
+        "id": "P004",
+        "age": 28,
+        "condition": "Healthy",
+        "riskScore": 0.05,
+        "lastVisit": "2025-02-25T11:45:00Z"
+    },
+    {
+        "id": "P005",
+        "age": 55,
+        "condition": "Hypertension",
+        "riskScore": 0.60,
+        "lastVisit": "2025-01-28T16:20:00Z"
+    },
+    {
+        "id": "P006",
+        "age": 62,
+        "condition": "Heart Disease",
+        "riskScore": 0.88,
+        "lastVisit": "2025-02-15T08:30:00Z"
+    },
+    {
+        "id": "P007",
+        "age": 35,
+        "condition": "Diabetes Type 1",
+        "riskScore": 0.70,
+        "lastVisit": "2025-02-05T13:00:00Z"
+    },
+    {
+        "id": "P008",
+        "age": 80,
+        "condition": "Hypertension",
+        "riskScore": 0.95,
+        "lastVisit": "2025-02-26T10:30:00Z"
+    },
+    {
+        "id": "P009",
+        "age": 45,
+        "condition": "Healthy",
+        "riskScore": 0.10,
+        "lastVisit": "2025-02-22T15:15:00Z"
+    },
+    {
+        "id": "P010",
+        "age": 58,
+        "condition": "Asthma",
+        "riskScore": 0.45,
+        "lastVisit": "2025-01-10T09:45:00Z"
+    },
+    {
+        "id": "P011",
+        "age": 68,
+        "condition": "Diabetes Type 2",
+        "riskScore": 0.82,
+        "lastVisit": "2025-02-18T14:00:00Z"
+    },
+    {
+        "id": "P012",
+        "age": 33,
+        "condition": "Healthy",
+        "riskScore": 0.08,
+        "lastVisit": "2025-02-27T11:00:00Z"
+    }
+]

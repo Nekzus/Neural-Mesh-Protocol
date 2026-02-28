@@ -105,6 +105,12 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
+  examples/demos/high-fidelity-demo:
+    dependencies:
+      '@neural-mesh/sdk':
+        specifier: workspace:*
+        version: link:../../..
+
   examples/server:
     dependencies:
       '@neural-mesh/sdk':

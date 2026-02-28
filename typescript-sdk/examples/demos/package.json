@@ -8,7 +8,9 @@
         "edu:server": "tsx educational-sandbox-demo/src/server-node.ts",
         "edu:agent": "tsx educational-sandbox-demo/src/agent-injector.ts",
         "prod:server": "tsx production-audit-demo/src/server.ts",
-        "prod:client": "tsx production-audit-demo/src/client.ts"
+        "prod:client": "tsx production-audit-demo/src/client.ts",
+        "hifi:server": "tsx high-fidelity-demo/src/server-node.ts",
+        "hifi:agent": "tsx high-fidelity-demo/src/agent.ts"
     },
     "dependencies": {
         "@neural-mesh/sdk": "workspace:*",
