@@ -23,9 +23,9 @@ NMP introduces a decentralized, Zero-Trust architectural model where AI agents i
 
 The project is divided into two distinct, highly isolated modules:
 
-### 1. The Rust Application (`rust-app/`)
+### 1. The NMP Node (`mesh-node/`)
 The underlying high-performance mesh network, node infrastructure, DHT Kademlia discovery, and the Wasmtime (WASI) sandboxing environment. This is where the core nodes (Client/Agent and Server/Data Source) operate on the metal.
-👉 [Read the Rust App Documentation](./rust-app/README.md)
+👉 [Read the Mesh Node Documentation](./mesh-node/README.md)
 
 ### 2. The TypeScript SDK (`typescript-sdk/`)
 The developer tooling, designed to act as a direct, Zero-Friction drop-in replacement for the current Model Context Protocol (MCP) APIs. It provides interfaces like `NmpServer` and `NmpClient`, Zod validation schemas, and transparent Javy/WASM compilation to connect Node.js environments to the Neural Mesh.

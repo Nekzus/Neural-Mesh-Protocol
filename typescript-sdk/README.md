@@ -76,4 +76,4 @@ pnpm lint
 pnpm format
 ```
 
-All source paths and dependencies are isolated. Modifying this SDK will not affect the core Rust backend at `../rust-app`.
+All source paths and dependencies are isolated. Modifying this SDK will not affect the core Rust backend at `../mesh-node`.

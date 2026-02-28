@@ -5,7 +5,7 @@ import { randomBytes } from "node:crypto";
 /**
  * NMP Post-Quantum Cryptography Wrapper
  * Implements ML-KEM-768 for Zero-Trust secure key encapsulation
- * directly compatible with `pqcrypto-kyber` on the Rust-App Backend.
+ * directly compatible with `pqcrypto-kyber` on the Mesh-Node Backend.
  */
 
 export class Kyber768Wrapper {

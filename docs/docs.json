@@ -51,8 +51,8 @@
           {
             "group": "Rust Backend",
             "pages": [
-              "rust-app/overview",
-              "rust-app/compilation"
+              "mesh-node/overview",
+              "mesh-node/compilation"
             ]
           }
         ]
