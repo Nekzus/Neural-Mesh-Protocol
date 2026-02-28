@@ -51,13 +51,20 @@
             animation: dashAnimD 20s linear infinite;
         }
 
+        .conn-line-rx-d {
+            stroke: #a855f7;
+            stroke-width: 2;
+            stroke-dasharray: 6, 6;
+            animation: dashAnimD 20s linear infinite;
+        }
+
         @keyframes dashAnimD {
             to {
                 stroke-dashoffset: -400;
             }
         }
 
-        @keyframes moveTxD {
+        @keyframes move90-d {
             0% {
                 transform: translateX(0px);
                 opacity: 0;
@@ -72,12 +79,12 @@
             }
 
             100% {
-                transform: translateX(200px);
+                transform: translateX(90px);
                 opacity: 0;
             }
         }
 
-        @keyframes moveRxD {
+        @keyframes move50-d {
             0% {
                 transform: translateX(0px);
                 opacity: 0;
@@ -92,25 +99,125 @@
             }
 
             100% {
-                transform: translateX(-200px);
+                transform: translateX(50px);
                 opacity: 0;
             }
         }
 
-        .p-tx1-d {
-            animation: moveTxD 1.5s linear infinite;
+        @keyframes moveReturn-d {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            2% {
+                opacity: 1;
+            }
+
+            98% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-590px);
+                opacity: 0;
+            }
         }
 
-        .p-tx2-d {
-            animation: moveTxD 1.5s linear infinite -0.75s;
+        @keyframes rxPath1-d {
+            0% {
+                transform: translate(680px, 260px);
+                opacity: 0;
+            }
+
+            2% {
+                opacity: 1;
+            }
+
+            14.8% {
+                transform: translate(680px, 300px);
+            }
+
+            85.2% {
+                transform: translate(490px, 300px);
+            }
+
+            98% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(490px, 260px);
+                opacity: 0;
+            }
         }
 
-        .p-rx1-d {
-            animation: moveRxD 1.5s linear infinite;
+        @keyframes rxPath2-d {
+            0% {
+                transform: translate(450px, 260px);
+                opacity: 0;
+            }
+
+            2% {
+                opacity: 1;
+            }
+
+            15.4% {
+                transform: translate(450px, 340px);
+            }
+
+            84.6% {
+                transform: translate(90px, 340px);
+            }
+
+            98% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(90px, 260px);
+                opacity: 0;
+            }
         }
 
-        .p-rx2-d {
-            animation: moveRxD 1.5s linear infinite -0.75s;
+        .anim-90-1-d {
+            animation: move90-d 1.5s linear infinite;
+        }
+
+        .anim-90-2-d {
+            animation: move90-d 1.5s linear infinite 0.75s;
+        }
+
+        .anim-50-1-d {
+            animation: move50-d 1s linear infinite;
+        }
+
+        .anim-50-2-d {
+            animation: move50-d 1s linear infinite 0.5s;
+        }
+
+        .anim-ret-1-d {
+            animation: moveReturn-d 3s linear infinite;
+        }
+
+        .anim-ret-2-d {
+            animation: moveReturn-d 3s linear infinite 1.5s;
+        }
+
+        .anim-r1-1-d {
+            animation: rxPath1-d 2s linear infinite;
+        }
+
+        .anim-r1-2-d {
+            animation: rxPath1-d 2s linear infinite 1s;
+        }
+
+        .anim-r2-1-d {
+            animation: rxPath2-d 3.5s linear infinite;
+        }
+
+        .anim-r2-2-d {
+            animation: rxPath2-d 3.5s linear infinite 1.75s;
         }
 
         @keyframes spinGearD {
@@ -131,8 +238,10 @@
         Flow (Node.js Tier-0)</text>
 
     <!-- Lines -->
-    <line x1="160" y1="200" x2="330" y2="200" class="conn-line-d" />
-    <line x1="490" y1="200" x2="630" y2="200" class="conn-line-d" />
+    <line x1="160" y1="200" x2="250" y2="200" class="conn-line-d" />
+    <line x1="370" y1="200" x2="420" y2="200" class="conn-line-d" />
+    <line x1="560" y1="200" x2="610" y2="200" class="conn-line-d" />
+    <line x1="750" y1="200" x2="800" y2="200" class="conn-line-d" />
 
     <!-- 1. Agent App -->
     <rect x="20" y="140" width="140" height="120" rx="12" fill="#0f172a" stroke="#0ea5e9" stroke-width="2"
@@ -174,29 +283,43 @@
     <text x="680" y="220" class="text-tiny-d" text-anchor="middle" fill="#6ee7b7">Multiplex Egress</text>
 
     <!-- Particles -->
-    <circle cx="150" cy="190" r="4" fill="#38bdf8" class="p-tx1-d" />
-    <circle cx="150" cy="190" r="4" fill="#38bdf8" class="p-tx2-d" />
-
-    <circle cx="380" cy="200" r="4" fill="#fbbf24" class="p-tx1-d" />
-    <circle cx="380" cy="200" r="4" fill="#fbbf24" class="p-tx2-d" />
-
-    <circle cx="580" cy="210" r="4" fill="#c084fc" class="p-tx1-d" />
-    <circle cx="580" cy="210" r="4" fill="#c084fc" class="p-tx2-d" />
-
-    <circle cx="750" cy="190" r="4" fill="#10b981" class="p-tx1-d" />
-    <circle cx="750" cy="190" r="4" fill="#10b981" class="p-tx2-d" />
-
-    <!-- Return Flow -->
-    <path d="M 680 260 L 680 320 L 90 320 L 90 260" fill="none" stroke="#a855f7" stroke-width="2"
-        stroke-dasharray="6 6" />
-    <text x="385" y="340" class="text-sub-d" text-anchor="middle" fill="#c084fc">ZK-Receipt / AES Payload Return</text>
-
-    <g transform="translate(680, 260)">
-        <circle cx="0" cy="0" r="5" fill="#a855f7" class="p-rx1-d" />
-        <circle cx="0" cy="0" r="5" fill="#a855f7" class="p-rx2-d" />
+    <!-- Gap 1: Agent to Guardian -->
+    <g transform="translate(160, 200)">
+        <circle cx="0" cy="0" r="4" fill="#38bdf8" class="anim-90-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#38bdf8" class="anim-90-2-d" />
     </g>
-    <g transform="translate(480, 260)">
-        <circle cx="0" cy="0" r="5" fill="#a855f7" class="p-rx1-d" />
-        <circle cx="0" cy="0" r="5" fill="#a855f7" class="p-rx2-d" />
+
+    <!-- Gap 2: Guardian to Worker -->
+    <g transform="translate(370, 200)">
+        <circle cx="0" cy="0" r="4" fill="#fbbf24" class="anim-50-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#fbbf24" class="anim-50-2-d" />
     </g>
+
+    <!-- Gap 3: Worker to MeshNode -->
+    <g transform="translate(560, 200)">
+        <circle cx="0" cy="0" r="4" fill="#c084fc" class="anim-50-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#c084fc" class="anim-50-2-d" />
+    </g>
+
+    <!-- Gap 4: MeshNode Ext -->
+    <g transform="translate(750, 200)">
+        <circle cx="0" cy="0" r="4" fill="#10b981" class="anim-50-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#10b981" class="anim-50-2-d" />
+    </g>
+
+    <!-- Return Flow 1: MeshNode -> Worker Pool -->
+    <path d="M 680 260 L 680 300 L 490 300 L 490 260" fill="none" class="conn-line-rx-d" />
+    <text x="585" y="290" class="text-sub-d" text-anchor="middle" fill="#c084fc">ZK-Receipt / AES Payload</text>
+
+    <!-- Return Particles 1 -->
+    <circle cx="0" cy="0" r="5" fill="#a855f7" class="anim-r1-1-d" />
+    <circle cx="0" cy="0" r="5" fill="#a855f7" class="anim-r1-2-d" />
+
+    <!-- Return Flow 2: Worker Pool -> Agent App -->
+    <path d="M 450 260 L 450 340 L 90 340 L 90 260" fill="none" class="conn-line-rx-d" />
+    <text x="270" y="330" class="text-sub-d" text-anchor="middle" fill="#38bdf8">Verified Plaintext Result</text>
+
+    <!-- Return Particles 2 -->
+    <circle cx="0" cy="0" r="5" fill="#38bdf8" class="anim-r2-1-d" />
+    <circle cx="0" cy="0" r="5" fill="#38bdf8" class="anim-r2-2-d" />
 </svg>
