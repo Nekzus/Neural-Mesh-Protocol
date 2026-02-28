@@ -3,13 +3,13 @@ title: "Visión General del SDK TypeScript"
 description: "Llevando el poder de la Neural Mesh al ecosistema Node.js"
 ---
 
-El oficial `@neural-mesh/sdk` provee un conjunto de herramientas completo e intensamente tipado para construir Clientes NMP (Nodos Agentes) y Servidores NMP (Nodos de Datos) en TypeScript y JavaScript.
+El SDK oficial `@neural-mesh/sdk` proporciona un conjunto de herramientas completo y fuertemente tipado para construir Clientes NMP (Agent Nodes) y Servidores NMP (Data Nodes) en TypeScript y JavaScript.
 
-Si te encuentras migrando desde el Protocolo de Contexto de Modelos (MCP), hallarás una superficie de APIs en enorme grado familiar. NMP se diseñó como un **Reemplazo Directo** (Drop-in Replacement) para tu Experiencia de Desarrollador (DX), logrando abstraer e internalizar bajo simples clases en TypeScript la inmensa complejidad proveniente de interactuar directamente con Protobuf, WebAssembly, y redes DHT Kademlia.
+Si estás migrando desde el Model Context Protocol (MCP), la API te resultará muy familiar. NMP fue diseñado para ofrecer una experiencia de desarrollo de **reemplazo directo** (drop-in replacement), abstrayendo la complejidad de Protobuf, WebAssembly y Kademlia DHT bajo clases de TypeScript sencillas.
 
 ## Arquitectura del Paquete
 
-El SDK ha sido publicado de forma unificada hacia `npm`, englobando en él todas las lógicas tanto para el Cliente como para el Servidor:
+El SDK se publica en npm como un único paquete que contiene tanto la lógica del Cliente como la del Servidor:
 
 <CodeGroup>
 ```bash npm
@@ -24,48 +24,46 @@ yarn add @neural-mesh/sdk zod
 </CodeGroup>
 
 <Note>
-  Recomendamos instalar `zod` junto al SDK. Al igual como detalla la especificación MCP, nuestro protocolo NMP descansa sobre Zod como herramienta para asegurar que un Argumento de Ejecución expedido por la Inteligencia cuadre frente al manifiesto capacitador local provisto por el servidor receptor.
+  Recomendamos instalar `zod` junto al SDK. Al igual que en la especificación MCP, NMP utiliza Zod para garantizar que los argumentos de ejecución coincidan con el manifiesto de capacidades del servidor.
 </Note>
 
-## Bajo la Lupa: El Compilador Javy
+## Funcionamiento Interno: El Compilador Javy
 
-Podrías preguntarte: *Si NMP inyecta rutinas de WebAssembly (`.wasm`), ¿cómo puedo armar Agentes únicamente en TypeScript?*
+Si NMP inyecta lógica compilada en WebAssembly (`.wasm`), ¿cómo es posible desarrollar Agentes puramente en TypeScript?
 
-El `@neural-mesh/sdk` incluye un **Component Builder**. Cuando tu Agente de TypeScript ejecuta `.execute()`, de manera transparente el SDK serializa el payload en JavaScript, lo condensa estructurando bajo tecnología Javy en un `.wasm` restrictivo, lo envuelve a `LogicRequest` con tecnología Protobuf, y lo inyecta a la Malla (Mesh).
+El SDK incluye un puente de compilación nativo. Cuando un Agente TypeScript invoca `.execute()`, el SDK serializa el payload de JavaScript, lo empaqueta usando un motor similar a Javy en un módulo `.wasm` restrictivo y lo inyecta en la malla a través de gRPC. El desarrollador nunca tiene que escribir ni compilar Rust/Wasm manualmente.
 
-El desarrollador no se ve obligado jamás a componer ni compilar Rust/Wasm manualmente.
+## Características Enterprise de Vanguardia
 
-## Funcionalidades de Vanguardia Empresarial
+El SDK TypeScript mantiene paridad arquitectónica con el núcleo en Rust, asegurando restricciones Zero-Trust de grado empresarial:
 
-El SDK TypeScript opera bajo estricta paridad de arquitectura logrando replicar las restricciones de alta escalabilidad dictaminadas por su núcleo Rust, garantizando reglas Enterprise de modelo Zero-Trust:
+- **Criptografía Post-Cuántica (ML-KEM-768):** Encapsulación asimétrica (`crystals-kyber`) y autenticación simétrica AES-256-GCM de extremo a extremo.
+- **Transporte Híbrido:** Conectividad P2P en Node.js y navegadores mediante WebSockets (WS/Mplex) y TCP (Yamux).
+- **Guardian-TS (Inspección AST):** Mitigación proactiva de escapes del sandbox mediante el análisis del binario antes de su ejecución.
+- **ZK-Receipt Ready:** Soporte nativo para Pruebas Cero Conocimiento matemáticas contra zkVMs.
+- **Escalado Multi-Core (Worker Pool):** Alto rendimiento mediante `piscina`, delegando el descifrado y la ejecución de sandboxes a hilos del SO independientes del Event Loop de V8.
 
-- **Criptografía Post-Cuántica (ML-KEM-768):** Blindaje asimétrico extremo de punta a punta usando `crystals-kyber` y sellado AES-256-GCM.
-- **Transporte Híbrido por Mesh:** Acceso ilimitado sumando interconexiones duales operando en red libp2p englobando WebSockets y TCP (Yamux).
-- **Guardian-TS (Inspección AST Cero-Tiempo):** Mitigaciones contra sandbox-escape bloqueándolos directamente antes que disparen una ejecución en `node:wasi`.
-- **ZK-Receipt Ready:** Soporte estructural para acoplarse y garantizar mediante Máquinas Virtuales de Conocimiento-Cero (zkVMs).
-- **Escala Multi-Core (Piscina):** Traspasa limitantes de estrangulamientos originados por el Event Loop principal bypasseando estas descargas transaccionales operando con `piscina`. Aísla todas las desencripciones PQC y el WASI Sandbox dentro de hilos OS independientes.
+## Exportaciones Principales
 
-## Exportaciones Principales (Key Exports)
-
-El SDK exporta tres estructuras bases orientadas a orquestar Aplicaciones Mesh (Mallas de Red):
+El SDK exporta tres clases principales:
 
 <CardGroup cols={3}>
-  <Card title="NmpServer" icon="server" href="/typescript-sdk/server">
-    El Receptor de Datos (Data Node). Expone las capacidades, archivos y maneja el flujo entrante de Intenciones de Lógica-en-Origen (Logic-on-Origin) de modo seguro.
+  <Card title="NmpServer" icon="server" href="/es/typescript-sdk/server">
+    El receptor de datos. Expone capacidades locales y archivos, y maneja la intención de Logic-on-Origin de forma segura.
   </Card>
-  <Card title="NmpClient" icon="robot" href="/typescript-sdk/client">
-    El Nodo de Inteligencia. Bucea en la Tabla DHT de la Red Mesh descubriendo las capacidades disponibles e inyectándole las cargas dinámicas en WebAssembly para procesar datos.
+  <Card title="NmpClient" icon="robot" href="/es/typescript-sdk/client">
+    El nodo de inteligencia. Busca capacidades en la malla e inyecta payloads WASM para procesar datos.
   </Card>
-  <Card title="NmpMcpBridge" icon="bridge-water" href="/typescript-sdk/server#nmpmcpbridge">
-    El Traductor Heredado. Convierte las interacciones tradicionales JSON-RPC haciéndolas compatibles instatáneamente con tu nueva red NMP de altísimo rendimiento.
+  <Card title="NmpMcpBridge" icon="bridge-water" href="/es/typescript-sdk/server#nmpmcpbridge">
+    El traductor de legado. Hace que los clientes MCP tradicionales sean compatibles con tu nueva red NMP.
   </Card>
 </CardGroup>
 
-## Deep Dive Arquitectónico: Pool Transaccional Multi-Core
+## Deep Dive: Pool Transaccional Multi-Core
 
-Una severa limitación históricamente señalada con respecto a Node.js originaba estancamientos en su hilo único (single-threaded Event Loop) bajo pesadas cargas de CPU extenuantes. El SDK rompe este límite derivando el asolamiento criptográfico hacia Worker Threads aislados del SO empleando \piscina\.
+NMP rompe la limitación de hilo único de Node.js mediante el enrutamiento de la carga criptográfica a hilos aislados del SO.
 
-\\\mermaid
+```mermaid
 flowchart TD
     classDef client fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#fff
     classDef grpc fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
@@ -73,32 +71,30 @@ flowchart TD
     classDef worker fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
     classDef wasi fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
 
-    C[NMP Client / Agent]:::client --"Petición PQC Encapsulada\n(gRPC / TCP)"--> G{Servidor gRPC\n(Hilo Principal)}:::grpc
+    C[Cliente NMP / Agente]:::client --"Petición PQC Encapsulada\n(gRPC / TCP)"--> G{Servidor gRPC\n(Hilo Principal)}:::grpc
     
-    subgraph "Main Thread (Event Loop - Hilo Principal)"
-        G --> |"Acepta Conexión\nNo Bloqueante"| M[Despachador RPC]:::main
+    subgraph "Main Thread (Event Loop)"
+        G --> |"Acepta Conn\nNo Bloqueante"| M[Despachador RPC]:::main
     end
 
-    subgraph "Hardware CPU Cores (Núcleos Físicos)"
-        M -.->|"Desplaza Payload Cifrado\n(Memoria Compartida)"| W1[Worker Thread 1 - Hilo SO]:::worker
-        M -.->|Desplaza a Hilo| W2[Worker Thread 2]:::worker
-        M -.->|Desplaza a Hilo| WN[Worker Thread N]:::worker
+    subgraph "Hardware CPU Cores"
+        M -.->|"Offload Payload Cifrado\n(Memoria Compartida)"| W1[Worker Thread 1]:::worker
+        M -.->|Offload| W2[Worker Thread 2]:::worker
+        M -.->|Offload| WN[Worker Thread N]:::worker
     end
 
-    subgraph "Inside OS Worker Thread (Dentro del Hilo SO)"
+    subgraph "Inside OS Worker Thread"
         W1 --> |1| D1(Kyber768 & AES Decrypt)
         D1 --> |2| G1(Guardian-TS Inspección AST)
-        G1 --> |3| V1[WASI Ejecución Sandbox]:::wasi
-        V1 --> |4| Z1(ZK-Receipt Generador Hasher)
+        G1 --> |3| V1[Ejecución Sandbox WASI]:::wasi
+        V1 --> |4| Z1(Generador ZK-Receipt)
     end
 
-    W1 -.->|"Devuelve Prueba ZK\n& Contexto de Ejecución"| M
-    M --"LogicResponse\nStream (Flujo)"--> C
-\\\
+    W1 -.->|"Retorna Prueba\ny Contexto"| M
+    M --"LogicResponse\nStream"--> C
+```
 
-## Primeros Pasos (Getting Started)
+## Comenzando
 
-¿Listo para escribir tu primera línea de código NMP? Salta directo a construir ambos extremos limitantes de la Malla:
-
-- Construye un [Neural Server (Servidor NMP)](/typescript-sdk/server) para proteger tus datos.
-- Diseña un [Neural Client (Cliente NMP)](/typescript-sdk/client) para explorar descubriendo inteligencia.
+- Construye un [Neural Server](/es/typescript-sdk/server) para proteger tus datos.
+- Diseña un [Neural Client](/es/typescript-sdk/client) para buscar inteligencia.

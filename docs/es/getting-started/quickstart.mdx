@@ -1,19 +1,19 @@
 ---
 title: "Inicio Rápido"
-description: "Comienza a construir con NMP en menos de 5 minutos empleando el core SDK de TypeScript"
+description: "Comienza con NMP en menos de 5 minutos usando el SDK de TypeScript"
 ---
 
-El Neural Mesh Protocol (NMP) provee a los arquitectos e ingenieros el paquete `@neural-mesh/sdk`, diseñado como una interfaz altamente poderosa pero familiar. Si te encontrabas diseñando servidores para el obsoleto Model Context Protocol (MCP), saltar al hyperespacio arquitectónico de NMP será trivial y prácticamente transparente a nivel código.
+El ecosistema `@neural-mesh/sdk` está diseñado para ser potente pero familiar. Si has construido servidores para MCP, la transición a NMP es casi directa.
 
-En esta guía, programaremos la base matriz de un Nodo NMP Servidor (Data) abriendo su compuerta segura, seguido de su invocador Agente (Client) quien lo penetrará inyectándole inteligencia real.
+En esta guía, crearemos un Servidor NMP que expone una herramienta y un Cliente que la invoca.
 
 <Note>
-  A nivel subterráneo, la malla NMP compila imperceptiblemente tu lógica al formato compacto WebAssembly para su posterior push e inyección remota. El SDK te abstrae por completo del pesado ensamblador otorgando un dev-experience sublime sin que toques una sola línea que no sea Javascript de negocio.
+  Internamente, NMP compila tu lógica a WebAssembly y la inyecta vía P2P. El SDK abstrae todo esto para que te enfoques en la lógica de negocio.
 </Note>
 
 ## 1. Instalación
 
-Instala el SDK originario oficial e insértalo en tu ambiente Node.js.
+Instala el SDK en tu proyecto de Node.js o TypeScript.
 
 <CodeGroup>
 ```bash npm
@@ -27,9 +27,9 @@ yarn add @neural-mesh/sdk zod
 ```
 </CodeGroup>
 
-## 2. Iniciar el Gateway (Data Node / Servidor)
+## 2. Crear un Servidor NMP (Data Node)
 
-Un servidor NMP opera como el Gate-Host. Escucha de fondo inyecciones entrantes que navegan sobre un mar P2P proveniente de mentes remotas. Asegura recursos vitales para transacciones directas.
+Un Servidor NMP actúa como un Nodo de Datos. Se conecta a la malla y espera lógica inyectada de agentes remotos.
 
 Crea un archivo llamado `server.ts`:
 
@@ -37,103 +37,99 @@ Crea un archivo llamado `server.ts`:
 import { NmpServer } from '@neural-mesh/sdk';
 import { z } from 'zod';
 
-// Inicializa el Enclave Local y su Identidad Pública en el DHT
+// Inicializa el servidor con identidad
 const server = new NmpServer({
-  name: "MiHostLocalDatabase",
+  name: "MyLocalDataNode",
   version: "1.0.0"
 });
 
-// Registrar e Instanciar Capacidad Transaccional Local
-// Importante: La magia Logic-on-Origin dicta que tu función interna
-// no viajará a la IA, será la IA quien entre hasta la instancia y
-// accione esta memoria en tu red local.
+// Expone una capacidad (Tool)
 server.tool(
-  "evaluar_logs_masivos",
-  "Busca el bug a velocidades de micro-segundos directamente sobre la RAM.",
-  { path_interno: z.string(), term: z.string() },
-  async ({ term }) => {
-    console.log(`[Host Sandboxing] WebAssembly Remote Agent Ejecutando Local: ${term}`);
+  "query_database",
+  "Analiza tablas masivas directamente en el origen.",
+  { query: z.string() },
+  async ({ query }) => {
+    console.log(`[Server] Ejecutando Logic-on-Origin: ${query}`);
     
-    // Procesa petabytes sin que salgan en forma JSON al router exterior.
+    // Aquí se procesarían los datos locales (ej. 5GB)
+    // Solo el resultado final sale del servidor
     return {
-      content: [{ type: "text", text: `La fuga de memoria sucede en el thread: ${term} de la tabla` }]
+      content: [{ type: "text", text: `Resultado de la consulta: ${query}` }]
     };
   }
 );
 
-// Puesta en Marcha hacia el Stream y Anclaje P2P Global.
+// Inicia la conexión y anúncialo en la malla DHT Kademlia
 async function main() {
   await server.connect();
-  console.log("[Node] Gateway Despierto. Escuchando Mesh Protocol...");
+  console.log("Servidor NMP escuchando en la malla...");
 }
 
 main().catch(console.error);
 ```
 
-## 3. Despertar la IA (Agente Cliente / Nodo NMP)
+## 3. Crear un Cliente NMP (Agent Node)
 
-Un Cliente en el ecosistema NMP no es un espectador; es Inteligencia Viva. Averigua las topologías expuestas hacia la red pública mediante P2P, y emite secuencias (Payloads) comprimidas matemáticamente con propósitos (Intention).
+El Cliente actúa como la Inteligencia. Descubre servidores e inyecta solicitudes (intenciones).
 
-Forja tu `client.ts`:
+Crea un archivo llamado `client.ts`:
 
 ```typescript client.ts
 import { NmpClient } from '@neural-mesh/sdk';
 
 async function main() {
-  // Bautizamos nuestro inyector cognitivo
   const client = new NmpClient({
-    name: "Cerebro_Inspector_AWS",
-    version: "3.2.1"
+    name: "AI_Research_Agent",
+    version: "2.5.1"
   });
 
   await client.connect();
-  console.log("Acoplado al Torrente P2P...");
+  console.log("Conectado al Neural Mesh Protocol...");
 
-  // Identificar Host y Ejecutar Extracción Dirigida.
   try {
-    const receipt = await client.callTool("MiHostLocalDatabase", "evaluar_logs_masivos", {
-      path_interno: "/var/log/syslog/",
-      term: "SEGFAULT"
+    // Descubre el servidor e inyecta la lógica
+    const result = await client.callTool("MyLocalDataNode", "query_database", {
+      query: "SELECT * FROM massive_table WHERE anomaly = true"
     });
 
-    console.log("Transacción Devuelta. Validada en ZK-Hardware:");
-    console.log(receipt.content[0].text);
-  } catch (error) {
-    console.error("Sandboxing Reject - Exec Bloqueado:", error);
+    console.log("Resultado verificado matemáticamente:");
+    console.log(result.content[0].text);
+  } catch (err) {
+    console.error("Fallo en la ejecución del Agente:", err);
   }
 }
 
 main().catch(console.error);
 ```
 
-## 4. Ensamblar e Iniciar Malla (The Mesh)
+## 4. Ejecutar la Malla
 
-Lanza tu escudo primero en un terminal asincrónico:
+Primero, inicia el servidor:
 ```bash
 npx tsx server.ts
-# Console: [Node] Gateway Despierto. Escuchando Mesh Protocol...
+# Salida: Servidor NMP escuchando en la malla...
 ```
 
-Luego, clona y ensambla un segundo thread para ejecutar tu ente local:
+En otra terminal, lanza el Agente:
 ```bash
 npx tsx client.ts
-# Console: Acoplado al Torrente P2P...
-# Console: Transacción Devuelta. Validada en ZK-Hardware:
-# Console: La fuga de memoria sucede en el thread: SEGFAULT de la tabla
+# Salida: Conectado al Neural Mesh Protocol...
+# Salida: Resultado verificado matemáticamente:
+# Salida: Resultado de la consulta: SELECT * FROM massive_table WHERE anomaly = true
 ```
 
-## Entones, ¿Qué ocurrió realmente?
+## ¿Qué acaba de ocurrir?
 
-Lo que no podías hacer con el extinto protocolo REST lo lograste en sub-ms:
-1. El Agente fue entrelazado mediante el tejido oscuro gracias al index paramórfico de la tabla **P2P Kademlia**.
-2. Una negociación blindada anti-quantum **Kyber ML-KEM-768** encapsuló vuestra criptografía localmente.
-3. El mandato estructurado mutó atómicamente a **Binario Protobuf Multiplexado**.
-4. Del otro lado, este WebAssembly asaltante fue aprisionado sobre un contorno blindado originario en formato de un microscópico **WASI Sandbox** por tu Nodo Servidor, garantizando absoluta impasibilidad viral desde el Agente a su Host nativo.
+A diferencia de las APIs tradicionales:
+1. Tu Cliente descubrió el Servidor instantáneamente mediante **Kademlia P2P**.
+2. Un handshake **Kyber Post-Cuántico** aseguró la comunicación.
+3. La consulta se serializó en un formato **binario Protobuf** ultra compacto.
+4. La ejecución ocurrió dentro de un **sandbox WASI** en el servidor, aislado del host físico.
 
-## Conquista lo que sigue
+## Siguientes Pasos
 
-Abstrae más, eleva el diseño y desvela las entrañas asíncronas de la Verificación en Entornos Seguros y Watchdogs Permanentes explorando el core técnico total:
+Ahora que has ejecutado tu primera misión en la malla, explora la arquitectura para aprovechar Watchdogs y Pruebas ZK.
 
-<Card title="La Mente del Protocolo" icon="sitemap" href="/es/concepts/architecture">
-  Infórmate a fondo cómo la capa de Data-Pool viaja embutida en Transport-Pool liberando ancho de banda inmenso.
+<Card title="Arquitectura del Core" icon="sitemap" href="/es/concepts/architecture">
+  Aprende cómo la capa de datos y transporte se sinergizan en NMP.
 </Card>

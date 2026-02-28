@@ -3,35 +3,37 @@ title: "Arquitectura"
 description: "Comprendiendo los componentes, capas y el enrutamiento P2P del Neural Mesh Protocol"
 ---
 
-<img className="block dark:hidden" src="/images/architecture-light.svg" alt="Diagrama de Arquitectura NMP" />
-<img className="hidden dark:block" src="/images/architecture-dark.svg" alt="Diagrama de Arquitectura NMP" />
-
-NMP opera bajo un paradigma fundamentalmente distinto a las tradicionales APIs REST o al Model Context Protocol (MCP). Abandona el modelo cliente-servidor JSON-RPC tipo concentrador-y-distribuidor en favor de un **modelo descentralizado de empuje binario (push model)**.
+NMP opera bajo un paradigma fundamentalmente distinto a las APIs REST tradicionales o al Model Context Protocol (MCP). Abandona el modelo cliente-servidor JSON-RPC en favor de un **modelo descentralizado de empuje binario (push model)**.
 
 Al orquestar **Lógica en el Origen (Logic-on-Origin)**, NMP elimina las restricciones de gravedad de datos, permitiendo que la lógica del Agente viaje hacia el conjunto de datos en lugar de forzar a que el conjunto de datos viaje hacia el Agente.
+
+<Frame>
+  <img className="block dark:hidden" src="/images/architecture-light.svg" alt="Diagrama de Arquitectura NMP" />
+  <img className="hidden dark:block" src="/images/architecture-dark.svg" alt="Diagrama de Arquitectura NMP" />
+</Frame>
 
 ## Alcance del Protocolo
 
 NMP comprende varios pilares fundamentales:
-- **Especificación NMP**: La implementación estandarizada de mensajes Protobuf, enrutamiento libp2p y restricciones de ejecución binaria WASI.
-- **SDKs de NMP**: Bibliotecas oficiales en TypeScript y Rust para integrar sin problemas la malla en las aplicaciones existentes.
-- **Motores de Ejecución NMP (Runtimes)**: El motor central (usualmente `wasmtime`) que lleva a cabo el aislamiento y sandboxing matemático.
+- **Especificación NMP**: Implementación estandarizada de mensajes Protobuf, enrutamiento libp2p y restricciones WASI.
+- **SDKs de NMP**: Bibliotecas oficiales en TypeScript y Rust para integración fluida.
+- **Motores de Ejecución NMP (Runtimes)**: El motor central (usualmente `wasmtime`) que realiza el sandboxing matemático.
 
 <Note>
-  De forma similar a MCP, NMP es agnóstico respecto al modelo LLM utilizado internamente. Se rige estrictamente por estandarizar *cómo* se intercambian el contexto y la ejecución lógica de forma segura.
+  Al igual que MCP, NMP es agnóstico al modelo LLM utilizado. Estandariza estrictamente *cómo* se intercambian el contexto y la ejecución lógica de forma segura.
 </Note>
 
 ## Participantes de la Malla
 
-En la Malla Neuronal (Neural Mesh), cada nodo es un Par (Peer), pero asumen roles distintos en base a su propósito computacional:
+En el Neural Mesh, cada nodo es un Par (Peer), asumiendo roles según su propósito:
 
-*   **Sistema Host (Host System)**: El sistema operativo subyacente, base de datos o dispositivo que contiene los datos crudos propietarios.
-*   **Nodo de Datos (Servidor)**: Un par NMP especializado que se ejecuta de forma adyacente al Sistema Host. Inicializa el sandbox `WASI` y aguarda la llegada de módulos remotos. Protege al Host de ejecuciones maliciosas.
-*   **Nodo Agente (Cliente)**: Típicamente una Inteligencia Artificial Autónoma. Genera bytes de WebAssembly dinámico (`.wasm`) mapeados según sus intenciones y empuja estos bytes a la Malla para encontrar Nodos de Datos correspondientes.
+*   **Sistema Host**: El SO, base de datos o dispositivo que contiene los datos crudos.
+*   **Data Node (Servidor)**: Un par especializado que se ejecuta junto al Host. Inicializa el sandbox `WASI` y protege al Host de ejecuciones maliciosas.
+*   **Agent Node (Cliente)**: Típicamente una IA Autónoma. Genera bytes WebAssembly (`.wasm`) y los empuja a la malla para encontrar Nodos de Datos.
 
 ## Capas del Sistema
 
-Para asegurar una latencia ultra-baja y máxima seguridad, NMP está estrictamente dividido en dos capas técnicas, orquestadas a través de tuberías matemáticamente verificables.
+Para asegurar latencia ultra-baja y máxima seguridad, NMP se divide en tres capas técnicas:
 
 <Frame>
   <img className="block dark:hidden w-full" src="/images/topology-light.svg" alt="Arquitectura de Topología NMP" />
@@ -39,22 +41,22 @@ Para asegurar una latencia ultra-baja y máxima seguridad, NMP está estrictamen
 </Frame>
 
 ### 1. Capa de Transporte (libp2p & QUIC)
-La capa de transporte se encarga de descubrir a los pares y de establecer conexiones inquebrantables.
-- **Protocolo de Red**: Usa **QUIC**, el cual soporta nativamente la multiplexación sin bloqueos de cabeza de línea (head-of-line blocking) UDP, y **TCP/WebSockets** para compatibilidad de Entornos Navegador (Edge/Browser).
-- **Criptografía**: Los handshakes iniciales utilizan el **Noise Protocol** (Ed25519) combinado con **Sobres Autenticados Simétricos (AES-256-GCM)**, profundamente arraigados en la **Criptografía Post-Cuántica (ML-KEM-768 / Kyber)**.
-- **Enrutamiento**: Utiliza una **Tabla Hash Distribuida Kademlia (DHT)** altamente optimizada. Los nodos agente no necesitan direcciones IP grabadas en código duro ni DNS centralizado; simplemente le preguntan a la Malla "¿Quién puede cumplir con esta solicitud?", y Kademlia enruta el paquete binario de manera autónoma.
+Maneja el descubrimiento de pares y conexiones seguras.
+- **Protocolo**: Usa **QUIC** (multiplexación nativa sin bloqueos UDP) y **TCP/WebSockets** para compatibilidad con navegadores.
+- **Criptografía**: Handshakes vía **Noise Protocol** (Ed25519) con **Sobres Autenticados (AES-256-GCM)** y **Criptografía Post-Cuántica (ML-KEM-768 / Kyber)**.
+- **Enrutamiento**: Tabla Hash Distribuida **Kademlia (DHT)**. Los agentes no necesitan IPs fijas; preguntan a la malla y el payload se enruta autónomamente.
 
 ### 2. Capa de Datos (Protobuf & Tonic)
-Una vez la capa de transporte conecta el Agente con el nodo de Datos, la Capa de Datos dicta la estructura de la solicitud de ejecución.
-- **Codificación**: Abandona sus representaciones JSON voluminosas. Todos los mensajes se empacan estrechamente en un Protocolo Binario de Búferes (`.proto`).
-- **Framework RPC**: Usa **Tonic (gRPC)** para una transmisión bidireccional ágil como el relámpago.
-- **Estructura del Paquete (Payload)**: La Capa de Datos define los elementos primitivos `LogicRequest` y `LogicResponse`, transmitiendo el WASM AST, los identificadores de capacidad y las pruebas criptográficas (`ZK-Receipts`).
+Dicta la estructura de la solicitud de ejecución.
+- **Codificación**: Mensajes binarios compactos usando **Protocol Buffers (`.proto`)**.
+- **Framework RPC**: **Tonic (gRPC)** para streaming bidireccional de alta velocidad.
+- **Payload**: Define `LogicRequest` y `LogicResponse`, transmitiendo el WASM AST, capacidades y pruebas criptográficas (`ZK-Receipts`).
 
 ### 3. Capa de Verificación y Aislamiento (Ejecución)
-La frontera final antes de tocar el metal.
-- **Validación AST del Guardián**: Rastrea e intercepta vulnerabilidades de Host-Escape sobre importaciones WebAssembly antes de iniciar el Sandbox.
-- **Enclaves de Hardware (TEEs)**: Opcionalmente, arranca todo el motor de ejecución de `wasmtime` dentro de un enclave de hardware propietario como un Enclave Intel SGX o AWS Nitro, para un blindaje de la RAM evitando inspectores del sistema administrativo remoto.
-- **Evidencia Lógico-Matemática Zero-Knowledge**: Opcionalmente, empodera los zkVMs (como `RISC Zero`) para que el servidor devuelva deducciones operadas selladas matemáticamente de que nada de lo generado fue falseable ni mutado.
+La frontera final antes de tocar el hardware.
+- **Guardian AST Validation**: Escanea el binario buscando vulnerabilidades de escape del host antes de la ejecución.
+- **Enclaves Hardware (TEEs)**: Ejecución opcional dentro de AWS Nitro o Intel SGX para blindar la RAM.
+- **Zero-Knowledge Evidence**: Uso de zkVMs (como `RISC Zero`) para devolver resultados sellados matemáticamente que garantizan la integridad del cómputo.
 
 ## La Odisea: Lógica en el Origen (Logic-on-Origin)
 
@@ -63,25 +65,23 @@ La frontera final antes de tocar el metal.
   <img className="hidden dark:block w-full" src="/images/master-flow-dark.svg" alt="Flujo de Logic-on-Origin Animado" />
 </Frame>
 
-Aquí está el ciclo vital exacto de una ejecución NMP, que refleja una paridad 1:1 entre nuestros Modelos Arquitectónicos, el Backend de Rust y el SDK para Node.js:
+Ciclo de vida exacto de una ejecución NMP:
 
 ### 1. El Cliente Emisor (`TypeScript Client`)
-- **Compilación WebAssembly:** La lógica dinámica del LLM se evalúa y transforma a sí misma de inmediato en un stream binario de formato `.wasm`.
-- **Sensor Guardián de Tipo Árbol AST para Clientes (`GuardianTS`):** Antes de toda la subida hacia la red, la inspección heurística final de pre-vuelo anula bloqueos y alcances ilegales, y corta la emisión para prevenir infecciones.
-- **Post-Quantum Key Exchange:** El SDK genera un secreto cuántico `Kyber768`, destruyendo por pura matemática la agresión conocida de robar el protocolo y analizarlo con superordenadores *Harvest Now, Decrypt Later*.
-- **Cifrado del Paquete (Payload Encryption):** El manifiesto `.wasm` es precintado de modo cerrado en formato criptográfico simétrico bajo `AES-256-GCM` valiendo los nonces aleatorios.
+- **Compilación WASM:** La lógica de la IA se transforma en un stream binario `.wasm`.
+- **GuardianTS:** Inspección heurística previa para bloquear contenido malicioso antes de enviarlo.
+- **Intercambio Cuántico:** Generación de un secreto `Kyber768` para derrotar ataques *Harvest Now, Decrypt Later*.
+- **Cifrado:** El payload es sellado con `AES-256-GCM`.
 
-### 2. El Tránsito por Kademlia (`Zero-Trust Mesh`)
-- **Libp2p Transport:** Paquetes inyectados sobrepasan distancias viajando por sustratos invisibles Malla empleando latencia mínima `TCP/QUIC`.
-- **Multiplexed Secure Streams:** Mientras el gestor `Yamux` invoca sus recursos manejando miles de bifurcaciones P2P asincrónicas a la vez, el tránsito fluye resguardado vía *handshakes* robustos de Noise P2P.
+### 2. Tránsito por Kademlia (`Zero-Trust Mesh`)
+- **Transporte libp2p:** Los paquetes viajan por la malla descentralizada vía `TCP/QUIC`.
+- **Streams Multiplexados:** `Yamux` gestiona miles de solicitudes paralelas bajo handshakes de `Noise`.
 
-### 3. La Ingesta Nivel Host Origen (`Rust Server`)
-- **Terminator de Transporte:** Al impactar su punto central, este de-oculta todo su ecosistema interno para destrabar Kyber Secrets resolviendo localmente un pre-vuelo inverso en pura decodificación. Extrae su núcleo.
-- **AST Guardian (Sensor Centinela de tiempo Cero):** El parseador asíncrono sobre el analizador de Rust (`wasmparser`) fracciona lo inyectado AST a velocidades récord, fulminando instantáneamente cualquier llamado host fraudulento detectado inyectado o subido.
-- **Wasmtime / Limites de Arena Sandboxing:** El gigante subyacente y base fundacional de Bytecode Alliance enciende este entorno microscópico blindado en Memoria RAM con márgenes constrictivos hostiles para que un loop del tamaño petabyte de Data local fluya impermutable bajo absoluto silencio remoto pero bajo latencia red de nivel asincrónico 0.
+### 3. Ingesta en el Origen (`Rust Server`)
+- **Descifrado:** El Data Node procesa el secreto Kyber y descifra el payload.
+- **AST Guardian:** Análisis en tiempo cero del binario. Cualquier importación ilegal de funciones del host detiene la lógica al instante.
+- **Sandboxing WASI:** El motor `Wasmtime` inicia un sandbox ultra-restringido. La lógica procesa gigabytes de datos locales con latencia de red cero.
 
-### 4. Mathematical Return Cero-conocimiento (`ZK-Receipt`)
-- **Evidencia Cero Riesgo Matemático:** Opcionalmente, una Máquina Virtual de Cero Conocimiento como `RISC Zero` forja internamente sellos de validación (ZK-Receipt) e indescifrables garantizando lo computado de forma criptográfica sin compartir la data subyacente de donde derivan.
-- **Stream Binario Yamux**: El resultado es retornado hacia su emisor en la tubería múltiple y compacta multiplex gRPC para empoderar al Agente IA Autónomo en todo momento devolviendo respuestas infalibles en certidumbre matemática pura.
-
-Esta arquitectura End-to-End provee no sólo la más colosal velocidad requerida y teóricamente insuperable para IAs Distribuidas Autónomas del momento sino una base inviolable grado Privacy Zero-Trust sobre sistemas puramente y matemáticamente verificables para todo el ciclo de transacciones.
+### 4. Retorno Matemático (`ZK-Receipt`)
+- **Prueba ZK:** Opcionalmente, `RISC Zero` genera un recibo criptográfico de la ejecución.
+- **Streaming de Resultados:** Los hallazgos regresan por el multiplex gRPC, proporcionando certeza matemática final al Agente.

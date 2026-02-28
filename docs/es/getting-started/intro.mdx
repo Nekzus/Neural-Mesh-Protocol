@@ -3,62 +3,58 @@ title: "Introducción"
 description: "Bienvenido a la documentación del Neural Mesh Protocol (NMP)"
 ---
 
-NMP es una red de transporte binaria de alto rendimiento y última generación, diseñada específicamente para la comunicación avanzada entre Agentes de Inteligencia Artificial. Concebido como la evolución conceptual y técnica de los protocolos de contexto existentes (como el **Model Context Protocol**), NMP cambia radicalmente el paradigma: abandona la extracción de fragmentos masivos de datos para adoptar la **ejecución segura de Logic-on-Origin** (Lógica en el Origen).
+NMP es una red de transporte binario de alto rendimiento diseñada específicamente para la comunicación avanzada entre Agentes de Inteligencia Artificial. Concebido como la evolución técnica de los protocolos de contexto (como el **Model Context Protocol**), NMP cambia el paradigma de la transferencia masiva de datos hacia la **ejecución segura de Logic-on-Origin** (Lógica en el Origen).
 
-Si MCP fue construido como el "puerto USB-C para aplicaciones de IA" para estandarizar conexiones, **NMP es el sistema nervioso de fibra óptica** que habilita la verdadera inteligencia descentralizada.
+Si MCP es el "puerto USB-C para aplicaciones de IA", **NMP es el sistema nervioso de fibra óptica** que habilita una verdadera inteligencia descentralizada.
 
 ## ¿Por qué NMP?
 
-En el panorama actual de los agentes autónomos, las arquitecturas cliente-servidor tradicionales enfrentan severos cuellos de botella. Transferir gigabytes de datos sin procesar (logs, bases de datos, repositorios) mediante HTTP/JSON a través de Internet para que un LLM los analice, razone y filtre, es cada vez más ineficiente, lento y costoso en términos de límites de tokens de contexto.
-
-NMP resuelve esto invirtiendo por completo la arquitectura: **Movemos las matemáticas hacia los datos, no los datos hacia las matemáticas.**
+En las arquitecturas tradicionales, transferir gigabytes de datos (logs, bases de datos) para que un LLM los analice es ineficiente y costoso en términos de latencia y tokens. NMP invierte la arquitectura: **llevamos el proceso a los datos, no los datos al proceso.**
 
 <CardGroup cols={2}>
   <Card title="Logic-on-Origin" icon="bolt">
-    En lugar de descargar conjuntos de datos gigantescos, los Agentes compilan dinámicamente su paso de razonamiento en un módulo microscópico de WebAssembly (`.wasm`) y lo inyectan exactamente donde residen los datos.
+    En lugar de descargar datos masivos, los Agentes compilan su lógica en un módulo WebAssembly (`.wasm`) y lo ejecutan exactamente donde residen los datos.
   </Card>
-  <Card title="Zero-Trust Sandboxing" icon="shield-check">
-    Los Hosts no necesitan confíar a ciegas en los Agentes. El WebAssembly inyectado se ejecuta dentro de un sandbox microscópico `WASI` impulsado por `Wasmtime`, aniquilando al instante cualquier violación de capacidades o escape al host.
+  <Card title="Sandboxing Zero-Trust" icon="shield-check">
+    La lógica inyectada corre en un sandbox `WASI` mediante `Wasmtime`, bloqueando cualquier acceso no autorizado al sistema host.
   </Card>
-  <Card title="Alto Rendimiento Binario" icon="rocket">
-    Construido enteramente sobre mensajes Protobuf compilados y multiplexados sobre Tonic (gRPC). Dile adiós al lento análisis de secuencias JSON que bloquea tus bucles de eventos. Los tamaños de carga se reducen en más de un 60%.
+  <Card title="Rendimiento Binario" icon="rocket">
+    Basado en Protobuf y gRPC. Reduce el tamaño de los payloads en más de un 60% al eliminar el parsing de JSON.
   </Card>
   <Card title="Escalabilidad Multi-Core" icon="microchip">
-    El SDK de Node.js aprovecha un Pool Nativo de Workers (`piscina`), superando el límite de un solo hilo de V8 para alcanzar gravedades transaccionales idénticas a los robustos clústeres nativos en Rust.
+    El SDK de Node.js usa un Worker Pool nativo (`piscina`), superando el límite de un solo hilo de V8 para igualar el rendimiento de Rust.
   </Card>
   <Card title="Verificación Matemática" icon="signature">
-    Arquitecturas nativas para Pruebas de Cero Conocimiento (ZK-SNARKs) que permiten a los servidores de origen firmar criptográficamente recibos verificables (ZK-Receipts) de la ejecución a través de hardware TEE.
+    Arquitectura preparada para Pruebas Cero Conocimiento (ZK-SNARKs), permitiendo firmas criptográficas de la ejecución (ZK-Receipts).
   </Card>
   <Card title="Malla Descentralizada DHT" icon="network-wired">
-    Cero autoridades centrales. El descubrimiento de Agentes y Desarrolladores ocurre de manera instantánea y segura a través de una Tabla Hash Distribuida Kademlia sobre la red global P2P.
+    Sin autoridades centrales. El descubrimiento de pares ocurre de forma instantánea mediante una Tabla Hash Distribuida Kademlia sobre `libp2p`.
   </Card>
 </CardGroup>
 
 ## ¿Para quién es NMP?
 
-NMP proporciona beneficios significativos a través de todo el ecosistema de IA:
+*   **Desarrolladores de Aplicaciones IA:** Permite analizar repositorios o bases de datos remotas al instante sin latencia de red masiva.
+*   **Propietarios de Datos y Empresas:** Expón herramientas y datos sensibles de forma segura. Los datos brutos nunca salen de tu red; solo se exporta la respuesta final.
+*   **Comunidad de IA:** Un estándar universal y matemáticamente verificable para desplegar misiones de inteligencia autónoma.
 
-*   **Para Desarrolladores de Aplicaciones IA:** Permite que tus agentes analicen repositorios o bases de datos masivas de forma remota e instantánea sin esperar a que viajen megabytes por la red.
-*   **Para Propietarios de Datos y Empresas:** Expón tus herramientas locales y datos sensibles de forma completamente segura. Dado que la lógica del Agente se ejecuta en un sandbox matemático (`WASI`) en tu máquina, tus datos crudos propietarios nunca abandonan tu red local. NMP solo exporta la respuesta final.
-*   **Para la Comunidad de IA:** Un estándar universal, abierto y matemáticamente verificable para desplegar modelos de inteligencia dinámica, rutinas continuas y observadores autónomos.
+## Pilares de la Malla Neuronal
 
-## Pilares Centrales de la Malla Neuronal
-
-1.  **Seguridad Basada en Capacidades:** Los permisos en NMP no son meras cadenas string. Son Descriptores de Archivos mapeados restrictitvamente dentro del Sandbox. Un agente solo puede ver y procesar aquello que se le haya otorgado de forma explicita.
-2.  **Handshakes Post-Cuánticos:** Las negociaciones de intención utilizan el ecosistema Kyber (ML-KEM-768), asegurando que los ataques de "Cosecha ahora, Descifra después" queden completamente mitigados. Todo es encapsulado bajo encriptación simétrica `AES-256-GCM`.
-3.  **Watchdogs en Tiempo Real:** Los Agentes pueden inyectar módulos `.wasm` persistentes que duermen en el servidor subyacente de la data sin costo. Posteriormente, se despiertan de forma asíncrona para emitir una alerta vía gRPC cuando una anomalía es detectada in-situ.
-4.  **Computación Ciega en Hardware (TEEs):** Diseños arquitectónicos preparados para ejecutar el motor `Wasmtime` dentro de AWS Nitro Enclaves, promoviendo cifrado nativo de la Memoria RAM a nivel hardware en entornos Enterprise e Institucionales.
-5.  **Guardianes AST en Tiempo Cero:** El código abierto inspecciona de forma preventiva todos y cad auno de los árboles binarios `.wasm`. Aquellos esquemas que intentan resoluciones ilegales o escaladas de importación, son desintegrados en tiempo asíncrono sobre workers aislados antes de transicionar al motor base.
+1.  **Seguridad por Capacidades:** Los permisos son descriptores de archivos mapeados estrictamente en el sandbox. Solo se ve lo que se concede.
+2.  **Handshakes Post-Cuánticos:** Negociación vía Kyber (ML-KEM-768) para mitigar ataques *Harvest Now, Decrypt Later*, con cifrado AES-256-GCM.
+3.  **Watchdogs en Tiempo Real:** Módulos `.wasm` persistentes que "duermen" en el servidor y despiertan para emitir alertas asíncronas solo cuando detectan anomalías.
+4.  **Computación Ciega (TEEs):** Preparado para ejecutar el motor `Wasmtime` dentro de AWS Nitro Enclaves para cifrado de memoria a nivel hardware.
+5.  **Guardianes AST:** Inspección preventiva de binarios `.wasm` para destruir amenazas antes de la inicialización del sandbox.
 
 ## Comenzando
 
-¿Listo para sumergirte y modernizar tu arquitectura de IA hacia el futuro Logic-on-Origin? Elige tu camino:
+¿Listo para modernizar tu arquitectura de IA?
 
 <CardGroup cols={2}>
   <Card title="Guía de Inicio Rápido" icon="forward-step" href="/es/getting-started/quickstart">
-    Lanza tu primer Servidor y Cliente NMP en menos de 5 minutos usando el SDK oficial en Typescript.
+    Lanza tu primer Servidor y Cliente NMP en menos de 5 minutos.
   </Card>
-  <Card title="Análisis de Arquitectura" icon="sitemap" href="/es/concepts/architecture">
-    Comprende cómo Kademlia P2P, gRPC Streams y Wasmtime se entrelazan asincrónicamente en la Matrix.
+  <Card title="Arquitectura Profunda" icon="sitemap" href="/es/concepts/architecture">
+    Comprende cómo Kademlia, gRPC y Wasmtime crean el paradigma Logic-on-Origin.
   </Card>
 </CardGroup>
