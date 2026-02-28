@@ -2,6 +2,9 @@ import { Buffer } from "node:buffer";
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * WasiSandbox simulates the WebAssembly/WASI execution environment with fuel tracking,
@@ -22,7 +25,7 @@ export class WasiSandbox {
         const jsLogic = rawContent.split("}").pop() || "";
 
         console.log(`[WasiSandbox] Mounting VirtualFS: /data/medical_records.json (Read-Only)`);
-        const dataPath = path.join(process.cwd(), "data", "medical_records.json");
+        const dataPath = path.resolve(__dirname, "../../data/medical_records.json");
         const records = JSON.parse(await fs.readFile(dataPath, "utf8"));
 
         let consumedFuel = 0;

@@ -86,11 +86,11 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.2)(tsx@4.21.0)
 
-  examples/demos/educational-sandbox-demo:
+  examples/demos:
     dependencies:
       '@neural-mesh/sdk':
         specifier: workspace:*
-        version: link:../../..
+        version: link:../..
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -99,24 +99,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@types/node':
-        specifier: ^25.3.2
-        version: 25.3.2
-
-  examples/demos/production-audit-demo:
-    dependencies:
-      '@neural-mesh/sdk':
-        specifier: workspace:*
-        version: link:../../..
-      zod:
-        specifier: ^3.22.4
-        version: 3.25.76
-    devDependencies:
-      '@types/node':
-        specifier: ^20.11.24
-        version: 20.19.35
-      tsx:
-        specifier: ^4.7.1
-        version: 4.21.0
+        specifier: ^22.10.0
+        version: 22.19.13
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
@@ -934,8 +918,8 @@ packages:
   '@types/jsesc@2.5.1':
     resolution: {integrity: sha512-9VN+6yxLOPLOav+7PwjZbxiID2bVaeq0ED4qSQmdQTdjnXJSaCVKTR58t15oqH1H5t8Ng2ZX1SabJVoN9Q34bw==}
 
-  '@types/node@20.19.35':
-    resolution: {integrity: sha512-Uarfe6J91b9HAUXxjvSOdiO2UPOKLm07Q1oh0JHxoZ1y8HoqxDAu3gVrsrOHeiio0kSsoVBt4wFrKOm0dKxVPQ==}
+  '@types/node@22.19.13':
+    resolution: {integrity: sha512-akNQMv0wW5uyRpD2v2IEyRSZiR+BeGuoB6L310EgGObO44HSMNT8z1xzio28V8qOrgYaopIDNA18YgdXd+qTiw==}
 
   '@types/node@25.3.2':
     resolution: {integrity: sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q==}
@@ -2309,7 +2293,7 @@ snapshots:
 
   '@types/jsesc@2.5.1': {}
 
-  '@types/node@20.19.35':
+  '@types/node@22.19.13':
     dependencies:
       undici-types: 6.21.0
 

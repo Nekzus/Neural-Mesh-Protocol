@@ -1,0 +1,22 @@
+{
+    "name": "@neural-mesh/demos",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "description": "Consolidated NMP demos ecosystem",
+    "scripts": {
+        "edu:server": "tsx educational-sandbox-demo/src/server-node.ts",
+        "edu:agent": "tsx educational-sandbox-demo/src/agent-injector.ts",
+        "prod:server": "tsx production-audit-demo/src/server.ts",
+        "prod:client": "tsx production-audit-demo/src/client.ts"
+    },
+    "dependencies": {
+        "@neural-mesh/sdk": "workspace:*",
+        "tsx": "^4.21.0",
+        "zod": "^3.23.11"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3",
+        "@types/node": "^22.10.0"
+    }
+}
