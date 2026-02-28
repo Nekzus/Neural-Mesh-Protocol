@@ -56,9 +56,25 @@ By offloading the computation *away* from its own core loop, the Agent Client re
 
 ### Execution Runtime Model (Node.js Tier-0)
 
-Once the data is flowing, the Node.js Host orchestrates the process leveraging extreme concurrency. Unlike Legacy architectures, NMP doesn't block the main thread for PQC/AES operations, opting to spawn a `piscina` Worker Pool instead, ensuring native throughput parity.
+Once the data is flowing, the Node.js Host orchestrates the process leveraging extreme concurrency. The overarching goal of the Neural Mesh SDK is to execute rigorous cryptographic and security boundaries without ever blocking the **Main Event Loop**, securing the responsiveness needed for high-traffic Agent applications.
 
 <Frame>
   <img className="block dark:hidden w-full" src="/images/animated-sdk-flow-light.svg" alt="Animated SDK Runtime Flow" />
   <img className="hidden dark:block w-full" src="/images/animated-sdk-flow-dark.svg" alt="Animated SDK Runtime Flow" />
 </Frame>
+
+The visual flow above details the four pivotal components inside the local `@neural-mesh/sdk`:
+
+#### 1. Agent App (LLM Logic Emitter)
+This is the origin point representing your custom application. Whether it is an AI Auto-Coder, a data scraper, or a local utility, it dictates the "Intent" and outputs the initial raw capabilities that need to be packaged and pushed to the remote Mesh Network.
+
+#### 2. GuardianTS (AST Heuristics)
+Prior to network transmission, `GuardianTS` acts as the first defensive checkpoint. Utilizing V8's native `WebAssembly.compile()` pipeline as a dry-run heuristic, it scans the generated `.wasm` binary in *zero-time* for malicious syscall imports (e.g., trying to escape the `wasi_snapshot_preview1` sandbox). If illegal instructions are detected, the payload is destroyed before it even reaches the cryptography module.
+
+#### 3. Worker Pool (Piscina Cryptography)
+Instead of forcing the Node.js Main Thread to calculate intensive mathematical encryptions, NMP implements parallel offloading using a native `piscina` Worker Pool. 
+- **Egress (Outbound):** Worker threads simultaneously lock the validated `.wasm` using `Kyber768` (Post-Quantum Cryptography) and seal it inside an `AES-256-GCM` envelope.
+- **Ingress (Return):** When the resulting `ZK-Receipt / AES Payload` arrives back from the network, it is immediately routed *back* into this Worker Pool to be decrypted and mathematically verified *concurrently*, completely saving the primary Node thread from blocking.
+
+#### 4. MeshNode (Yamux/Noise Multiplexing)
+The outermost border of the SDK. `MeshNode` opens a sustained `libp2p` gateway to the decentralized network, encapsulating the traffic in a `Noise` protocol tunnel and multiplexing streams via `Yamux`. This ensures that a single TLS/QUIC connection can handle hundreds of simultaneous Logic-on-Origin injections to different remote servers with zero latency overhead.
