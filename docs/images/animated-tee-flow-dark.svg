@@ -1,0 +1,277 @@
+<svg width="800" height="380" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="380" fill="#09090b" rx="16" />
+    <style>
+        .text-main-d {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #FFFFFF;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .text-sub-d {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #a1a1aa;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .text-badge-d {
+            font-family: 'Inter', system-ui, sans-serif;
+            fill: #fbbf24;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .box-base-d {
+            fill: #18181b;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .box-enclave-d {
+            fill: #1e1b4b;
+            stroke: #4f46e5;
+            stroke-width: 2;
+            stroke-dasharray: 6 6;
+            rx: 12;
+        }
+
+        .box-highlight-d {
+            fill: #052e16;
+            stroke: #10b981;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .box-zk-d {
+            fill: #451a03;
+            stroke: #f59e0b;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .conn-line-d {
+            stroke: #52525b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .conn-line-rx-d {
+            stroke: #52525b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 4 4;
+        }
+
+        /* Animations */
+        @keyframes flowRightD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(60px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flowEnclaveD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(90px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flowZkD {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flowReturnD {
+            0% {
+                transform: translate(670px, 160px);
+                opacity: 0;
+            }
+
+            2% {
+                opacity: 1;
+            }
+
+            10% {
+                transform: translate(670px, 60px);
+            }
+
+            90% {
+                transform: translate(90px, 60px);
+            }
+
+            98% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(90px, 160px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulseBorderD {
+            0% {
+                stroke-opacity: 1;
+            }
+
+            50% {
+                stroke-opacity: 0.4;
+            }
+
+            100% {
+                stroke-opacity: 1;
+            }
+        }
+
+        .anim-r-1-d {
+            animation: flowRightD 1.5s linear infinite;
+        }
+
+        .anim-r-2-d {
+            animation: flowRightD 1.5s linear infinite 0.75s;
+        }
+
+        .anim-e-1-d {
+            animation: flowEnclaveD 2s linear infinite;
+        }
+
+        .anim-e-2-d {
+            animation: flowEnclaveD 2s linear infinite 1s;
+        }
+
+        .anim-z-1-d {
+            animation: flowZkD 1.5s linear infinite;
+        }
+
+        .anim-z-2-d {
+            animation: flowZkD 1.5s linear infinite 0.75s;
+        }
+
+        .anim-rx-1-d {
+            animation: flowReturnD 4s linear infinite;
+        }
+
+        .anim-rx-2-d {
+            animation: flowReturnD 4s linear infinite 2s;
+        }
+
+        .pulse-enclave-d {
+            animation: pulseBorderD 3s ease-in-out infinite;
+        }
+    </style>
+
+    <!-- Connections -->
+    <!-- Ingress -> Pre-check -->
+    <path d="M 150 230 L 210 230" class="conn-line-d" />
+    <!-- Pre-check -> Enclave -->
+    <path d="M 350 230 L 440 230" class="conn-line-d" />
+    <!-- Wasmtime -> ZK Prover -->
+    <path d="M 560 230 L 610 230" class="conn-line-d" />
+
+    <!-- Return Path: ZK -> Ingress -->
+    <path d="M 670 160 L 670 60 L 90 60 L 90 160" class="conn-line-rx-d" />
+    <text x="380" y="50" class="text-sub-d" fill="#fbbf24" text-anchor="middle">ZK-Receipt + Verified Result
+        Return</text>
+
+    <!-- Return Particles (ZK Receipt) -->
+    <circle cx="0" cy="0" r="5" fill="#f59e0b" class="anim-rx-1-d" />
+    <circle cx="0" cy="0" r="5" fill="#f59e0b" class="anim-rx-2-d" />
+
+    <!-- 1. Ingress Node -->
+    <rect x="30" y="190" width="120" height="80" class="box-base-d" />
+    <text x="90" y="225" class="text-main-d" text-anchor="middle">Yamux Ingress</text>
+    <text x="90" y="245" class="text-sub-d" text-anchor="middle">Multiplex Stream</text>
+
+    <!-- Particles 1 (Encrypted) -->
+    <g transform="translate(150, 230)">
+        <circle cx="0" cy="0" r="4" fill="#a855f7" class="anim-r-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#a855f7" class="anim-r-2-d" />
+    </g>
+
+    <!-- 2. Host Pre-Check -->
+    <rect x="210" y="180" width="140" height="100" class="box-base-d" />
+    <text x="280" y="210" class="text-main-d" text-anchor="middle">Host Pre-Check</text>
+    <rect x="220" y="220" width="120" height="22" fill="#3b0764" rx="4" />
+    <text x="280" y="235" class="text-sub-d" fill="#d8b4fe" text-anchor="middle">AES/Kyber Decrypt</text>
+    <rect x="220" y="246" width="120" height="22" fill="#450a0a" rx="4" />
+    <text x="280" y="261" class="text-sub-d" fill="#fca5a5" text-anchor="middle">Guardian AST</text>
+
+    <!-- Particles 2 (Plaintext) -->
+    <g transform="translate(350, 230)">
+        <circle cx="0" cy="0" r="4" fill="#38bdf8" class="anim-e-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#38bdf8" class="anim-e-2-d" />
+    </g>
+
+    <!-- 3. TEE ENCLAVE -->
+    <rect x="410" y="130" width="350" height="200" class="box-enclave-d pulse-enclave-d" />
+    <text x="585" y="155" class="text-main-d" fill="#a5b4fc" text-anchor="middle">Hardware Isolated Enclave (TEE)</text>
+    <text x="585" y="170" class="text-sub-d" fill="#818cf8" text-anchor="middle">Encrypted RAM / Blind
+        Computation</text>
+
+    <!-- 3a. Wasmtime Engine -->
+    <rect x="440" y="190" width="120" height="100" class="box-highlight-d" />
+    <text x="500" y="225" class="text-main-d" text-anchor="middle">WASI Engine</text>
+    <rect x="450" y="240" width="100" height="22" fill="#064e3b" rx="4" />
+    <text x="500" y="255" class="text-sub-d" fill="#6ee7b7" text-anchor="middle">Fuel Monitor</text>
+    <rect x="450" y="266" width="100" height="18" fill="#0f766e" rx="4" />
+    <text x="500" y="279" class="text-badge-d" fill="#99f6e4" text-anchor="middle">.consume_fuel()</text>
+
+    <!-- Particles 3 (Executing -> ZK) -->
+    <g transform="translate(560, 230)">
+        <circle cx="0" cy="0" r="4" fill="#10b981" class="anim-z-1-d" />
+        <circle cx="0" cy="0" r="4" fill="#10b981" class="anim-z-2-d" />
+    </g>
+
+    <!-- 3b. ZK Prover -->
+    <rect x="610" y="190" width="120" height="100" class="box-zk-d" />
+    <text x="670" y="225" class="text-main-d" text-anchor="middle" fill="#fcd34d">ZK Prover</text>
+    <rect x="620" y="240" width="100" height="22" fill="#78350f" rx="4" />
+    <text x="670" y="255" class="text-sub-d" fill="#fcd34d" text-anchor="middle">RISC Zero</text>
+    <text x="670" y="275" class="text-badge-d" text-anchor="middle">Journal + Seal</text>
+</svg>

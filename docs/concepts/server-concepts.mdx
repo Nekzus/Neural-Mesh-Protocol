@@ -57,10 +57,28 @@ AI applications often need to monitor a server (e.g., "Tell me when memory usage
 
 This creates true real-time autonomous systems with zero polling overhead.
 
-## 4. Trust & Evidence (Enterprise Node Vanguard)
-In Tier-0 Enterprise Environments, the server provides Mathematical and Physical evidence:
-- **Zero-Knowledge Proofs (ZK-SNARKs)**: The logical computation within WASM generates a `Receipt` (using integrations like RISC Zero) that proves the module executed faithfully, without revealing internal Host structure.
-- ** Hardware Enclaves (TEEs)**: Data Nodes can deploy `wasmtime` enveloped in memory-encrypted slices (AWS Nitro Enclaves), assuring absolute RAM concealment (Blind Computing).
+## 4. Trust & Evidence (Enterprise TEE Execution Sandbox)
+
+In Tier-0 Enterprise Environments, the Neural Mesh Server fundamentally evolves past standard OS-level sandboxing. The server provides Mathematical and Physical evidence utilizing a **TEE (Trusted Execution Environment) Sandbox**.
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/animated-tee-flow-light.svg" alt="TEE Execution Sandbox Flow" />
+  <img className="hidden dark:block w-full" src="/images/animated-tee-flow-dark.svg" alt="TEE Execution Sandbox Flow" />
+</Frame>
+
+The TEE execution pipeline executes malicious or foreign logic under zero-trust assumptions through the following isolated modules:
+
+#### 1. Host Pre-Check (Decryption & Guardian AST)
+Before any logic touches the execution engine, the outermost Host Server interceptor unlocks the `.wasm` payload from its `Kyber768` / `AES-256-GCM` transport encryption. Instantly, the **Guardian AST Sentinel** parses the WebAssembly Abstract Syntax Tree. If it detects attempted imports from arbitrary Host functions rather than authorized `wasi_snapshot_preview1` bounds, the payload is purged before entry.
+
+#### 2. Hardware Isolated Enclave (TEE)
+The core computation does not run in the Host OS. It is pushed into a physical Hardware Enclave (such as **AWS Nitro Enclaves** or **Intel SGX**). This ensures *Blind Computation*: the Host’s RAM is hardware-encrypted, meaning not even the Server Administrator or Cloud Provider can dump the memory to steal the Agent's reasoning.
+
+#### 3. Wasmtime Engine & Fuel Monitor
+Inside the TEE, the `Wasmtime` engine boots the WASI context. Since WebAssembly is Turing Complete, it could theoretically execute an infinite loop to starve the server. The **Fuel Monitor** defends against this by enforcing `.consume_fuel()`. Every operation deducts "fuel" limits; if exhausted, the engine unconditionally kills the execution thread, repelling DoS bombs.
+
+#### 4. ZK Prover (Mathematical Certainty)
+When the `.wasm` finishes outputting data, the result passes to the **Zero-Knowledge Prover** (e.g., `RISC Zero` integration). This module generates a mathematical *Receipt* (consisting of a Journal and a cryptographic Seal). The returned packet proves unconditionally to the Agent that the specific logic payload executed flawlessly, and the output was not tampered with by the execution Node.
 
 ## 5. TypeScript Server & MCP Bridge (The SDK Node)
 While the Rust Dataplane dominates heavy WASI Sandboxing and Mathematical Evidence, the Neural Mesh Ecosystem also provides a lightweight, pure-TypeScript Server implementation (`@neural-mesh/sdk`). 
