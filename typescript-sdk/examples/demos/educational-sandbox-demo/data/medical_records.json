@@ -1,0 +1,34 @@
+[
+    {
+        "id": "P-001",
+        "name": "Anonymous Alpha",
+        "age": 45,
+        "condition": "Hypertension",
+        "risk_score": 0.85,
+        "last_visit": "2026-01-15"
+    },
+    {
+        "id": "P-002",
+        "name": "Anonymous Beta",
+        "age": 32,
+        "condition": "Diabetes Type 2",
+        "risk_score": 0.92,
+        "last_visit": "2026-02-10"
+    },
+    {
+        "id": "P-003",
+        "name": "Anonymous Gamma",
+        "age": 68,
+        "condition": "Common Cold",
+        "risk_score": 0.12,
+        "last_visit": "2026-02-20"
+    },
+    {
+        "id": "P-004",
+        "name": "Anonymous Delta",
+        "age": 55,
+        "condition": "Arthritis",
+        "risk_score": 0.45,
+        "last_visit": "2025-12-05"
+    }
+]

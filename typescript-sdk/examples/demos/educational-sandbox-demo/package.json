@@ -1,0 +1,19 @@
+{
+    "name": "@neural-mesh/educational-sandbox-demo",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "description": "Educational sandbox demo exploring NMP internals",
+    "scripts": {
+        "start:server": "tsx src/server-node.ts",
+        "start:agent": "tsx src/agent-injector.ts"
+    },
+    "dependencies": {
+        "@neural-mesh/sdk": "workspace:*",
+        "tsx": "^4.21.0",
+        "zod": "^3.23.11"
+    },
+    "devDependencies": {
+        "@types/node": "^25.3.2"
+    }
+}

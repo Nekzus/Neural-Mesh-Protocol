@@ -1,0 +1,30 @@
+[
+    {
+        "id": "REC-001",
+        "age": 45,
+        "condition": "Hypertension",
+        "risk_score": 0.85,
+        "last_visit": "2026-01-15"
+    },
+    {
+        "id": "REC-002",
+        "age": 32,
+        "condition": "Healthy",
+        "risk_score": 0.12,
+        "last_visit": "2026-02-10"
+    },
+    {
+        "id": "REC-003",
+        "age": 67,
+        "condition": "Diabetes Type II",
+        "risk_score": 0.92,
+        "last_visit": "2026-01-20"
+    },
+    {
+        "id": "REC-004",
+        "age": 28,
+        "condition": "Asthma",
+        "risk_score": 0.45,
+        "last_visit": "2025-12-05"
+    }
+]

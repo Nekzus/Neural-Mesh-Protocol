@@ -18,9 +18,9 @@ export default async function processLogicExecution(data: WorkerData): Promise<a
     const { ciphertext, secretKeyObj, kyberPublicKey, wasmBinary, inputs, sessionToken } = data;
 
     // 1. Decapsulate Kyber secret
-    // Note: secretKeyObj is likely serialized, so we must reconstruct it or it might be passed as an array
-    const sk = Array.from(secretKeyObj);
-    const ct = Array.from(ciphertext);
+    // Ensure we use Uint8Array for Kyber operations
+    const sk = new Uint8Array(secretKeyObj);
+    const ct = new Uint8Array(ciphertext);
     const sharedSecret = kyber.Decrypt768(ct, sk);
     const aesKey = Buffer.from(sharedSecret).subarray(0, 32);
 
