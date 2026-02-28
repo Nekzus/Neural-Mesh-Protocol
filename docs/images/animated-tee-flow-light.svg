@@ -1,5 +1,5 @@
-<svg width="800" height="380" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
-    <rect width="800" height="380" fill="#ffffff" rx="16" />
+<svg width="950" height="380" viewBox="0 0 950 380" xmlns="http://www.w3.org/2000/svg">
+    <rect width="950" height="380" fill="#ffffff" rx="16" />
     <style>
         .text-main-l {
             font-family: 'Inter', system-ui, sans-serif;
@@ -27,6 +27,14 @@
             stroke: #d4d4d8;
             stroke-width: 2;
             rx: 8;
+        }
+
+        .box-agent-l {
+            fill: #f8fafc;
+            stroke: #3b82f6;
+            stroke-width: 2;
+            rx: 8;
+            stroke-dasharray: 4 4;
         }
 
         .box-enclave-l {
@@ -67,17 +75,37 @@
         }
 
         /* Animations */
+        @keyframes flowOriginL {
+            0% {
+                transform: translateX(0px);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(60px);
+                opacity: 0;
+            }
+        }
+
         @keyframes flowRightL {
             0% {
                 transform: translateX(0px);
                 opacity: 0;
             }
 
-            10% {
+            15% {
                 opacity: 1;
             }
 
-            90% {
+            85% {
                 opacity: 1;
             }
 
@@ -93,11 +121,11 @@
                 opacity: 0;
             }
 
-            5% {
+            10% {
                 opacity: 1;
             }
 
-            95% {
+            90% {
                 opacity: 1;
             }
 
@@ -129,7 +157,7 @@
 
         @keyframes flowReturnL {
             0% {
-                transform: translate(670px, 160px);
+                transform: translate(850px, 160px);
                 opacity: 0;
             }
 
@@ -137,11 +165,11 @@
                 opacity: 1;
             }
 
-            10% {
-                transform: translate(670px, 60px);
+            12% {
+                transform: translate(850px, 60px);
             }
 
-            90% {
+            88% {
                 transform: translate(90px, 60px);
             }
 
@@ -167,6 +195,14 @@
             100% {
                 stroke-opacity: 1;
             }
+        }
+
+        .anim-o-1-l {
+            animation: flowOriginL 1.5s linear infinite;
+        }
+
+        .anim-o-2-l {
+            animation: flowOriginL 1.5s linear infinite 0.75s;
         }
 
         .anim-r-1-l {
@@ -207,71 +243,84 @@
     </style>
 
     <!-- Connections -->
-    <!-- Ingress -> Pre-check -->
+    <!-- Agent -> Yamux -->
     <path d="M 150 230 L 210 230" class="conn-line-l" />
+    <!-- Yamux -> Pre-check -->
+    <path d="M 330 230 L 390 230" class="conn-line-l" />
     <!-- Pre-check -> Enclave -->
-    <path d="M 350 230 L 440 230" class="conn-line-l" />
+    <path d="M 530 230 L 620 230" class="conn-line-l" />
     <!-- Wasmtime -> ZK Prover -->
-    <path d="M 560 230 L 610 230" class="conn-line-l" />
+    <path d="M 740 230 L 790 230" class="conn-line-l" />
 
-    <!-- Return Path: ZK -> Ingress -->
-    <path d="M 670 160 L 670 60 L 90 60 L 90 160" class="conn-line-rx-l" />
-    <text x="380" y="50" class="text-sub-l" fill="#d97706" text-anchor="middle">ZK-Receipt + Verified Result
+    <!-- Return Path: ZK -> Origin -->
+    <path d="M 850 160 L 850 60 L 90 60 L 90 160" class="conn-line-rx-l" />
+    <text x="470" y="50" class="text-sub-l" fill="#d97706" text-anchor="middle">ZK-Receipt + Verified Result
         Return</text>
 
     <!-- Return Particles (ZK Receipt) -->
     <circle cx="0" cy="0" r="5" fill="#f59e0b" class="anim-rx-1-l" />
     <circle cx="0" cy="0" r="5" fill="#f59e0b" class="anim-rx-2-l" />
 
-    <!-- 1. Ingress Node -->
-    <rect x="30" y="190" width="120" height="80" class="box-base-l" />
-    <text x="90" y="225" class="text-main-l" text-anchor="middle">Yamux Ingress</text>
-    <text x="90" y="245" class="text-sub-l" text-anchor="middle">Multiplex Stream</text>
+    <!-- 0. Agent Origin -->
+    <rect x="30" y="190" width="120" height="80" class="box-agent-l" />
+    <text x="90" y="225" class="text-main-l" text-anchor="middle">Agent Client</text>
+    <text x="90" y="245" class="text-sub-l" fill="#2563eb" text-anchor="middle">Mesh Network</text>
 
-    <!-- Particles 1 (Encrypted) -->
+    <!-- Particles 0 (Sent) -->
     <g transform="translate(150, 230)">
+        <circle cx="0" cy="0" r="4" fill="#9333ea" class="anim-o-1-l" />
+        <circle cx="0" cy="0" r="4" fill="#9333ea" class="anim-o-2-l" />
+    </g>
+
+    <!-- 1. Ingress Node -->
+    <rect x="210" y="190" width="120" height="80" class="box-base-l" />
+    <text x="270" y="225" class="text-main-l" text-anchor="middle">Yamux Ingress</text>
+    <text x="270" y="245" class="text-sub-l" text-anchor="middle">Multiplex Stream</text>
+
+    <!-- Particles 1 (Passing Yamux) -->
+    <g transform="translate(330, 230)">
         <circle cx="0" cy="0" r="4" fill="#9333ea" class="anim-r-1-l" />
         <circle cx="0" cy="0" r="4" fill="#9333ea" class="anim-r-2-l" />
     </g>
 
     <!-- 2. Host Pre-Check -->
-    <rect x="210" y="180" width="140" height="100" class="box-base-l" />
-    <text x="280" y="210" class="text-main-l" text-anchor="middle">Host Pre-Check</text>
-    <rect x="220" y="220" width="120" height="22" fill="#f3e8ff" rx="4" />
-    <text x="280" y="235" class="text-sub-l" fill="#7e22ce" text-anchor="middle">AES/Kyber Decrypt</text>
-    <rect x="220" y="246" width="120" height="22" fill="#fee2e2" rx="4" />
-    <text x="280" y="261" class="text-sub-l" fill="#b91c1c" text-anchor="middle">Guardian AST</text>
+    <rect x="390" y="180" width="140" height="100" class="box-base-l" />
+    <text x="460" y="210" class="text-main-l" text-anchor="middle">Host Pre-Check</text>
+    <rect x="400" y="220" width="120" height="22" fill="#f3e8ff" rx="4" />
+    <text x="460" y="235" class="text-sub-l" fill="#7e22ce" text-anchor="middle">AES/Kyber Decrypt</text>
+    <rect x="400" y="246" width="120" height="22" fill="#fee2e2" rx="4" />
+    <text x="460" y="261" class="text-sub-l" fill="#b91c1c" text-anchor="middle">Guardian AST</text>
 
     <!-- Particles 2 (Plaintext) -->
-    <g transform="translate(350, 230)">
+    <g transform="translate(530, 230)">
         <circle cx="0" cy="0" r="4" fill="#0284c7" class="anim-e-1-l" />
         <circle cx="0" cy="0" r="4" fill="#0284c7" class="anim-e-2-l" />
     </g>
 
     <!-- 3. TEE ENCLAVE -->
-    <rect x="410" y="130" width="350" height="200" class="box-enclave-l pulse-enclave-l" />
-    <text x="585" y="155" class="text-main-l" fill="#4338ca" text-anchor="middle">Hardware Isolated Enclave (TEE)</text>
-    <text x="585" y="170" class="text-sub-l" fill="#4f46e5" text-anchor="middle">Encrypted RAM / Blind
+    <rect x="590" y="130" width="350" height="200" class="box-enclave-l pulse-enclave-l" />
+    <text x="765" y="155" class="text-main-l" fill="#4338ca" text-anchor="middle">Hardware Isolated Enclave (TEE)</text>
+    <text x="765" y="170" class="text-sub-l" fill="#4f46e5" text-anchor="middle">Encrypted RAM / Blind
         Computation</text>
 
     <!-- 3a. Wasmtime Engine -->
-    <rect x="440" y="190" width="120" height="100" class="box-highlight-l" />
-    <text x="500" y="225" class="text-main-l" text-anchor="middle">WASI Engine</text>
-    <rect x="450" y="240" width="100" height="22" fill="#d1fae5" rx="4" />
-    <text x="500" y="255" class="text-sub-l" fill="#047857" text-anchor="middle">Fuel Monitor</text>
-    <rect x="450" y="266" width="100" height="18" fill="#a7f3d0" rx="4" />
-    <text x="500" y="279" class="text-badge-l" fill="#0f766e" text-anchor="middle">.consume_fuel()</text>
+    <rect x="620" y="190" width="120" height="100" class="box-highlight-l" />
+    <text x="680" y="225" class="text-main-l" text-anchor="middle">WASI Engine</text>
+    <rect x="630" y="240" width="100" height="22" fill="#d1fae5" rx="4" />
+    <text x="680" y="255" class="text-sub-l" fill="#047857" text-anchor="middle">Fuel Monitor</text>
+    <rect x="630" y="266" width="100" height="18" fill="#a7f3d0" rx="4" />
+    <text x="680" y="279" class="text-badge-l" fill="#0f766e" text-anchor="middle">.consume_fuel()</text>
 
     <!-- Particles 3 (Executing -> ZK) -->
-    <g transform="translate(560, 230)">
+    <g transform="translate(740, 230)">
         <circle cx="0" cy="0" r="4" fill="#059669" class="anim-z-1-l" />
         <circle cx="0" cy="0" r="4" fill="#059669" class="anim-z-2-l" />
     </g>
 
     <!-- 3b. ZK Prover -->
-    <rect x="610" y="190" width="120" height="100" class="box-zk-l" />
-    <text x="670" y="225" class="text-main-l" text-anchor="middle" fill="#b45309">ZK Prover</text>
-    <rect x="620" y="240" width="100" height="22" fill="#fef3c7" rx="4" />
-    <text x="670" y="255" class="text-sub-l" fill="#b45309" text-anchor="middle">RISC Zero</text>
-    <text x="670" y="275" class="text-badge-l" text-anchor="middle">Journal + Seal</text>
+    <rect x="790" y="190" width="120" height="100" class="box-zk-l" />
+    <text x="850" y="225" class="text-main-l" text-anchor="middle" fill="#b45309">ZK Prover</text>
+    <rect x="800" y="240" width="100" height="22" fill="#fef3c7" rx="4" />
+    <text x="850" y="255" class="text-sub-l" fill="#b45309" text-anchor="middle">RISC Zero</text>
+    <text x="850" y="275" class="text-badge-l" text-anchor="middle">Journal + Seal</text>
 </svg>
