@@ -1,0 +1,66 @@
+---
+title: "Compilando Payloads WASM"
+description: "Creando Inteligencia binaria para el Sandbox de la Malla"
+---
+
+Al desarrollar directamente en el Rust Core (específicamente dentro del crate `wasm-filters`), estás escribiendo la lógica exacta que un Agente inyectará en los Nodos de Datos remotos.
+
+Debido a que esta lógica debe ser completamente agnóstica al SO y estar estrictamente aislada (sandboxed), no puedes compilarla apuntando a arquitecturas estándar como `x86_64` o `arm64`. Debe ser compilada a WebAssembly, apuntando explícitamente al estándar **WASI (WebAssembly System Interface)**.
+
+## Configurando el Target del Compilador
+
+Asegúrate de que tu toolchain de Rust tenga instalada la librería estándar de WASI.
+
+```bash
+rustup target add wasm32-wasi
+```
+
+<Note>
+  NMP actualmente apunta a WASI Preview 1 (`wasm32-wasi`). Estamos monitoreando activamente `wasm32-wasip2` (El Model de Componentes) y migraremos el motor `Wasmtime` para soportar objetos complejos fuertemente tipados cruzando el límite del motor en nuestro próximo lanzamiento.
+</Note>
+
+## Escribiendo un Filtro (Filter)
+
+Un Filtro NMP típico es código estándar de Rust, con la salvedad de que las operaciones de red y de hilos (threading) fallarán (panic) si son invocadas, debido a las restricciones de Sandboxing en el servidor de destino.
+
+```rust src/main.rs
+use std::env;
+use std::fs;
+
+fn main() {
+    // 1. Recibir argumentos pasados por el runtime del Nodo de Datos
+    let args: Vec<String> = env::args().collect();
+    let query = args.get(1).expect("Falta el parámetro de consulta (query)");
+
+    // 2. Acceder al sistema de archivos virtualizado
+    // ¡/logs está mapeado por el Servidor, no es la raíz física!
+    if let Ok(content) = fs::read_to_string("/logs/system.log") {
+        for line in content.lines() {
+            if line.contains(query) {
+                // 3. La salida es atrapada por WASI y transmitida vía gRPC
+                println!("{}", line);
+            }
+        }
+    }
+}
+```
+
+## Compilación
+
+Para compilar tu lógica en el payload de inyección `.wasm`, ejecuta Cargo apuntando a la arquitectura WASI:
+
+```bash
+cargo build --target wasm32-wasi --release
+```
+
+El archivo microscópico resultante (ej., `target/wasm32-wasi/release/filter.wasm`) es lo que el `nmp-client` carga en memoria y transmite al par (peer) a través de la red.
+
+## Pruebas Locales
+
+Antes de desplegar tu filtro en la malla de producción, puedes probar su comportamiento localmente utilizando el CLI independiente de Wasmtime. 
+
+Proporciona los mapeos de capacidades (como directorios pre-abiertos) explícitamente:
+
+```bash
+wasmtime run --dir /ruta/fisica/local::/logs filter.wasm "CRITICAL"
+```

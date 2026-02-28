@@ -1,0 +1,80 @@
+---
+title: "Conceptos del Cliente"
+description: "Cómo los Nodos Agentes aprovechan la Neural Mesh para descubrimiento y ejecución"
+---
+
+En el Neural Mesh Protocol, un "Cliente" se entiende mejor como un **Nodo Agente** (Agent Node) o un orquestador de Inteligencia. Mientras el Servidor garantiza una ejecución segura, el Cliente es responsable de descubrir datos, definir intenciones y tejer la lógica que atraviesa la red.
+
+Los Nodos Agentes dominan la Malla a través de tres mecanismos centrales: **Descubrimiento (DHT)**, **Handshakes de Elicitación** e **Inyección de Lógica**.
+
+## 1. Descubrimiento de Red (Kademlia DHT)
+
+En las arquitecturas tradicionales Cliente-Servidor, el Cliente debe conocer la dirección IP exacta o el Sistema de Nombres de Dominio (DNS) del servidor que desea consultar (ej., `https://api.internal.corp/`).
+
+Los Nodos Agentes en NMP operan en una topología puramente descentralizada. Así es como descubren rápidamente los recursos que necesitan:
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/client-dht-light.svg" alt="Enrutamiento por Tabla de Hash Distribuida" />
+  <img className="hidden dark:block w-full" src="/images/client-dht-dark.svg" alt="Enrutamiento por Tabla de Hash Distribuida" />
+</Frame>
+
+- Cada Agente y Nodo de Datos genera un **Peer ID Ed25519** criptográfico al iniciar.
+- Los nodos se conectan a una red bootstrap peer-to-peer y forman una **Tabla de Hash Distribuida (DHT) de Kademlia**.
+- Cuando un Agente necesita acceder a una capacidad específica (ej., `Company_SQL_Database`), simplemente consulta al enjambre entero: *"¿Qué Peer ID posee actualmente esta capacidad?"*
+- El algoritmo DHT calcula matemáticamente la ruta de red más corta hasta el nodo objetivo, resolviendo su IP dinámica automáticamente detrás de NATs y Firewalls sin un registro central.
+
+Esto otorga a los ecosistemas de IA extrema resiliencia y balanceo de carga automático.
+
+## 2. Handshakes de Elicitación y Confianza
+
+Debido a que la Malla es descentralizada, la confianza no puede derivarse de Autoridades de Certificación (CAs) centralizadas estándar empleadas en mTLS.
+
+Cuando un Nodo Agente localiza un Nodo de Datos, inicia un **Handshake Zero-Trust (Elicitación)** antes de que cualquier lógica sea ejecutada.
+- NMP usa el **Noise Protocol Framework**, lo que significa que las conexiones se cifran nativamente en la capa de transporte (QUIC) usando claves simétricas derivadas de la identidad del Agente.
+- **Criptografía Post-Cuántica (PQC)**: Los borradores avanzados de Elicitaciones de Cliente NMP encapsulan las intenciones usando ML-KEM-768. Esto previene que adversarios interceptores graben la comunicación hoy y la descifren en una década usando máquinas cuánticas.
+
+Si el Nodo de Datos requiere el consentimiento humano o tokens de autorización específicos, responde a la solicitud de Elicitación incitando al Agente/Usuario a proporcionar los ámbitos de OAuth requeridos nativamente.
+
+## 3. Inyección de Lógica (El Payload)
+
+Una vez la confianza se establece matemáticamente, el Cliente realiza su acción primordial: **Inyectar Lógica**.
+
+En vez de despachar comandos JSON secuenciales para recuperar texto en crudo, el Agente confía en la generación de lógica local orquestada nativamente por el TypeScript SDK:
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/sdk-flow-light.svg" alt="Flujo E2E TypeScript SDK" />
+  <img className="hidden dark:block w-full" src="/images/sdk-flow-dark.svg" alt="Flujo E2E TypeScript SDK" />
+</Frame>
+
+1. **Compilación**: El Agente (a menudo potenciando el subsistema Javy/Component Model provisto por el `@neural-mesh/sdk`) traduce su lógica de alto nivel (JavaScript, Python) en un módulo binario minúsculo de WebAssembly.
+2. **Centinela AST del Cliente (`GuardianTS`)**: Antes de la partida, reglas de Heurística AST rígidas bloquean instrucciones maliciosas dentro del archivo `.wasm`, previniendo estrategias de escape del sandbox directamente en tiempo cero.
+3. **Sellado de Payload (`Crypto Module`)**: El Cliente encapsula la sesión usando Criptografía Post-Cuántica `Kyber768` y sella la carga herméticamente dentro de un sobre `AES-256-GCM`.
+4. **Streaming (`MeshNode`)**: El Cliente multiplexa la conexión vía `Yamux` junto con `Noise` y transmite el binario `.wasm` cifrado a la Malla destino exactamente una vez.
+5. **ZK-Verification**: Al recuperar el resultado por el ingreso libp2p, el Agente valida localmente el ZK-Receipt (Recibo Cero Conocimiento), generando una confianza absoluta en el resultado computacional foráneo.
+
+Al descargar el peso de la computación *lejos* de su ecosistema subyacente de operaciones continuas propio, el Agente Cliente permanece sumamente ligero, libre de orquestar cientas de conexiones concurrentes de datos sobre la Neural Mesh, simultáneamente mientras los servidores remotos efectúan el cálculo matemático pesado y de uso intensivo de memoria.
+
+### Modelo de Tiempo de Ejecución (Node.js Tier-0)
+
+Una vez los datos fluyen, el Host de Node.js orquesta el procesamiento aprovechando concurrencia extrema. El objetivo general del SDK Neural Mesh es ejecutar los límites de seguridad y cifrados rigurosos sin jamás bloquear el **Hilo de Eventos Principal (Main Event Loop)**, otorgando la capacidad de respuesta necesaria para aplicaciones Agentes de alto tráfico.
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/animated-sdk-flow-light.svg" alt="Flujo de Runtime Animado SDK" />
+  <img className="hidden dark:block w-full" src="/images/animated-sdk-flow-dark.svg" alt="Flujo de Runtime Animado SDK" />
+</Frame>
+
+El flujo visual de arriba detalla los cuatro componentes pivotales dentro del `@neural-mesh/sdk` local:
+
+#### 1. Agent App (Emisor de Lógica LLM)
+Este es el punto de origen que representa su aplicación personalizada. Sea un Auto-Coder de IA, un scraper de datos o una utilidad local, dicta el "Intento" (Intent) y genera las capacidades brutas iniciales requeridas que precisan ser empaquetadas y empujadas a la Red de Malla remota.
+
+#### 2. GuardianTS (Heurísticas AST)
+Previo a la trasmisión en la red, `GuardianTS` actúa como el primer escudo de control. Empleando la arquitectura nativa `WebAssembly.compile()` de V8 como un proceso de control heurístico veloz, escanea el binario `.wasm` generado en *tiempo-cero* para detectar importaciones al sistema corrompidas o maliciosas (por ejemplo: intentar vulnerar o evadir los estrechos márgenes de `wasi_snapshot_preview1` del sandbox). Ante detecciones que infrinjan estatutos lícitos, el flujo despacha su interrupción total e instantánea eliminando el objeto perjudicial desde el comienzo y suprimiendo todo avance pre-criptografía.
+
+#### 3. Worker Pool (Criptografía Piscina)
+En gran disidencia a someter el subproceso principal en hilos pesados operados sobre Node.js a lidiar efectuando matemáticos algoritmos de encriptado pesados, NMP acapara las descargas de encriptación y paralelizándolas apoyando ejecuciones nativas de uso intenso estructurando su paralelización desde un recurso nativo Worker Pool de la librería `piscina`. 
+- **Egresos (Outbound):** Procesos en hilo (Threads) simultáneos proceden inmovilizando los sellos en resguardo para el valyoso `.wasm` recurriendo al esquema  Post-Quántico `Kyber768` blindándolo acorazadamente como paso final a prueba térmica e inalterablemente cifrándolo adentro un marco contenedor envolvente absoluto con protección estándar robustísima de sello `AES-256-GCM`.
+- **Ingresos (Activos Retornos):** Las remisiones concluyentes provenientes a cargo con retornos `ZK-Receipt / AES Payload` provistos listos tras desembocar provenientemente originados sobre ecosistemas interconexos se orientan veloz reconectando al reingreso encauzando hacia sus propios entornos originarios correspondientes (Worker Pool), delegando descifres verificaciones perimetralmente matemáticas procediéndoseles *concurrentemente*, mitigando que acaparen u estanquen las dependencias directrices de todo canal matriz y central operativo primordial al propio Thread de ecosistema Node base.
+
+#### 4. MeshNode (Yamux/Noise Multiplexado)
+Contorno vital e interfaz frontera exterior abismal extrema hacia SDK. `MeshNode` inicia portales sustancialmente engranados de enlaces con enrutamientos hacia las directrices por túnel base a libp2p incursionando fluyente de par en par directo en arquitecturas descentralizadas enrutadas y red, disimulando toda comunicación envolviéndola a manera subyacente cifradamente transcurrida en red `Noise`. Estipulando multiplexajes sobre secuencias transmitiendo acoplando `Yamux`, resultando capaz en tolerancias y estabilidades abismales logrando tráficos por encima al número superador en cienes lógicas conectando por vía de la canalización de la modalidad de las interacciones estables sobre las aperturas a de Conexiones directas QUIC/TLS logrando todo flujo estable exento transaccionalmente retrasos o atascos operativos latencia-cero (zero latency) frente a multiplicidades disímiles.

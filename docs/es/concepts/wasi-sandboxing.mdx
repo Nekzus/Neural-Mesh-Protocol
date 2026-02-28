@@ -1,0 +1,41 @@
+---
+title: "Sandboxing con WASI"
+description: "Cómo NMP aísla la ejecución a través de la Interfaz de Sistema de WebAssembly (WASI)"
+---
+
+El mayor salto de paradigma desde MCP hacia NMP es el concepto de **Logic-on-Origin** (Lógica en el Origen). Sin embargo, ejecutar código binario arbitrario proveniente de agentes remotos de internet sobre tu infraestructura local introduce inmensas consecuencias de seguridad.
+
+Para solucionar esto, NMP depende enteramente del aislamiento matemático a nivel de CPU provisto por **WASI (WebAssembly System Interface)**, utilizando el motor `Wasmtime` de Bytecode Alliance.
+
+## ¿Qué es WASI?
+
+Cuando una herramienta Node.js o Python se ejecuta en MCP, depende del sandboxing generalizado del sistema operativo (usualmente contenerización como Docker). Si una dependencia de Python se ve comprometida, teóricamente podría intentar una escalada de red completa o un escape (sandbox escape).
+
+**WASI invierte el modelo de seguridad.** WebAssembly es un formato de computación seguro en memoria y puramente matemático. Por defecto, a un módulo `.wasm` le faltan literalmente las instrucciones de CPU para hablar con el sistema operativo, el disco, el reloj o la red. WASI es el puente estrictamente controlado que re-introduce estas funcionalidades exactamente, y solamente, cuando son concedidas explícitamente.
+
+## El Ciclo de Vida del Sandbox NMP
+
+Cuando un Nodo Agente inyecta un módulo WebAssembly en un Nodo de Datos, las siguientes barreras de seguridad se activan:
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/wasi-bounds-light.svg" alt="Límites de Ejecución WASM" />
+  <img className="hidden dark:block w-full" src="/images/wasi-bounds-dark.svg" alt="Límites de Ejecución WASM" />
+</Frame>
+
+### 1. Verificación de Capacidades
+El Agente declara las capacidades que requiere de antemano (ej., `requires_capability: ["logs_read", "sql_readonly"]`). El Nodo de Datos chequea su manifiesto local para ver si se le permite a este Agente en específico acceder a esas capacidades.
+
+### 2. Pre-aperturas Microscópicas (Preopens)
+Si es aprobado, el Nodo de Datos **no** concede al módulo WASM acceso al sistema de archivos. En vez de eso, "pre-abre" (preopens) descriptores de archivos muy específicos y los mapea dentro del espacio virtualizado del módulo WASM.
+Si el agente pide leer `/var/log/nginx/` y el servidor lo permite asignándolo como `/logs`, el Agente *solo* verá `/logs` como la raíz absoluta para todo su universo. Intentar atravesar o escalar directorios retrocediendo con `../` se detendrá en seco y morirá en el límite del Sandbox.
+
+### 3. Límites de Ejecución y Memoria (Bounds)
+`Wasmtime` arranca el motor con limitadores estrictos:
+- **Tiempo Máximo de Ejecución:** Si el módulo ingresa en un bucle infinito, el runtime lo aniquila a través de una trampa lógica de agotamiento *Out-Of-Fuel* (Combustible Agotado).
+- **Límite Máximo de Memoria:** Si el módulo intenciona detonar un desbordamiento de búfer o rebosamiento e intenta alojar memoria expandiéndose más allá de su tope límite (ej., 50MB), desencadena de inmediato una Trampa insalvable e inatajable de tipo *OOM Trap* (Out Of Memory).
+- **Cero Sockets:** La lógica del Agente se ejecuta completamente desconectada y aislada (offline) al ras y dentro del Servidor. No puede abrir puertos, conectarse a internet, ni exfiltrar datos directamente sobre conexiones de red o un socket TCP. Su única salida de información y data permitida es estrictamente aquello que reporta retornando como salida autorizada vía `returns` para el orquestador interceptor encargado de gestionar invocaciones de NMP.
+- **Piscina (Pool) No Bloqueante:** Por naturaleza y estructura, la ejecución Sandbox u asolamiento virtual es de magnitud drástica resultando en extremo intensiva de forma en procesos de la CPU computacional. Para socorrer y prevenir que los servidores Node.js base colapsen congelados y dejen de posibilitar respuestas y atascando por colapsar los tiempos lógicos al colapsar o recargo del host principal en carga, el `@neural-mesh/sdk` destina e aísla todo este ciclo íntegro pre-fijado confiriéndoles traspasadas las ejecuciones delegándolas de vitalidad de manera de fondo traspasando e inter operándolos al interior de sistemas por separado en sus paralelos provistos y apartados con soporte de la red nativo aislando a paralelos `worker_threads` (manos de trabajo hilos originándose del medio natural empleando implementaciones en de interacciones y uniones provistas por red de `piscina`), logrando e igualando logrando el nivel al plano resultando equitativas logrando lo idéntico en rendimiento transaccional paralelo en concurrencias sin sobre cargas, alcanzado sobre un igual idénticamente paralelo y similar procesamiento de volumen simultáneos pareándose así rindiendo similar en escalada concurrente a la fluidez nativa del procesado original desde y asilados e apartes sub flujos que en contra cara el nodo nativo robusto principal original y matriz `Mesh-Node` lograse escalar de antemano.
+
+## Avanzando hacia el Modelo de Componentes (Preview 2)
+
+NMP está adoptando e impulsando un abordaje integrador abrazando firme con entusiasmo un asalto próximo de desarrollo abalanzando el adentrarnos integrando el marco de **WASI Preview 2 (El Component Model)**. Esto destrabará posibilitando franquear habilitaciones y franqueándole a los apartados abriéndole caminos directos posibilitándole interconexiones de aperturas e iteraciones para que los referenciados módulos operantes del Agente agilicen al compartir complejas estructuras nativas puras (structs) provenientes codificadas u organizadas y estructuras de los envases Protobuf y o las de objeto y en JSON formateadas acopladas de tipado estructurado de forma pesada rígida trans-pasando los puentes desde bordes fronteras inter referenciales y limites atravesando entre inter conectivas puentes de los linderos perimetrales frontera por la (Idioma emisor agente remitente del Agente -> al interior local hacia el Motor subyacente y operante receptor de asilados en motor Rust), logrando en gran medida total una de llano y totalitaria y de llano la eliminación erradicación eliminándolo a pleno y sin recuentos ni recargos abanderando eliminación librándoles al enorme gran salto un recargo masivo mermando y logrando eliminación bajando a el muy en detrimento costoso (overhead) de demoras estipulados y referido usual habitual e habitual al habituales referenciados procesos lógicos o analíticos, del acaparamiento general analítico en lectura analítica de parsing manual o interpretación serial o decodificaciones tipo conversiones y serializaciones y lecturas y su conversión originada general (parsing manuales originarias) y manipulativas e interprete inter-operativamente en pre análisis tipo interpretado e del procesado procesadas en cadenas caracteres (strings manual) recargado las ejecuciones analizando inter e interpretando manual (string parsing) y cadenas entre o trans fraccionando las lecturas directas mediadoras interpretándolas o codificaciones y decodificaciones mediantes o e interceptada e puente en entre partes entre referidas al Sandbox por el lado, unificando sin procesos de análisis sin manualidad inter partes transaccionales de recargos al Sistema originario o e o el de hosteado Anfitrión local Host (Sistema local Host referenciado original e sub sistema base).

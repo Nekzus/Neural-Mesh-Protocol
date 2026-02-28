@@ -1,0 +1,91 @@
+---
+title: "NmpServer"
+description: "Construyendo Nodos de Datos autónomos y migrando herramientas MCP heredadas"
+---
+
+La clase `NmpServer` es el corazón del Nodo de Datos. Representa la infraestructura host que orquesta de manera segura las intenciones entrantes de Lógica-en-Origen provenientes de Agentes remotos.
+
+En lugar de escribir entornos de ejecución personalizados para gestionar WebAssembly, aislamiento y redes, tú defines funciones sencillas en JavaScript/TypeScript. El SDK abstrae el complejo sandboxing automáticamente.
+
+## Inicialización
+
+Creas un Nodo de Datos indicándole a la Malla quién eres y proporcionando las propiedades de transporte.
+
+```typescript
+import { NmpServer } from "@neural-mesh/sdk";
+
+const server = new NmpServer({
+  name: "EnterpriseDatabaseNode",
+  version: "3.2.0",
+  // Escala el descifrado y el sandboxing WASI a través de todos los núcleos de CPU al instante
+  workerPool: { enabled: true, maxThreads: 16 }
+});
+```
+
+## Creando Capacidades (Tools)
+
+En MCP, estas se llaman Tools (Herramientas). En NMP, nos referimos a ellas como **Capacidades** (Capabilities). 
+
+Para el desarrollador, definir una Capacidad en NMP se ve virtualmente idéntico a definir una Tool de MCP. Proporcionas un nombre, una descripción, un esquema Zod para seguridad de tipos y un manejador (handler) de ejecución.
+
+```typescript
+import { z } from "zod";
+
+server.tool(
+  "analyze_employee_data",
+  "Analiza información sensible de nómina dentro del Sandbox.",
+  { department: z.string() },
+  async ({ department }) => {
+    // La lógica inyectada del Agente se detiene aquí.
+    // El Nodo de Datos ejecuta la solicitud local bajo sus propios permisos.
+    const result = await database.query(department);
+
+    return {
+      content: [{ type: "text", text: `Nómina evaluada: ${result.summary}` }]
+    };
+  }
+);
+```
+
+### En qué se diferencia de MCP
+
+Si el código se ve exactamente igual, ¿qué lo hace Neural Mesh?
+
+1. **Sin Polling:** El Nodo de Datos anuncia el esquema de `analyze_employee_data` criptográficamente sobre la DHT de Kademlia. El Agente sabe instantáneamente que el esquema existe sin desperdiciar una petición de red preguntando por `listTools()`.
+2. **Transporte Binario:** Cuando el Agente invoca esta herramienta, los parámetros (ej., `department: "HR"`) son comprimidos en bytes puros de Protobuf, omitiendo JSON por completo.
+
+## Conectando Servidores MCP Heredados (Legacy)
+
+El objetivo principal de NMP es una rápida adopción por parte de la industria. Si has pasado meses construyendo un servidor estándar del Protocolo de Contexto de Modelos (MCP), no necesitas reescribirlo para unirte a la Neural Mesh.
+
+El `@neural-mesh/sdk` incluye el `NmpMcpBridge`.
+
+Este poderoso adaptador intercepta las peticiones binarias entrantes de la malla NMP, las traduce a estándar JSON-RPC 2.0 localmente, las reenvía a tu Servidor MCP sin modificar vía stdio o SSE, y empaqueta la respuesta estándar de MCP de vuelta hacia la red P2P ultra rápida.
+
+```typescript
+import { NmpMcpBridge } from "@neural-mesh/sdk/bridge";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+
+// Tu implementación estándar de MCP heredado
+const mcpServer = new Server({ name: "LegacyWeatherApp", version: "1.0" });
+
+// Envuélvelo en el Puente NMP
+const bridge = new NmpMcpBridge(mcpServer, {
+  publishToMesh: true,
+  meshIdentity: "WeatherNode_01"
+});
+
+// Inicia el puente
+await bridge.connect();
+```
+
+Tu aplicación heredada es ahora completamente accesible para Agentes de IA Web3, descentralizados y Post-Cuánticos en todo el mundo sin cambiar una sola línea de tu lógica MCP original.
+
+## Iniciando el Servidor
+
+Una vez que tus herramientas, watchdogs y puentes están configurados, lanzas el Nodo de Datos vinculándolo a la red:
+
+```typescript
+await server.connect();
+console.log(`Neural Node online. Escuchando Wasms entrantes...`);
+```

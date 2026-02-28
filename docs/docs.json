@@ -9,50 +9,107 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Documentation",
-        "groups": [
+        "language": "en",
+        "tabs": [
           {
-            "group": "Get started",
-            "pages": [
-              "getting-started/intro",
-              "getting-started/quickstart"
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Get started",
+                "pages": [
+                  "getting-started/intro",
+                  "getting-started/quickstart"
+                ]
+              },
+              {
+                "group": "Core Concepts",
+                "pages": [
+                  "concepts/architecture",
+                  "concepts/server-concepts",
+                  "concepts/client-concepts",
+                  "concepts/wasi-sandboxing",
+                  "concepts/zero-trust"
+                ]
+              }
             ]
           },
           {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/architecture",
-              "concepts/server-concepts",
-              "concepts/client-concepts",
-              "concepts/wasi-sandboxing",
-              "concepts/zero-trust"
+            "tab": "TypeScript SDK",
+            "groups": [
+              {
+                "group": "TypeScript SDK",
+                "pages": [
+                  "typescript-sdk/overview",
+                  "typescript-sdk/client",
+                  "typescript-sdk/server"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Rust Backend",
+            "groups": [
+              {
+                "group": "Rust Backend",
+                "pages": [
+                  "mesh-node/overview",
+                  "mesh-node/compilation"
+                ]
+              }
             ]
           }
         ]
       },
       {
-        "tab": "TypeScript SDK",
-        "groups": [
+        "language": "es",
+        "tabs": [
           {
-            "group": "TypeScript SDK",
-            "pages": [
-              "typescript-sdk/overview",
-              "typescript-sdk/client",
-              "typescript-sdk/server"
+            "tab": "Documentación",
+            "groups": [
+              {
+                "group": "Comenzando",
+                "pages": [
+                  "es/getting-started/intro",
+                  "es/getting-started/quickstart"
+                ]
+              },
+              {
+                "group": "Conceptos Fundamentales",
+                "pages": [
+                  "es/concepts/architecture",
+                  "es/concepts/server-concepts",
+                  "es/concepts/client-concepts",
+                  "es/concepts/wasi-sandboxing",
+                  "es/concepts/zero-trust"
+                ]
+              }
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Rust Backend",
-        "groups": [
+          },
           {
-            "group": "Rust Backend",
-            "pages": [
-              "mesh-node/overview",
-              "mesh-node/compilation"
+            "tab": "TypeScript SDK",
+            "groups": [
+              {
+                "group": "TypeScript SDK",
+                "pages": [
+                  "es/typescript-sdk/overview",
+                  "es/typescript-sdk/client",
+                  "es/typescript-sdk/server"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Backend Rust",
+            "groups": [
+              {
+                "group": "Nodo Mesh",
+                "pages": [
+                  "es/mesh-node/overview",
+                  "es/mesh-node/compilation"
+                ]
+              }
             ]
           }
         ]

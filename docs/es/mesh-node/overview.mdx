@@ -1,0 +1,57 @@
+---
+title: "Core en Rust"
+description: "La base de red y Protocol Buffers de alto rendimiento"
+---
+
+Mientras que el `@neural-mesh/sdk` proporciona una excelente experiencia de desarrollador en Node.js y TypeScript, la verdad absoluta del protocolo reside en su núcleo: el **Backend en Rust**.
+
+Este espacio de trabajo (`mesh-node/`) contiene las estructuras de datos hiper-optimizadas, el bucle de ejecución del motor `Wasmtime` y las primitivas de red puras de Libp2p. 
+
+Solo deberías interactuar directamente con el Rust Core si estás:
+- Construyendo un SDK de NMP para un nuevo lenguaje (ej., Python, Go, C#).
+- Modificando los límites matemáticos del Sandbox Zero-Trust.
+- Personalizando los algoritmos de enrutamiento de la DHT de Kademlia.
+
+## Arquitectura del Workspace
+
+El Workspace de Cargo está estrictamente modularizado en componentes funcionales:
+
+<CardGroup cols={2}>
+  <Card title="nmp-core" icon="cube">
+    La Fuente de la Verdad (Source of Truth). Contiene las definiciones compiladas de Protobuf (`nmp_core.proto`) construidas a través de `tonic` y `prost`. Este crate define la estructura binaria inalterable de todas las intenciones de red.
+  </Card>
+  <Card title="nmp-server" icon="shield-halved">
+    El Nodo de Datos (Data Node). Aprovecha el crate `Wasmtime` de Bytecode Alliance para crear el límite de ejecución WASI para la lógica WebAssembly entrante. Incorpora vinculaciones arquitectónicas avanzadas para AWS Nitro Enclaves (TEEs) y RISC Zero (ZK-VM).
+  </Card>
+  <Card title="nmp-client" icon="network-wired">
+    El Nodo Agente (Agent Node). Despacha cargas de lógica a través de la malla de forma segura utilizando `rust-libp2p` y el framework del protocolo Noise.
+  </Card>
+  <Card title="wasm-filters" icon="microchip">
+    Las plantillas de carga aisladas (Payload templates). Contiene lógica en Rust específicamente orientada a la compilación `wasm32-wasi` para actuar como el cerebro del agente.
+  </Card>
+</CardGroup>
+
+## Stack de Transporte de Red
+
+A diferencia de las APIs simples de HTTP/REST, NMP requiere una conexión persistente, bidireccional y altamente multiplexada para soportar los Watchdogs persistentes y la ejecución de lógica de baja latencia.
+
+El backend en Rust implementa esto combinando dos tecnologías de vanguardia:
+
+1. **Tonic (gRPC):** 
+   Tonic maneja el enmarcado de mensajes (message framing). Cada `LogicRequest` y `LogicResponse` se transmite como Protobuf binario. Tonic gestiona automáticamente la contrapresión (backpressure) y los contextos de streaming de forma asíncrona utilizando el runtime de `tokio`.
+2. **Libp2p (QUIC & Noise):**
+   En lugar de ejecutar Tonic sobre TCP/TLS estándar, `nmp-core` tuneliza la totalidad del tráfico gRPC dentro de un flujo **QUIC** gestionado por Libp2p. Esto permite el descubrimiento de pares (peers) vía Kademlia y la verificación de identidad Ed25519 al instante tras el handshake, prescindiendo totalmente de la necesidad de CAs centralizadas o registradores DNS.
+
+## Motor de Ejecución
+
+El diferenciador central de todo el Neural Mesh Protocol reside en `mesh-node/nmp-server/src/executor.rs`.
+
+Aquí, el binario nativo de Rust recibe un array de bytes que representa la intención del Agente de IA. Antes de la ejecución, el motor limita la memoria dinámicamente basándose en el token de autorización del Agente, pre-abre descriptores de archivos estrictos usando `WasiCtxBuilder` y entrega la carga a la CPU virtual.
+
+Esto asegura un aislamiento total ante fallos (panic-isolation): si el `.wasm` del Agente encuentra una fuga de memoria, el SO Host permanece ileso.
+
+### Características de Vanguardia (Truth Protocol)
+
+Entrando en el "Endgame" de Nivel-0 (Tier-0), `nmp-server` opera más allá del sandboxing estándar:
+- **Hooks de Conocimiento Cero (Zero-Knowledge Hooks)**: Antes de devolver una respuesta, la lógica puede envolverse en una zkVM para generar un Recibo matemático determinista del AST exacto aplicado sobre los datos localizados.
+- **Computación Ciega (Blind Computation)**: A través del trait `EnclaveProvider`, el motor de ejecución puede arrancar sin problemas dentro de capacidades de Hardware aisladas, previniendo el volcado de memoria a nivel de hipervisor y del SO host.

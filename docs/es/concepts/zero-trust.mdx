@@ -1,0 +1,47 @@
+---
+title: "Seguridad Zero-Trust"
+description: "La arquitectura de defensa de múltiples capas que protege la Malla Neuronal (Neural Mesh)"
+---
+
+En un ecosistema donde los agentes de IA se comunican libremente y ejecutan matemáticas en servidores remotos de manera autónoma, la seguridad perimetral tradicional (VPNs, Whitelisting de IP, Contraseñas) resulta completamente insuficiente.
+
+El Neural Mesh Protocol (NMP) asume que la red es intrínsecamente hostil, adoptando una verdadera **Arquitectura Extreme Zero-Trust (Cero Confianza Absoluta)**. 
+
+Cada capa de NMP, desde la conexión física hasta la ejecución del código, integra redes de seguridad teóricas y criptográficas de grado militar.
+
+## 1. Cifrado de Transporte (Noise & PQC)
+
+En lugar de depender de Autoridades de Certificación centralizadas (como TLS/HTTPS), NMP utiliza el framework **Noise Protocol**, del cual son pioneras aplicaciones como Signal.
+
+- **Identidades Ed25519**: Cada Agente y Servidor genera un par de claves Ed25519. Tu Clave Pública *es* tu Peer ID en internet.
+- **Autenticación Mutua**: Las conexiones en la Malla Kademlia P2P se autentican mutuamente al instante. Tienes total certeza y en tiempo real de quién te está invocando simétricamente, y ellos asimétricamente de quién les está respondiendo.
+- **Criptografía Post-Cuántica (PQC)**: Los Handshakes de validación de conexión inicial emplean **Kyber (ML-KEM-768)** para derivar un ticket base a la clave simétrica y efectuar la encapsulación del payload bajo el esquema encriptador cifrado por medio de **AES-256-GCM**. Blindando y garantizando así la lógica e inteligencia del IA o Agentes ante eventuales o fatales amenazas futuras y pasadas en ataques "Harvest Now, Decrypt Later" ("Cosecha Hoy, Descifra Mañana") usual de supercomputadoras de tipo cuánticas albergadas.
+
+## 2. Inspección de Carga (Payload / Zero-Time Guardian)
+
+Mucho antes de que el Nodo de Datos siquiera le conceda privilegios básicos para que el engine local `wasmtime` emule a vuelo compilado los arranques .wasm inyectados, el mismo se evalúa y analiza matemáticamente por un escáner heurístico in vivo.
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/zero-trust-ast-light.svg" alt="Inspección Guardian AST" />
+  <img className="hidden dark:block w-full" src="/images/zero-trust-ast-dark.svg" alt="Inspección Guardian AST" />
+</Frame>
+
+El **Módulo Guardián** (Centinela AST o AST Sentinel) examina el fragmento binario basándose plenamente en validar escrupulosamente el Árbol de Sintaxis Abstracta (AST) de cada byte transmitido. Puesto que WebAssembly resulta estricta y fuertemente tipificable verificable de carácter y naturaleza de índole abstracta de manera explícita sin recurrir o necesitar a ejecutar una mínima línea de código antes de confirmarlo al vuelo, el core de NMP certifica o repudia el binario asegurando libre inyecciones malware a bajo nivel. De forma categórica esto impide secuencias fraudulentas y/o rutinas de des-limitaciones o saltos I/O (I/O Escapes/Network) por ganchos locales de sistema (System hooks).
+
+Sencillamente, y bajo latencias operativas medibles imperceptibles de orden cero; es purgado. Anulando, extinguiendo todo rastro y mitigando ramas e infraestructuras severamente intrincadas tipo persistente (Advanced Threats) en su raíz previniendo el arranque base del host al instante previo a que el motor arranque un hilo lógico.
+
+## 3. Entorno de Aislamiento Arena Físico (WASI Sandboxing)
+
+Profusamente cubierto adentro capitulándolos apartados oficiales programáticos para constructores abstractos delineados bajo la descripción principal del [Aislamientos en Sandbox WASI (WASI Sandboxing)](/es/concepts/wasi-sandboxing); en si implica el contorno rigurosamente blindado del metal físico. Impidiéndole transaccionar con APIs del metal o CPU I/O y conexiones directas de Internet mediante férreas políticas inviolables atadas inmutablemente que limitan el Bytecode-Runtime de Wasmtime mediante una delegación estricta al host para delegar la apertura y cierre estricto de las conexiones mapeadas impuestas a una capacidad y otorgada mediante directorios asignados y cerrados a un loop local sin desborde perimetral posible hacia escaladas verticales. Privacidad total desde su arquitectura inyectadora abstracta que opera a lo alto y no a lo hondo.
+
+## 4. Hardware de Aislamientos Restrictivos Ciegos Físico Hardware (TEEs)
+
+Sabido universal y académicamente que a pesar de perfectos confinamientos a softwares siempre existirán latentes en esferas avanzadas debilidades nativas derivadas o provenientes directamente (vía Hipervisores / Host Provider) escapando al Zero-Trust inyectado puro (Como el caso de amenazas Advanced Persistent Threats). NMP promueve bajo la arquitectura y despliegue opcional de su escalón jerárquicamente superior su capacidad de soportar o abarcar arquitecturas operables blindadas a nivel micro-hardware con infraestructuras o plataformas de ejecución denominadas comúnmente en la industria de Data Security a los **Entornos de Mallas Físicamente Seguros (Trusted Execution Environments - TEEs)** tipo implementaciones bajo Enclaves Amazon Cloud o (Enclaves como AWS Nitro) o nativas en chips locales como procesamientos CPU tipo enclave (Intel SGX).
+
+Así, alojándolo (O instalándolo al Nodo Base/Data y desplegándolo el engine ejecutor asincromático) al `Wasmtime` internado dentro o corriendo por encapsulado local al Enclave, el proveedor TEE garantiza ciframiento a la capa y niveles profundos que alojan su bloque de memorias efímeros instanciados. En concreto y al mismo punto ni el Cloud Host Manager base (AWS / Amazon) de forma directa forense u operante Sysadmin nativo administrador máquina, pueden escanear forense y lateral la mem RAM virtual del Host. Asegurándolo impermutable previniendo la extracción subyacentes e información extraídas al agente AI (Robado la memoria) o el Host invadido con copias cruzadas e ilícitas blindando al ecosistema entero al plano normativo inexpugnable. Esta capa es estricto estandarte a normativas mundiales estrictas FinTech (Financiera) o HIPAA Médicas de seguridad del data base analizada en los Host-Nodo.
+
+## 5. Pruebas y Atestaciones (Certidumbres Computacional por SNARKs ZK)
+
+Si un Agente Remoto se pregunta desconfiadamente (¿acaso quien emulaba del lado de Data host ha operado falsamente por mi agente sus análisis asimétricamente sobre esta data entregada que responde?). En estos contextos; e implícitamente estipulado para esto; NMP ofrece soportes embebido integral base arquitectónico inmaculado mediante interfaces VM con cripto abstracciones SNARK del ecosistema bajo Zero-Knowledge VM a los fines evaluadores a estas interrogantes validables resolutorias empíricamente determinables.
+
+De tal manera, además del Payload de regreso resuelto el Data-Node se compromete enviando también por adjunto comprobantes cripto matemático firmados generando **Recibos ZK Receipt** (vía VM a Zero del corte como engine Risc0-zkVM u similares). Todo valedero e inmutable a los fines; así el AI Agent asimila comprueba evalúa y acredita en un segundo matemáticamente sin reejecutar todo al Host, de esta forma, las validaciones logran que lo encomendado (El código WASM inyectado abstractamente del agente IA AST) fue estrictamente operado e infalible a veracidad computaciona del motor origen validando al Host que este sin proveer un solo dato de sus archivos bases a inspección del mesh AI para su validación de test blindando con extrema pureza inmaculada sin que el host comparta un archivo matriz.

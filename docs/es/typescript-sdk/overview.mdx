@@ -1,0 +1,104 @@
+---
+title: "Visión General del SDK TypeScript"
+description: "Llevando el poder de la Neural Mesh al ecosistema Node.js"
+---
+
+El oficial `@neural-mesh/sdk` provee un conjunto de herramientas completo e intensamente tipado para construir Clientes NMP (Nodos Agentes) y Servidores NMP (Nodos de Datos) en TypeScript y JavaScript.
+
+Si te encuentras migrando desde el Protocolo de Contexto de Modelos (MCP), hallarás una superficie de APIs en enorme grado familiar. NMP se diseñó como un **Reemplazo Directo** (Drop-in Replacement) para tu Experiencia de Desarrollador (DX), logrando abstraer e internalizar bajo simples clases en TypeScript la inmensa complejidad proveniente de interactuar directamente con Protobuf, WebAssembly, y redes DHT Kademlia.
+
+## Arquitectura del Paquete
+
+El SDK ha sido publicado de forma unificada hacia `npm`, englobando en él todas las lógicas tanto para el Cliente como para el Servidor:
+
+<CodeGroup>
+```bash npm
+npm install @neural-mesh/sdk zod
+```
+```bash pnpm
+pnpm add @neural-mesh/sdk zod
+```
+```bash yarn
+yarn add @neural-mesh/sdk zod
+```
+</CodeGroup>
+
+<Note>
+  Recomendamos instalar `zod` junto al SDK. Al igual como detalla la especificación MCP, nuestro protocolo NMP descansa sobre Zod como herramienta para asegurar que un Argumento de Ejecución expedido por la Inteligencia cuadre frente al manifiesto capacitador local provisto por el servidor receptor.
+</Note>
+
+## Bajo la Lupa: El Compilador Javy
+
+Podrías preguntarte: *Si NMP inyecta rutinas de WebAssembly (`.wasm`), ¿cómo puedo armar Agentes únicamente en TypeScript?*
+
+El `@neural-mesh/sdk` incluye un **Component Builder**. Cuando tu Agente de TypeScript ejecuta `.execute()`, de manera transparente el SDK serializa el payload en JavaScript, lo condensa estructurando bajo tecnología Javy en un `.wasm` restrictivo, lo envuelve a `LogicRequest` con tecnología Protobuf, y lo inyecta a la Malla (Mesh).
+
+El desarrollador no se ve obligado jamás a componer ni compilar Rust/Wasm manualmente.
+
+## Funcionalidades de Vanguardia Empresarial
+
+El SDK TypeScript opera bajo estricta paridad de arquitectura logrando replicar las restricciones de alta escalabilidad dictaminadas por su núcleo Rust, garantizando reglas Enterprise de modelo Zero-Trust:
+
+- **Criptografía Post-Cuántica (ML-KEM-768):** Blindaje asimétrico extremo de punta a punta usando `crystals-kyber` y sellado AES-256-GCM.
+- **Transporte Híbrido por Mesh:** Acceso ilimitado sumando interconexiones duales operando en red libp2p englobando WebSockets y TCP (Yamux).
+- **Guardian-TS (Inspección AST Cero-Tiempo):** Mitigaciones contra sandbox-escape bloqueándolos directamente antes que disparen una ejecución en `node:wasi`.
+- **ZK-Receipt Ready:** Soporte estructural para acoplarse y garantizar mediante Máquinas Virtuales de Conocimiento-Cero (zkVMs).
+- **Escala Multi-Core (Piscina):** Traspasa limitantes de estrangulamientos originados por el Event Loop principal bypasseando estas descargas transaccionales operando con `piscina`. Aísla todas las desencripciones PQC y el WASI Sandbox dentro de hilos OS independientes.
+
+## Exportaciones Principales (Key Exports)
+
+El SDK exporta tres estructuras bases orientadas a orquestar Aplicaciones Mesh (Mallas de Red):
+
+<CardGroup cols={3}>
+  <Card title="NmpServer" icon="server" href="/typescript-sdk/server">
+    El Receptor de Datos (Data Node). Expone las capacidades, archivos y maneja el flujo entrante de Intenciones de Lógica-en-Origen (Logic-on-Origin) de modo seguro.
+  </Card>
+  <Card title="NmpClient" icon="robot" href="/typescript-sdk/client">
+    El Nodo de Inteligencia. Bucea en la Tabla DHT de la Red Mesh descubriendo las capacidades disponibles e inyectándole las cargas dinámicas en WebAssembly para procesar datos.
+  </Card>
+  <Card title="NmpMcpBridge" icon="bridge-water" href="/typescript-sdk/server#nmpmcpbridge">
+    El Traductor Heredado. Convierte las interacciones tradicionales JSON-RPC haciéndolas compatibles instatáneamente con tu nueva red NMP de altísimo rendimiento.
+  </Card>
+</CardGroup>
+
+## Deep Dive Arquitectónico: Pool Transaccional Multi-Core
+
+Una severa limitación históricamente señalada con respecto a Node.js originaba estancamientos en su hilo único (single-threaded Event Loop) bajo pesadas cargas de CPU extenuantes. El SDK rompe este límite derivando el asolamiento criptográfico hacia Worker Threads aislados del SO empleando \piscina\.
+
+\\\mermaid
+flowchart TD
+    classDef client fill:#0ea5e9,stroke:#0284c7,stroke-width:2px,color:#fff
+    classDef grpc fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+    classDef main fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    classDef worker fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+    classDef wasi fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+
+    C[NMP Client / Agent]:::client --"Petición PQC Encapsulada\n(gRPC / TCP)"--> G{Servidor gRPC\n(Hilo Principal)}:::grpc
+    
+    subgraph "Main Thread (Event Loop - Hilo Principal)"
+        G --> |"Acepta Conexión\nNo Bloqueante"| M[Despachador RPC]:::main
+    end
+
+    subgraph "Hardware CPU Cores (Núcleos Físicos)"
+        M -.->|"Desplaza Payload Cifrado\n(Memoria Compartida)"| W1[Worker Thread 1 - Hilo SO]:::worker
+        M -.->|Desplaza a Hilo| W2[Worker Thread 2]:::worker
+        M -.->|Desplaza a Hilo| WN[Worker Thread N]:::worker
+    end
+
+    subgraph "Inside OS Worker Thread (Dentro del Hilo SO)"
+        W1 --> |1| D1(Kyber768 & AES Decrypt)
+        D1 --> |2| G1(Guardian-TS Inspección AST)
+        G1 --> |3| V1[WASI Ejecución Sandbox]:::wasi
+        V1 --> |4| Z1(ZK-Receipt Generador Hasher)
+    end
+
+    W1 -.->|"Devuelve Prueba ZK\n& Contexto de Ejecución"| M
+    M --"LogicResponse\nStream (Flujo)"--> C
+\\\
+
+## Primeros Pasos (Getting Started)
+
+¿Listo para escribir tu primera línea de código NMP? Salta directo a construir ambos extremos limitantes de la Malla:
+
+- Construye un [Neural Server (Servidor NMP)](/typescript-sdk/server) para proteger tus datos.
+- Diseña un [Neural Client (Cliente NMP)](/typescript-sdk/client) para explorar descubriendo inteligencia.

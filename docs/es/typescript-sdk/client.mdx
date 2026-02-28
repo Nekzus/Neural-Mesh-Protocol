@@ -1,0 +1,101 @@
+---
+title: "NmpClient"
+description: "Enrutando intenciones e inyectando lógica autónoma vía la Neural Mesh"
+---
+
+La clase `NmpClient` es el orquestador para los Nodos Agentes. Conecta tu aplicación de Node.js o edge a la Malla (Mesh) DHT de Kademlia, valida identidades criptográficas y despacha cargas de lógica WebAssembly directamente a los Nodos de Datos (Servidores) remotos.
+
+A diferencia de los clientes REST tradicionales que solo hacen un `<fetch>` a endpoints JSON estáticos, un `NmpClient` literalmente empuja sus funciones de lógica a través de internet para ser ejecutadas de manera nativa en el servidor.
+
+## Inicialización
+
+Conectarse a la Malla requiere instanciar el cliente con metadatos de identificación. Estos metadatos se anuncian a la DHT.
+
+```typescript
+import { NmpClient } from "@neural-mesh/sdk";
+
+const client = new NmpClient(
+  {
+    name: "ForensicLogAgent",
+    version: "1.0.0",
+  },
+  {
+    // Habilitar características como Handshakes Post-Cuánticos
+    capabilities: {
+      roots: { listChanged: true },
+      quantumResistant: true 
+    },
+  }
+);
+```
+
+## Conexión a la Malla (Mesh)
+
+A diferencia de MCP, que requiere una tubería stdio directa o una URL de SSE preconfigurada, NMP utiliza ruteo peer-to-peer descentralizado. 
+Tú proporcionas un **Peer ID** (la identidad única Ed25519 del Servidor al que quieres llegar) y libp2p se encarga de atravesar NATs automáticamente.
+
+```typescript
+// Conectarse al backbone de la red Mesh
+await client.connect();
+
+console.log(`Agent Mesh ID: ${client.peerId}`);
+```
+
+## Llamando a una Capacidad del Servidor (Tool)
+
+Una vez conectado, puedes invocar las capacidades expuestas por cualquier Nodo de Datos en el que confíes. Internamente, el SDK empaquetará tu intención en WASM y la inyectará sobre gRPC.
+
+```typescript
+try {
+  // Consultando a un par 'remote-database' para una tarea de SQL intensiva
+  // El servidor ejecuta la lógica nativamente consumiendo 0 ancho de banda de red
+  const result = await client.callTool(
+    "PeerID_del_Nodo_de_Base_de_Datos_123",
+    "execute_complex_sql",
+    { 
+      query: "SELECT * FROM petabytes_table WHERE anomaly_detected = true" 
+    },
+    { requireZkReceipt: true } // ¡Verificar matemáticamente la ejecución!
+  );
+
+  console.log("Resultado Matemático devuelto:");
+  console.log(result.content[0].text);
+} catch (error) {
+  console.error("Inyección de Capacidad rechazada o fallida:", error);
+}
+```
+
+## Creando Watchdogs (Suscripciones Push)
+
+El verdadero poder de la Lógica-en-Origen es la habilidad de generar **Watchdogs**. En lugar de consultar manualmente `client.callTool()` cada 5 segundos, cargas un módulo de monitoreo persistente.
+
+```typescript
+// Desplegar un módulo de monitoreo persistente en un servidor
+await client.deployWatchdog(
+  "PeerID_Server_999",
+  "cpu_surge_monitor",
+  (event) => {
+    // Este callback se disparará solo cuando el servidor empuje un evento
+    // asíncronamente sobre el canal QUIC multiplexado.
+    console.log("🚨 PICO DETECTADO EN REMOTO:", event);
+  }
+);
+```
+
+## Manejo de Errores y Rechazos Zero-Trust
+
+Debido a que el Servidor impone un sandbox `WASI` estricto y utiliza el *Guardian Cero-Tiempo* para inspeccionar tu carga `.wasm` ANTES de la ejecución, tu cliente debe estar preparado para manejar rechazos del sandbox.
+
+```typescript
+import { NmpError, ErrorCode } from "@neural-mesh/sdk";
+
+try {
+  await client.callTool("PeerID", "read_file", { path: "/etc/passwd" });
+} catch (error) {
+  if (error instanceof NmpError) {
+    if (error.code === ErrorCode.CapabilityViolation) {
+      console.error("🚨 Ejecución en Sandbox Detenida: Intento de acceso no autorizado al sistema de archivos.");
+    }
+  }
+}
+```
