@@ -104,7 +104,10 @@ export const WasiSandbox = {
 		// 4. Generate Zero-Knowledge Proof (ZK-Receipt)
 		console.error(`🔒 [ZK Prover] Generating STARK cryptographic receipt...`);
 		const logicHash = createHash("sha256").update(compiledLogic).digest("hex");
-		const outputHash = createHash("sha256").update(resultOutput).digest("hex");
+
+		// Ensure output is string for hashing
+		const outputForHash = typeof resultOutput === "object" ? JSON.stringify(resultOutput) : String(resultOutput);
+		const outputHash = createHash("sha256").update(outputForHash).digest("hex");
 		// We simulate the Zero-Knowledge Proof: Ensures the integrity of the Logic -> Data -> Output pipeline
 		const zkReceipt = createHash("sha512")
 			.update(`RISC0_SEAL:${logicHash}:${outputHash}:NMP_V1`)
