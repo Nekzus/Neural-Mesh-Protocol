@@ -137,17 +137,14 @@
         @keyframes pulseNetD {
             0% {
                 opacity: 0.4;
-                filter: drop-shadow(0 0 2px #10b981);
             }
 
             50% {
                 opacity: 1;
-                filter: drop-shadow(0 0 6px #34d399);
             }
 
             100% {
                 opacity: 0.4;
-                filter: drop-shadow(0 0 2px #10b981);
             }
         }
 
@@ -258,27 +255,7 @@
             <polygon points="0 0, 10 3.5, 0 7" class="mfd-arrow-return" />
         </marker>
 
-        <filter id="glow-txD" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
-        <filter id="glow-rxD" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
-        <filter id="glow-amberD" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
+        <!-- Glows removed for mobile performance -->
     </defs>
 
     <!-- ZONES -->
@@ -347,14 +324,14 @@
     <!-- TX Particles -->
     <g transform="translate(330, 180)">
         <g class="mfd-part-tx-1">
-            <circle cx="0" cy="0" r="5" fill="#10b981" filter="url(#glow-txD)" />
+            <circle cx="0" cy="0" r="5" fill="#10b981" />
             <text x="0" y="-12" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#34d399">Kyber/AES
                 Encrypted</text>
         </g>
     </g>
     <g transform="translate(330, 180)">
         <g class="mfd-part-tx-2">
-            <circle cx="0" cy="0" r="5" fill="#38bdf8" filter="url(#glow-txD)" />
+            <circle cx="0" cy="0" r="5" fill="#38bdf8" />
             <text x="0" y="22" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#7dd3fc">WASM AST Payload</text>
         </g>
     </g>
@@ -365,14 +342,14 @@
     <!-- RX Particles -->
     <g transform="translate(670, 380)">
         <g class="mfd-part-rx-1">
-            <circle cx="0" cy="0" r="5" fill="#c084fc" filter="url(#glow-rxD)" />
+            <circle cx="0" cy="0" r="5" fill="#c084fc" />
             <text x="0" y="-12" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#c084fc">ZK-Receipt
                 Proof</text>
         </g>
     </g>
     <g transform="translate(670, 380)">
         <g class="mfd-part-rx-2">
-            <circle cx="0" cy="0" r="5" fill="#FFFFFF" filter="url(#glow-rxD)" />
+            <circle cx="0" cy="0" r="5" fill="#FFFFFF" />
             <text x="0" y="22" text-anchor="middle" class="mfd-text mfd-subtitle" fill="#FAFAFA">Semantic Output</text>
         </g>
     </g>
@@ -409,7 +386,7 @@
                 opacity="0.8" />
             <circle cx="0" cy="0" r="14" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="8 4"
                 opacity="0.6" />
-            <circle cx="0" cy="0" r="4" fill="#fcd34d" filter="url(#glow-amberD)" />
+            <circle cx="0" cy="0" r="4" fill="#fcd34d" />
         </g>
     </g>
 
