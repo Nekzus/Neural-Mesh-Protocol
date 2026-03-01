@@ -81,7 +81,11 @@ export const WasiSandbox = {
 
 			// We simulate computation latency
 			const startMark = performance.now();
-			resultOutput = String(runLogic(recordsData));
+			const rawResult = runLogic(recordsData);
+			resultOutput =
+				typeof rawResult === "object"
+					? JSON.stringify(rawResult)
+					: String(rawResult);
 			const endMark = performance.now();
 
 			// Calculate spent fuel based on mathematical duration (Approx)
