@@ -98,7 +98,7 @@ export class MeshRpcServer {
 				kyberPublicKey: Buffer.alloc(0),
 				wasmBinary: request.wasm_binary,
 				inputs: {},
-				sessionToken: request.session_token
+				sessionToken: request.session_token,
 			});
 
 			console.log(
@@ -142,20 +142,20 @@ export class MeshRpcServer {
 				console.log("[🔒] NMP gRPC: Mounting Secure TLS/mTLS Credentials...");
 				const cert = fs.readFileSync(certPath);
 				const key = fs.readFileSync(keyPath);
-				credentials = grpc.ServerCredentials.createSsl(null, [{ cert_chain: cert, private_key: key }]);
+				credentials = grpc.ServerCredentials.createSsl(null, [
+					{ cert_chain: cert, private_key: key },
+				]);
 			} else {
-				console.warn("[!] NMP gRPC: Missing TLS Certs. Falling back to Insecure localhost binding (Dev Mode only).");
+				console.warn(
+					"[!] NMP gRPC: Missing TLS Certs. Falling back to Insecure localhost binding (Dev Mode only).",
+				);
 			}
 
-			this.server.bindAsync(
-				bindAddr,
-				credentials,
-				(err, port) => {
-					if (err) return reject(err);
-					console.log(`NMP gRPC Server listening intensely on ${bindAddr}`);
-					resolve();
-				},
-			);
+			this.server.bindAsync(bindAddr, credentials, (err, port) => {
+				if (err) return reject(err);
+				console.log(`NMP gRPC Server listening intensely on ${bindAddr}`);
+				resolve();
+			});
 		});
 	}
 

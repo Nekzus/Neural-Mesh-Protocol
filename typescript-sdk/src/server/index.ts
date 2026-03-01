@@ -108,6 +108,35 @@ export class NmpServer {
 		return Array.from(this.tools.values()).map((t) => t.tool);
 	}
 
+	/**
+	 * Retrieves registered resources
+	 */
+	public listResources(): Resource[] {
+		return Array.from(this.resources.values());
+	}
+
+	/**
+	 * Reads a specific resource by URI
+	 */
+	public readResource(uri: string): { contents: Array<{ uri: string, mimeType?: string, text: string }> } {
+		const resource = this.resources.get(uri);
+		if (!resource) {
+			throw new Error(`Resource not found: ${uri}`);
+		}
+
+		// In a real scenario, this would read from disk or a database
+		// For our Logic-on-Origin demo, we'll return its description/content
+		return {
+			contents: [
+				{
+					uri: resource.uri,
+					mimeType: resource.mimeType || "text/plain",
+					text: resource.description || "No description provided",
+				}
+			]
+		}
+	}
+
 	public getServerInfo(): ServerInfo {
 		return this.serverInfo;
 	}

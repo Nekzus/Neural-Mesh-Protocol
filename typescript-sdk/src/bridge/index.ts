@@ -8,7 +8,7 @@ import type { CallToolRequest, CallToolResult } from "../types.js";
  * NmpServer logic (or eventually packaging them to WASM).
  */
 export class NmpMcpBridge {
-	constructor(private internalServer: NmpServer) {}
+	constructor(private internalServer: NmpServer) { }
 
 	/**
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
@@ -22,6 +22,28 @@ export class NmpMcpBridge {
 		if (payload.method === "tools/list") {
 			const tools = this.internalServer.listTools();
 			return this.successResponse(payload.id, { tools });
+		}
+
+		if (payload.method === "resources/list") {
+			const resources = this.internalServer.listResources();
+			return this.successResponse(payload.id, { resources });
+		}
+
+		if (payload.method === "resources/read") {
+			const { params } = payload;
+			if (!params || !params.uri) {
+				return this.errorResponse(
+					payload.id,
+					-32602,
+					"Missing resource uri in params",
+				);
+			}
+			try {
+				const result = this.internalServer.readResource(params.uri);
+				return this.successResponse(payload.id, result);
+			} catch (err: any) {
+				return this.errorResponse(payload.id, -32000, err.message);
+			}
 		}
 
 		if (payload.method === "tools/call") {
@@ -65,5 +87,56 @@ export class NmpMcpBridge {
 			id,
 			error: { code, message },
 		};
+	}
+
+	/**
+	 * Conecta el puente escuchando a stdio utilizando readline.
+	 * Responde a los comandos JSON-RPC 2.0 y maneja la inicialización.
+	 */
+	public async connect(): Promise<void> {
+		const readline = await import("readline");
+		const rl = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout,
+			terminal: false,
+		});
+
+		rl.on("line", async (line) => {
+			if (!line.trim()) return;
+			try {
+				const payload = JSON.parse(line);
+
+				// Standard MCP initialization bypass
+				if (payload.method === "initialize") {
+					const response = this.successResponse(payload.id, {
+						protocolVersion: payload.params?.protocolVersion || "2024-11-05",
+						capabilities: {
+							tools: {
+								listChanged: true
+							},
+							resources: {
+								listChanged: true
+							}
+						},
+						serverInfo: this.internalServer.getServerInfo(),
+					});
+					console.log(JSON.stringify(response));
+					return;
+				}
+
+				if (payload.method === "notifications/initialized") {
+					return;
+				}
+
+				const response = await this.handleJsonRpcRequest(payload);
+				if (response) {
+					console.log(JSON.stringify(response));
+				}
+			} catch (e: any) {
+				console.error(
+					`[NMP-Bridge] Error procesando payload JSON-RPC: ${e.message}`,
+				);
+			}
+		});
 	}
 }

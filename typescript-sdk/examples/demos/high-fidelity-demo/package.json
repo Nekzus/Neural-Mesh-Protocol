@@ -1,14 +1,14 @@
 {
-    "name": "@neural-mesh/high-fidelity-demo",
-    "version": "1.0.0",
-    "description": "High-Fidelity dynamic demo demonstrating NMP Guardian AST, WASI Sandbox and ZK-STARK constraints.",
-    "type": "module",
-    "main": "index.js",
-    "scripts": {
-        "start:server": "tsx src/server-node.ts",
-        "start:client": "tsx src/agent.ts"
-    },
-    "dependencies": {
-        "@neural-mesh/sdk": "workspace:*"
-    }
+	"name": "@neural-mesh/high-fidelity-demo",
+	"version": "1.0.0",
+	"description": "High-Fidelity dynamic demo demonstrating NMP Guardian AST, WASI Sandbox and ZK-STARK constraints.",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"start:server": "tsx src/server-node.ts",
+		"start:client": "tsx src/agent.ts"
+	},
+	"dependencies": {
+		"@neural-mesh/sdk": "workspace:*"
+	}
 }

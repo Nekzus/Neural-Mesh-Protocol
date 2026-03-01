@@ -10,9 +10,9 @@ describe("NmpClient", () => {
 		const mockServerPublicKey = new Uint8Array(1184);
 		const mockWasmPayload = Buffer.from("mock");
 
-		await expect(client.callTool({ name: "any" }, mockWasmPayload, mockServerPublicKey)).rejects.toThrow(
-			"Client must be connected before calling tools.",
-		);
+		await expect(
+			client.callTool({ name: "any" }, mockWasmPayload, mockServerPublicKey),
+		).rejects.toThrow("Client must be connected before calling tools.");
 		await expect(client.discoverTools()).rejects.toThrow(
 			"Client must be connected before discovering tools.",
 		);
@@ -39,7 +39,11 @@ describe("NmpClient", () => {
 		const mockServerPublicKey = new Uint8Array(1184);
 		const mockWasmPayload = Buffer.from("mock-wasm-binary-data");
 
-		const res = await client.callTool({ name: "read_logs", arguments: {} }, mockWasmPayload, mockServerPublicKey);
+		const res = await client.callTool(
+			{ name: "read_logs", arguments: {} },
+			mockWasmPayload,
+			mockServerPublicKey,
+		);
 		expect(res.isError).toBeFalsy();
 		expect(res.content[0].text).toContain("Secure Execution Dispatched");
 		expect(res.content[0].text).toContain("bytes (Encrypted)");
