@@ -47,7 +47,10 @@ export class NmpServer {
 
 	constructor(
 		private serverInfo: ServerInfo,
-		_config?: { capabilities?: Record<string, unknown> },
+		private config?: {
+			capabilities?: Record<string, unknown>;
+			security?: { piiPatterns?: string[] };
+		},
 	) { }
 
 	/**
@@ -167,6 +170,37 @@ export class NmpServer {
 								return item;
 							}),
 						};
+					}
+
+					// NMP Native Egress Filter (PII Protection)
+					const piiPatterns = this.config?.security?.piiPatterns;
+					if (
+						!result.isError &&
+						piiPatterns &&
+						piiPatterns.length > 0 &&
+						result.content
+					) {
+						for (const item of result.content) {
+							if (item.type === "text" && item.text) {
+								const lowerText = item.text.toLowerCase();
+								for (const pattern of piiPatterns) {
+									if (lowerText.includes(pattern.toLowerCase())) {
+										console.error(
+											`\n🚨 [NMP-SDK] SECURITY VIOLATION: Native Egress Filter blocked PII leak (${pattern}).`,
+										);
+										return {
+											content: [
+												{
+													type: "text",
+													text: `[NMP] Egress Security Violation. Output blocked due to PII leakage (${pattern}).`,
+												},
+											],
+											isError: true,
+										};
+									}
+								}
+							}
+						}
 					}
 
 					if (!result.isError) {

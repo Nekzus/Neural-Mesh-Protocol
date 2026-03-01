@@ -15,7 +15,12 @@ console.error(">>> THE VAULT (High-Fidelity NMP Server) is online.\n");
 
 export const theVaultServer = new NmpServer(
 	{ name: "TheVault", version: "1.0.0" },
-	{ capabilities: { tools: { listChanged: true } } },
+	{
+		capabilities: { tools: { listChanged: true } },
+		security: {
+			piiPatterns: ['"id":', '"patientid":', '"name":', '"nombre":'],
+		},
+	},
 );
 
 // NMP Plug & Play: Injects Authority MCP Prompts into the Stdio Bridge
@@ -49,30 +54,9 @@ theVaultServer.tool(
 			// 3. THE SHIELD - Phase 2: WASI Sandbox Execution
 			const result = await WasiSandbox.execute(logicCore);
 
-			// 4. THE SHIELD - Phase 3: Egress Filter (Anti-Exfiltration)
-			// We review the mathematical output to ensure the AI doesn't try to steal an ID.
-			try {
-				const parsedOutput = JSON.parse(result.output);
-				const stringifiedKeys = JSON.stringify(parsedOutput).toLowerCase();
-				if (
-					stringifiedKeys.includes('"id":') ||
-					stringifiedKeys.includes('"patientid":')
-				) {
-					console.error(
-						`\n🚨 [Egress Filter] FATAL: DATA EXFILTRATION ATTEMPT (PII) DETECTED!`,
-					);
-					console.error(
-						`🚨 [Egress Filter] The computational output attempted to export patient identifiers.`,
-					);
-					throw new Error(
-						"[NMP] Egress Security Violation. Output blocked due to PII leakage.",
-					);
-				}
-			} catch (err: unknown) {
-				const e = err as Error;
-				if (e.message.includes("Egress Security Violation")) throw e;
-				// If it's not JSON, let it pass or apply Regex for plain text according to the business rule.
-			}
+			console.error(
+				`\n📤 [The Vault] Analysis completed. Final result being audited by NMP-SDK...`,
+			);
 
 			console.error(
 				`\n📤 [The Vault] Analysis completed. Returning ZK-Receipt to the issuer.`,
