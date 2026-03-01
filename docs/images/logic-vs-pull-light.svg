@@ -273,11 +273,7 @@
         </marker>
     </defs>
 
-    <!-- CENTER DIVIDER -->
-    <line x1="500" y1="30" x2="500" y2="390" class="nmp-line" stroke-dasharray="8 8" opacity="0.4" />
 
-    <rect x="440" y="200" width="120" height="24" fill="#ffffff" stroke="#e4e4e7" stroke-width="1" rx="4" />
-    <text x="500" y="216" text-anchor="middle" class="nmp-text-sm" fill="#52525b">PARADIGM SHIFT</text>
 
     <!-- ========================================== -->
     <!-- LEFT SIDE: CONTEXT-PULLING (DATA GRAVITY)  -->
@@ -322,9 +318,9 @@
     </g>
 
     <!-- Warning Labels -->
-    <text x="100" y="210" text-anchor="end" class="nmp-subtitle" fill="#dc2626">SLOW</text>
-    <text x="100" y="230" text-anchor="end" class="nmp-subtitle" fill="#dc2626">EXPENSIVE</text>
-    <text x="100" y="250" text-anchor="end" class="nmp-subtitle" fill="#dc2626">EXFILTRATION RISK</text>
+    <text x="50" y="210" text-anchor="start" class="nmp-subtitle" fill="#dc2626">✗ SLOW</text>
+    <text x="50" y="230" text-anchor="start" class="nmp-subtitle" fill="#dc2626">✗ EXPENSIVE</text>
+    <text x="50" y="250" text-anchor="start" class="nmp-subtitle" fill="#dc2626">✗ DATA EXFILTRATION</text>
 
     <!-- ========================================== -->
     <!-- RIGHT SIDE: LOGIC-ON-ORIGIN (NMP)          -->
@@ -372,10 +368,16 @@
     </g>
 
     <!-- Action Labels -->
-    <text x="610" y="222" text-anchor="end" class="nmp-text-sm" fill="#0284c7">1. Push Logic</text>
-    <text x="890" y="222" text-anchor="start" class="nmp-text-sm" fill="#9333ea">2. Pull Semantics</text>
+    <text x="630" y="222" text-anchor="end" class="nmp-text-sm" fill="#0284c7">1. Push Logic</text>
+    <text x="870" y="222" text-anchor="start" class="nmp-text-sm" fill="#9333ea">2. Pull Semantics</text>
 
     <text x="750" y="220" text-anchor="middle" font-size="28" fill="#10b981" opacity="0.1"
         font-family="'Inter', sans-serif">⚡</text>
+
+    <!-- CENTER DIVIDER (Rendered on top) -->
+    <line x1="500" y1="30" x2="500" y2="390" class="nmp-line" stroke-dasharray="8 8" opacity="0.4" />
+
+    <rect x="440" y="200" width="120" height="24" fill="#ffffff" stroke="#e4e4e7" stroke-width="1" rx="4" />
+    <text x="500" y="216" text-anchor="middle" class="nmp-text-sm" fill="#52525b">PARADIGM SHIFT</text>
 
 </svg>
