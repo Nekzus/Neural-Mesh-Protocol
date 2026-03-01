@@ -1,4 +1,4 @@
-const { spawn } = require("child_process");
+const { spawn } = require("node:child_process");
 
 const server = spawn("pnpm", ["exec", "tsx", "src/run-mcp.ts"], {
 	cwd: process.cwd(),
@@ -14,12 +14,12 @@ server.stdout.on("data", (data) => {
 	}
 });
 
-server.stderr.on("data", (data) => {
+server.stderr.on("data", (_data) => {
 	// console.error('[Server Err]:', data.toString());
 });
 
 const send = (payload) => {
-	server.stdin.write(JSON.stringify(payload) + "\n");
+	server.stdin.write(`${JSON.stringify(payload)}\n`);
 };
 
 // 1. Send multiple bad requests to trigger the rate limiter (Threshold of 5)

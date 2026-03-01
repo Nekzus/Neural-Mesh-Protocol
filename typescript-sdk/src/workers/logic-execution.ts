@@ -15,15 +15,8 @@ export interface WorkerData {
 
 export default async function processLogicExecution(
 	data: WorkerData,
-): Promise<any> {
-	const {
-		ciphertext,
-		secretKeyObj,
-		kyberPublicKey,
-		wasmBinary,
-		inputs,
-		sessionToken,
-	} = data;
+): Promise<{ image_id: string; output: string }> {
+	const { ciphertext, secretKeyObj, wasmBinary } = data;
 
 	// 1. Decapsulate Kyber secret
 	// Ensure we use Uint8Array for Kyber operations

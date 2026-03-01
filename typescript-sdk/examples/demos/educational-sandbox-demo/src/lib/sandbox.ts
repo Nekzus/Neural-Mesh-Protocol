@@ -10,22 +10,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  * WasiSandbox simulates the WebAssembly/WASI execution environment with fuel tracking,
  * virtual filesystem, and ZK-Proof generation.
  */
-export class WasiSandbox {
-	private static MAX_FUEL = 50000;
-	private static FUEL_PER_RECORD = 1200;
+export const WasiSandbox = {
+	MAX_FUEL: 50000,
+	FUEL_PER_RECORD: 1200,
 
 	/**
 	 * Executes logic within a virtualized sandbox.
 	 */
-	static async execute(
+	async execute(
 		payload: Buffer,
-		context: any,
-	): Promise<{ result: any; receipt: any }> {
+		_context: unknown,
+	): Promise<{ result: unknown[]; receipt: Record<string, unknown> }> {
 		console.log(`[WasiSandbox] Instantiating WASM Instance...`);
 
 		// Extract Logic (Skip Magic and Manifest for simulation)
 		const rawContent = payload.toString("utf8");
-		const jsLogic = rawContent.split("}").pop() || "";
+		const _jsLogic = rawContent.split("}").pop() || "";
 
 		console.log(
 			`[WasiSandbox] Mounting VirtualFS: /data/medical_records.json (Read-Only)`,
@@ -34,7 +34,7 @@ export class WasiSandbox {
 		const records = JSON.parse(await fs.readFile(dataPath, "utf8"));
 
 		let consumedFuel = 0;
-		const results: any[] = [];
+		const results: unknown[] = [];
 
 		console.log(`[WasiSandbox] Running Guest Code Execution...`);
 
@@ -76,5 +76,5 @@ export class WasiSandbox {
 		};
 
 		return { result: results, receipt };
-	}
-}
+	},
+};

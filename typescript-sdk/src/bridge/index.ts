@@ -14,7 +14,9 @@ export class NmpMcpBridge {
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
 	 * and pipes it to the fast `NmpServer` validation layer.
 	 */
-	public async handleJsonRpcRequest(payload: any): Promise<any> {
+	public async handleJsonRpcRequest(
+		payload: Record<string, unknown>,
+	): Promise<unknown> {
 		if (payload.jsonrpc !== "2.0") {
 			return this.errorResponse(payload.id, -32600, "Invalid Request");
 		}
@@ -49,8 +51,12 @@ export class NmpMcpBridge {
 					arguments: params.arguments,
 				});
 				return this.successResponse(payload.id, result);
-			} catch (err: any) {
-				return this.errorResponse(payload.id, -32000, err.message);
+			} catch (err: unknown) {
+				return this.errorResponse(
+					payload.id as string | number,
+					-32000,
+					(err as Error).message,
+				);
 			}
 		}
 
@@ -66,8 +72,12 @@ export class NmpMcpBridge {
 			try {
 				const result = this.internalServer.readResource(params.uri);
 				return this.successResponse(payload.id, result);
-			} catch (err: any) {
-				return this.errorResponse(payload.id, -32000, err.message);
+			} catch (err: unknown) {
+				return this.errorResponse(
+					payload.id as string | number,
+					-32000,
+					(err as Error).message,
+				);
 			}
 		}
 
@@ -90,15 +100,22 @@ export class NmpMcpBridge {
 				const result: CallToolResult =
 					await this.internalServer.callTool(request);
 				return this.successResponse(payload.id, result);
-			} catch (err: any) {
-				return this.errorResponse(payload.id, -32000, err.message);
+			} catch (err: unknown) {
+				return this.errorResponse(
+					payload.id as string | number,
+					-32000,
+					(err as Error).message,
+				);
 			}
 		}
 
 		return this.errorResponse(payload.id, -32601, "Method not found");
 	}
 
-	private successResponse(id: string | number, result: any) {
+	private successResponse(
+		id: string | number | null | undefined,
+		result: unknown,
+	) {
 		return {
 			jsonrpc: "2.0",
 			id,
@@ -119,7 +136,7 @@ export class NmpMcpBridge {
 	 * Responds to JSON-RPC 2.0 commands and handles initialization.
 	 */
 	public async connect(): Promise<void> {
-		const readline = await import("readline");
+		const readline = await import("node:readline");
 		const rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout,
@@ -160,9 +177,9 @@ export class NmpMcpBridge {
 				if (response) {
 					console.log(JSON.stringify(response));
 				}
-			} catch (e: any) {
+			} catch (e: unknown) {
 				console.error(
-					`[NMP-Bridge] Error processing JSON-RPC payload: ${e.message}`,
+					`[NMP-Bridge] Error processing JSON-RPC payload: ${(e as Error).message}`,
 				);
 			}
 		});

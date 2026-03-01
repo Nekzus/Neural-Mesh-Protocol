@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 
 const server = spawn("pnpm", ["exec", "tsx", "src/run-mcp.ts"], {
 	cwd: process.cwd(),
@@ -16,7 +16,7 @@ server.stdout.on("data", (data) => {
 });
 
 const send = (payload) => {
-	server.stdin.write(JSON.stringify(payload) + "\n");
+	server.stdin.write(`${JSON.stringify(payload)}\n`);
 };
 
 for (let i = 0; i < 6; i++) {

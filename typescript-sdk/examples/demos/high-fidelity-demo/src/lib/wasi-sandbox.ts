@@ -12,16 +12,14 @@ export interface WasiExecutionResult {
 	zkReceipt: string;
 }
 
-export class WasiSandbox {
-	private static MAX_FUEL = 100_000; // Abstract CPU units
+export const WasiSandbox = {
+	MAX_FUEL: 100_000, // Abstract CPU units
 
 	/**
 	 * Executes the code in an isolated environment with a strict resource limit.
 	 * Prevents infinite loops and memory exhaustion attacks.
 	 */
-	public static async execute(
-		compiledLogic: string,
-	): Promise<WasiExecutionResult> {
+	async execute(compiledLogic: string): Promise<WasiExecutionResult> {
 		console.error(`\n📦 [WASI Sandbox] Instantiating V8 Sandbox...`);
 		console.error(
 			`📦 [WASI Sandbox] Strict Fuel limit injected: ${WasiSandbox.MAX_FUEL} Units`,
@@ -96,10 +94,11 @@ export class WasiSandbox {
 			console.error(
 				`✅ [WASI Sandbox] Execution Completed. Remaining fuel: ${WasiSandbox.MAX_FUEL - fuelUsed}`,
 			);
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const e = error as Error;
 			console.error(`\n💥 [WASI Sandbox - FATAL ERROR] Execution Interrupted!`);
-			console.error(`💥 Detail: ${error.message}`);
-			throw new Error(`[NMP Sandbox Crash] ${error.message}`);
+			console.error(`💥 Detail: ${e.message}`);
+			throw new Error(`[NMP Sandbox Crash] ${e.message}`);
 		}
 
 		// 4. Generate Zero-Knowledge Proof (ZK-Receipt)
@@ -116,5 +115,5 @@ export class WasiSandbox {
 			fuelConsumed: fuelUsed,
 			zkReceipt: zkReceipt,
 		};
-	}
-}
+	},
+};

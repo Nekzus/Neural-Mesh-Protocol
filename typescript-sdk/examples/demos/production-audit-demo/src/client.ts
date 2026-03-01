@@ -58,10 +58,10 @@ async function main() {
 			console.log(`Status: ${data.status}`);
 			console.log(`Anomalies Found: ${data.found_count}`);
 
-			data.anomalies.forEach((a: any) => {
+			data.anomalies.forEach((a: { id: string | number; risk: number }) => {
 				console.log(` - Record [${a.id}] High Risk Detected: ${a.risk * 100}%`);
 			});
-		} catch (e) {
+		} catch (_e) {
 			console.log(
 				"\n------------------------------------------------------------------",
 			);

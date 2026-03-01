@@ -20,8 +20,8 @@ server.tool(
 	"Audits local patient records for high-risk conditions using injected WASM logic.",
 	{
 		auditId: { type: "string" },
-	} as any, // Bypass strict zod shape for demo
-	async (args: any, extra: any) => {
+	} as unknown as Record<string, import("zod").ZodTypeAny>, // Bypass strict zod shape for demo
+	async (args: Record<string, unknown>, extra: Record<string, unknown>) => {
 		// In NMP, the wasmPayload comes in the gRPC stream.
 		// For the demo, we assume it's attached to the execution context.
 		const wasmPayload = extra.wasmPayload as Buffer;
@@ -68,8 +68,8 @@ server.tool(
 				],
 				isError: false,
 			};
-		} catch (err: any) {
-			console.error(`[NMP-HOST] EXECUTION_TRAP: ${err.message}`);
+		} catch (err: unknown) {
+			console.error(`[NMP-HOST] EXECUTION_TRAP: ${(err as Error).message}`);
 			return {
 				content: [{ type: "text", text: `Execution Error: ${err.message}` }],
 				isError: true,

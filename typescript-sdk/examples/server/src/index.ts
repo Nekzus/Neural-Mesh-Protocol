@@ -36,7 +36,7 @@ async function main() {
 			strictMode,
 		}: {
 			batchId: string;
-			records: any[];
+			records: unknown[];
 			strictMode: boolean;
 		}) => {
 			console.log(`\n[Execution Sandbox] Processing Batch UUID: ${batchId}`);

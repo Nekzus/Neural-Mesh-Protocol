@@ -8,8 +8,6 @@ import type { CallToolRequest, CallToolResult, ServerInfo } from "../types.js";
 export class NmpClient {
 	private serverInfo?: ServerInfo;
 
-	constructor(private clientInfo: { name: string; version: string }) {}
-
 	/**
 	 * Discovers and connects to the target server or mesh capability.
 	 */
@@ -52,14 +50,12 @@ export class NmpClient {
 		console.log(
 			`[NmpClient] 🔒 Encapsulating Post-Quantum Shared Secret for ${request.name}...`,
 		);
-		const { ciphertext: kyberCiphertext, sharedSecret } =
+		const { ciphertext: _kyberCiphertext, sharedSecret } =
 			Kyber768Wrapper.encapsulateAsymmetric(ephemeralServerPublicKey);
 
 		console.log(`[NmpClient] 🛡️ Sealing WASM Payload via AES-256-GCM...`);
-		const { ciphertext: aesCiphertext, nonce } = AesGcmWrapper.encryptPayload(
-			wasmPayload,
-			sharedSecret,
-		);
+		const { ciphertext: aesCiphertext, nonce: _nonce } =
+			AesGcmWrapper.encryptPayload(wasmPayload, sharedSecret);
 
 		// In a fully developed NMP SDK, this method orchestrates Wasmtime-WASI
 		// bindings by streaming `kyberCiphertext`, `nonce`, and `aesCiphertext` via libp2p gRPC.

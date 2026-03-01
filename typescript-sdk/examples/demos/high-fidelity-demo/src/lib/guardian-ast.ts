@@ -1,8 +1,8 @@
 // Guardian AST: Zero-Time Static Analysis
 // Scans server-side code before considering it for execution.
 
-export class GuardianAST {
-	private static readonly RESTRICTED_PATTERNS = [
+export const GuardianAST = {
+	RESTRICTED_PATTERNS: [
 		/require\(['"]fs['"]\)/g,
 		/require\(['"]child_process['"]\)/g,
 		/fs\.(read|write)FileSync/g,
@@ -10,13 +10,13 @@ export class GuardianAST {
 		/fetch\(/g,
 		/eval\(/g,
 		/new Function\(/g,
-	];
+	],
 
 	/**
 	 * Inspects incoming code looking for Sandbox Escape attempts or unauthorized I/O.
 	 * If it finds a doubtful pattern, it throws a lethal exception (Zero-Time Block).
 	 */
-	public static inspect(code: string): void {
+	inspect(code: string): void {
 		console.error(
 			`\n🛡️  [Guardian AST] Initializing Zero-Time heuristic inspection...`,
 		);
@@ -44,5 +44,5 @@ export class GuardianAST {
 		console.error(
 			`✅ [Guardian AST] Successful inspection. No malicious patterns detected.`,
 		);
-	}
-}
+	},
+};

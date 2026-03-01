@@ -5,7 +5,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
  * Uses AES-256-GCM to secure WASM Code transport over Zero-Trust networks.
  * Fully compatible with the `aes-gcm` Rust crate used by Wasmtime.
  */
-export class AesGcmWrapper {
+export const AesGcmWrapper = {
 	/**
 	 * Encrypts a raw WASM payload using the shared secret negotiated via Kyber768.
 	 *
@@ -13,7 +13,7 @@ export class AesGcmWrapper {
 	 * @param sharedSecret A perfectly derived 32-byte (256-bit) shared secret array
 	 * @returns The encrypted buffer to push to the GRPc stream, along with the 12-byte initialization vector natively generated.
 	 */
-	static encryptPayload(
+	encryptPayload(
 		payload: Uint8Array | Buffer,
 		sharedSecret: Uint8Array,
 	): {
@@ -41,12 +41,12 @@ export class AesGcmWrapper {
 			ciphertext: finalCiphertext,
 			nonce: nonce,
 		};
-	}
+	},
 
 	/**
 	 * Decrypts a remote Zero-Knowledge receipt using AES-256-GCM.
 	 */
-	static decryptPayload(
+	decryptPayload(
 		ciphertextBuffer: Buffer,
 		nonce: Buffer,
 		sharedSecret: Uint8Array,
@@ -65,5 +65,5 @@ export class AesGcmWrapper {
 		decipher.setAuthTag(authTag);
 
 		return Buffer.concat([decipher.update(encryptedData), decipher.final()]);
-	}
-}
+	},
+};

@@ -31,7 +31,7 @@ const runAgent = async () => {
 	const wasmPayload = NmpCompiler.compile(auditLogic, ["vfs:read"]);
 
 	// Post-Quantum Kyber & AES Sealing Visuals
-	const serverPublicKey = new Uint8Array(1184).fill(0x01); // Simulated Kyber PK
+	const _serverPublicKey = new Uint8Array(1184).fill(0x01); // Simulated Kyber PK
 
 	console.log(`[PILAR B] Starting ML-KEM-768 Handshake...`);
 	console.log(`[PILAR E] Sealing WASM Payload with AES-256-GCM...`);
@@ -72,8 +72,8 @@ const runAgent = async () => {
 		console.log(
 			`------------------------------------------------------------------\n`,
 		);
-	} catch (err: any) {
-		console.error(`\n[NMP-AGENT] ❌ REQUEST FAILED: ${err.message}`);
+	} catch (err: unknown) {
+		console.error(`\n[NMP-AGENT] ❌ REQUEST FAILED: ${(err as Error).message}`);
 	}
 };
 

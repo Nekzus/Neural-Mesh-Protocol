@@ -24,7 +24,7 @@ export class NmpMcpBridge {
 	 */
 	public async wrapLegacyMcpRoute(
 		route: string,
-		toolsDef: any[],
+		toolsDef: Record<string, unknown>[],
 	): Promise<void> {
 		console.log(`[NMP-Bridge] Wrapping legacy JSON-RPC MCP Route: ${route}`);
 
@@ -35,7 +35,7 @@ export class NmpMcpBridge {
 				mcpTool.name,
 				`[LEGACY-BRIDGED] ${mcpTool.description}`,
 				mcpTool.schema,
-				async (args) => {
+				async (_args) => {
 					// In a real implementation, this runtime handler compiles to a WASM
 					// that makes an outward HTTP subrequest to the legacy server.
 					console.log(`[NMP-Bridge] Emitting proxy HTTP Call to ${route}`);

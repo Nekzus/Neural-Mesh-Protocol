@@ -118,13 +118,17 @@ async function main() {
 			console.error(`🛡️  THE SHIELD HAS ACTIVATED (Execution Blocked)`);
 			console.error(`======================================================`);
 			// Extracting pure text
-			const msg = result.content.find((c: any) => c.type === "text");
+			const msg = result.content.find(
+				(c: Record<string, unknown>) => c.type === "text",
+			);
 			if (msg && typeof msg.text === "string") console.error(msg.text);
 		} else {
 			console.log(`\n======================================================`);
 			console.log(`💎 THE POWER DETECTED (Successful Execution)`);
 			console.log(`======================================================`);
-			const msg = result.content.find((c: any) => c.type === "text");
+			const msg = result.content.find(
+				(c: Record<string, unknown>) => c.type === "text",
+			);
 			if (msg && typeof msg.text === "string") {
 				const data = JSON.parse(msg.text);
 				console.log(`📊 Analysis Result:`, data.computation_result);

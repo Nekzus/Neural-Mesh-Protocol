@@ -4,8 +4,8 @@ import type { Buffer } from "node:buffer";
  * GuardianAST simulates the Zero-Time safety inspector that scans
  * incoming WASM payloads for forbidden host calls or malicious patterns.
  */
-export class GuardianAST {
-	private static FORBIDDEN_PATTERNS = [
+export const GuardianAST = {
+	FORBIDDEN_PATTERNS: [
 		"fetch",
 		"http",
 		"process",
@@ -14,12 +14,12 @@ export class GuardianAST {
 		"os",
 		"fs.readSync",
 		"XMLHttpRequest",
-	];
+	],
 
 	/**
 	 * Scans a binary payload for security violations.
 	 */
-	static validate(payload: Buffer): boolean {
+	validate(payload: Buffer): boolean {
 		console.log(`[GuardianAST] Performing Recursive AST Depth Inspection...`);
 
 		// In a real NMP, this would parse the WASM imports section.
@@ -39,5 +39,5 @@ export class GuardianAST {
 			`[GuardianAST] ✅ Pre-Check Passed. No sandbox escapes detected.`,
 		);
 		return true;
-	}
-}
+	},
+};

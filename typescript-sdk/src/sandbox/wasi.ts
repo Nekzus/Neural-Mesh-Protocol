@@ -50,13 +50,14 @@ export class WasiSandbox {
 
 			const instance = await WebAssembly.instantiate(
 				module,
-				this.wasi.getImportObject() as any, // Injects safe WASI syscalls
+				this.wasi.getImportObject() as WebAssembly.Imports, // Injects safe WASI syscalls
 			);
 
 			// Start execution from the _start entry point
 			this.wasi.start(instance);
-		} catch (error: any) {
-			throw new Error(`Execution failed inside Sandbox: ${error.message}`);
+		} catch (error: unknown) {
+			const e = error as Error;
+			throw new Error(`Execution failed inside Sandbox: ${e.message}`);
 		}
 	}
 

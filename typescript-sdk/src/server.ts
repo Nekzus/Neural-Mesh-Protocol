@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-export interface ToolDefinition<T extends z.ZodType<any, any>> {
+export interface ToolDefinition<T extends z.ZodTypeAny> {
 	name: string;
 	description: string;
 	schema: T;
@@ -16,12 +16,12 @@ export interface ToolDefinition<T extends z.ZodType<any, any>> {
  * to WASM and announces capabilities over the Libp2p/gRPC mesh.
  */
 export class NmpServer {
-	private tools: Map<string, ToolDefinition<any>> = new Map();
+	private tools: Map<string, ToolDefinition<z.ZodTypeAny>> = new Map();
 	private meshReady: boolean = false;
 
 	constructor(
 		private serverInfo: { name: string; version: string },
-		private config?: { meshPort?: number; targetDid?: string },
+		_config?: { meshPort?: number; targetDid?: string },
 	) {}
 
 	/**
@@ -29,7 +29,7 @@ export class NmpServer {
 	 * Internally, the SDK extracts the AST of the handler and
 	 * initiates Javy Component Model compilation to webassembly.
 	 */
-	public tool<T extends z.ZodType<any, any>>(
+	public tool<T extends z.ZodTypeAny>(
 		name: string,
 		description: string,
 		schema: T,

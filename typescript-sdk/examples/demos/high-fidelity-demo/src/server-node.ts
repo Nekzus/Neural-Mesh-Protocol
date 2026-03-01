@@ -68,7 +68,8 @@ theVaultServer.tool(
 						"[NMP] Egress Security Violation. Output blocked due to PII leakage.",
 					);
 				}
-			} catch (e: any) {
+			} catch (err: unknown) {
+				const e = err as Error;
 				if (e.message.includes("Egress Security Violation")) throw e;
 				// If it's not JSON, let it pass or apply Regex for plain text according to the business rule.
 			}
@@ -94,11 +95,12 @@ theVaultServer.tool(
 					{ type: "text", text: JSON.stringify(responseData, null, 2) },
 				],
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const e = error as Error;
 			console.error(
 				`\n🚫 [The Vault] EXECUTION ABORTED BY SECURITY PROTOCOLS.`,
 			);
-			console.error(`🚫 Reason: ${error.message}\n`);
+			console.error(`🚫 Reason: ${e.message}\n`);
 
 			return {
 				content: [
@@ -108,7 +110,7 @@ theVaultServer.tool(
 							{
 								success: false,
 								error: "VIOLETION_DETECTED",
-								details: error.message,
+								details: e.message,
 							},
 							null,
 							2,

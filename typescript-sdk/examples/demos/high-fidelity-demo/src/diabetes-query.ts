@@ -23,7 +23,9 @@ async function main() {
 		arguments: { payload }, // HERE IS THE REQUIRED PAYLOAD
 	});
 
-	const msg = result.content.find((c: any) => c.type === "text");
+	const msg = result.content.find(
+		(c: Record<string, unknown>) => c.type === "text",
+	);
 	if (result.isError) {
 		if (msg && typeof msg.text === "string")
 			console.error(`🛡️ Blocked:`, msg.text);

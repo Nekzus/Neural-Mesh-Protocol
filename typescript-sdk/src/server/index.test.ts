@@ -62,9 +62,14 @@ describe("NmpServer", () => {
 
 	it("should return a validation error internally if Zod parsing fails on tool call", async () => {
 		const server = new NmpServer({ name: "test-server", version: "1.0.0" });
-		server.tool("math", "Adds numbers", { a: z.number() }, async ({ a }) => ({
-			content: [],
-		}));
+		server.tool(
+			"math",
+			"Adds numbers",
+			{ a: z.number() },
+			async ({ a: _a }) => ({
+				content: [],
+			}),
+		);
 
 		const result = await server.callTool({
 			name: "math",
@@ -146,7 +151,7 @@ describe("NmpServer", () => {
 		});
 		const content = result.messages[0].content;
 		expect(content?.type).toBe("text");
-		expect((content as any).text).toBe("Prompt val");
+		expect((content as Record<string, unknown>).text).toBe("Prompt val");
 	});
 
 	it("should throw if registering a duplicate prompt", () => {

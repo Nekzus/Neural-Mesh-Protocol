@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type {
@@ -30,6 +30,7 @@ export class NmpServer {
 
 	private tools: Map<
 		string,
+		// biome-ignore lint/suspicious/noExplicitAny: Types erased at runtime, Map holds heterogeneous generics
 		{ tool: Tool; handler: ToolHandler<any>; schema: z.ZodObject<any> }
 	> = new Map();
 	private resources: Map<string, Resource & { contentText?: string }> =
@@ -46,7 +47,7 @@ export class NmpServer {
 
 	constructor(
 		private serverInfo: ServerInfo,
-		private config?: { capabilities?: Record<string, unknown> },
+		_config?: { capabilities?: Record<string, unknown> },
 	) {}
 
 	/**
@@ -73,6 +74,7 @@ export class NmpServer {
 			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n---END_LOGIC---`;
 			finalDescription += `\n\nOptional: You can include an "__nmp_bypass_ast_cache" boolean parameter set to true to force AST re-evaluation.`;
 
+			// biome-ignore lint/suspicious/noExplicitAny: Generic handler wrapper intercepts erased arguments
 			finalHandler = async (args: any, extra: any) => {
 				const clientId = "global_connection"; // Simplify for now, treating the instance as one connection
 				const now = Date.now();
@@ -119,11 +121,7 @@ export class NmpServer {
 					);
 					if (logicMatch && logicMatch.length >= 2) {
 						args.payload = logicMatch[1].trim();
-						try {
-							return await handler(args, extra);
-						} catch (e) {
-							throw e;
-						} // Bubbles up
+						return await handler(args, extra);
 					}
 				}
 
@@ -161,9 +159,7 @@ export class NmpServer {
 							timestamp: now,
 						});
 					} else if (
-						result.content.find(
-							(c) => c.text && c.text.includes("VIOLETION_DETECTED"),
-						)
+						result.content.find((c) => c.text?.includes("VIOLETION_DETECTED"))
 					) {
 						stats.failures++;
 						stats.lastAttempt = now;
@@ -171,8 +167,9 @@ export class NmpServer {
 					}
 
 					return result;
-				} catch (error: any) {
-					if (error.message && error.message.includes("VIOLETION_DETECTED")) {
+				} catch (error: unknown) {
+					const e = error as Error;
+					if (e.message?.includes("VIOLETION_DETECTED")) {
 						stats.failures++;
 						stats.lastAttempt = now;
 						this.connectionStats.set(clientId, stats);
@@ -184,7 +181,9 @@ export class NmpServer {
 
 		const inputSchema = {
 			type: "object",
+			// biome-ignore lint/suspicious/noExplicitAny: zodToJsonSchema returns a loose JSON schema
 			properties: (generatedSchema as any).properties || {},
+			// biome-ignore lint/suspicious/noExplicitAny: zodToJsonSchema returns a loose JSON schema
 			required: (generatedSchema as any).required,
 		};
 
@@ -223,7 +222,7 @@ export class NmpServer {
 			"nmp_blind_analyst",
 			"The official Neural Mesh Protocol system prompt. Instructs the LLM on how to securely inject Logic-on-Origin without violating PII or safety constraints.",
 			[],
-			(request) => {
+			(_request) => {
 				return {
 					description: "NMP Blind Analyst Instructions",
 					messages: [
@@ -308,24 +307,26 @@ Failure to follow these rules will result in an immediate violation and the exec
 			const parsedArgs = entry.schema.parse(request.arguments || {});
 
 			// Re-inject the bypass flag if present since Zod might strip unrecognized keys
-			if ((request.arguments as any)?.__nmp_bypass_ast_cache === true) {
-				(parsedArgs as any).__nmp_bypass_ast_cache = true;
+			if (
+				(request.arguments as Record<string, unknown>)
+					?.__nmp_bypass_ast_cache === true
+			) {
+				(parsedArgs as Record<string, unknown>).__nmp_bypass_ast_cache = true;
 			}
 
 			const result = await entry.handler(parsedArgs, {});
 			return result;
-		} catch (error: any) {
-			if (error instanceof z.ZodError) {
+		} catch (error: unknown) {
+			const e = error as Error;
+			if (e instanceof z.ZodError) {
 				return {
-					content: [
-						{ type: "text", text: `Validation Error: ${error.message}` },
-					],
+					content: [{ type: "text", text: `Validation Error: ${e.message}` }],
 					isError: true,
 				};
 			}
 			return {
 				content: [
-					{ type: "text", text: `Internal Execution Error: ${error.message}` },
+					{ type: "text", text: `Internal Execution Error: ${e.message}` },
 				],
 				isError: true,
 			};

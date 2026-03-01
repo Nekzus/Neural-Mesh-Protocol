@@ -14,7 +14,7 @@ export class GuardianViolationError extends Error {
  * Scans the WebAssembly module imports before instantiation to prevent
  * sandbox escapes and limits execution strictly to WASI and NMP APIs.
  */
-export class GuardianTS {
+export const GuardianTS = {
 	/**
 	 * Scans raw WASM bytes to ensure 100% compliance with NMP Logic-on-Origin boundaries.
 	 *
@@ -22,7 +22,7 @@ export class GuardianTS {
 	 * @returns A parsed WebAssembly.Module proven safe for sandboxed execution
 	 * @throws {GuardianViolationError} If forbidden host imports are detected
 	 */
-	static async analyzeAst(
+	async analyzeAst(
 		wasmBytes: Uint8Array | Buffer,
 	): Promise<WebAssembly.Module> {
 		console.log(
@@ -62,5 +62,5 @@ export class GuardianTS {
 			`[Guardian-TS] ✅ AST clean. Validated ${importCount} WASI/NMP imports.`,
 		);
 		return module;
-	}
-}
+	},
+};

@@ -16,6 +16,7 @@ export interface RpcClientConfig {
 }
 
 export class MeshRpcClient {
+	// biome-ignore lint/suspicious/noExplicitAny: grpc client instanced dynamically
 	private client: any;
 
 	constructor(config: RpcClientConfig) {
@@ -28,6 +29,7 @@ export class MeshRpcClient {
 		});
 
 		const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
+		// biome-ignore lint/suspicious/noExplicitAny: Dynamic gRPC protocol mapping
 		const nmp = (protoDescriptor as any).nmp.v1;
 
 		this.client = new nmp.NeuralMesh(
@@ -39,7 +41,7 @@ export class MeshRpcClient {
 	public negotiateIntent(
 		agentDid: string,
 		capabilityHash: string,
-	): Promise<any> {
+	): Promise<unknown> {
 		return new Promise((resolve, reject) => {
 			const req = {
 				agent_did: agentDid,
@@ -47,7 +49,7 @@ export class MeshRpcClient {
 				proof_of_intent: Buffer.from("dummy-sig"),
 			};
 
-			this.client.NegotiateIntent(req, (err: any, response: any) => {
+			this.client.NegotiateIntent(req, (err: unknown, response: unknown) => {
 				if (err) return reject(err);
 				resolve(response);
 			});
@@ -59,7 +61,7 @@ export class MeshRpcClient {
 		kyberPublicKey: Buffer,
 		wasmBinary: Buffer,
 		inputs: Record<string, Buffer>,
-	): Promise<any[]> {
+	): Promise<unknown[]> {
 		return new Promise((resolve, reject) => {
 			try {
 				// 1. PQC Encapsulation (ML-KEM-768)
@@ -92,9 +94,9 @@ export class MeshRpcClient {
 				};
 
 				const stream = this.client.ExecuteLogic(req);
-				const chunks: any[] = [];
+				const chunks: unknown[] = [];
 
-				stream.on("data", (chunk: any) => {
+				stream.on("data", (chunk: unknown) => {
 					chunks.push(chunk);
 				});
 
@@ -102,10 +104,10 @@ export class MeshRpcClient {
 					resolve(chunks);
 				});
 
-				stream.on("error", (err: any) => {
+				stream.on("error", (err: unknown) => {
 					reject(err);
 				});
-			} catch (err: any) {
+			} catch (err: unknown) {
 				reject(err);
 			}
 		});

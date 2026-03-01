@@ -1,6 +1,4 @@
 import type { Buffer } from "node:buffer";
-import fs from "node:fs/promises";
-import path from "node:path";
 
 /**
  * BridgeMock simulates the NMP P2P / gRPC transport layer.
@@ -9,12 +7,12 @@ import path from "node:path";
 export async function server_node_exec(
 	auditId: string,
 	wasmPayload: Buffer,
-): Promise<any> {
+): Promise<unknown> {
 	// In a real NMP, this would go through libp2p gRPC streams.
 	// For the demo, we dynamically import the server logic and call its handler.
 
 	// We simulate the context passed to the server tool
-	const server_logic = await import("../server-node.js");
+	const _server_logic = await import("../server-node.js");
 
 	// In a real gRPC call, the server's 'extra' context for a tool
 	// is populated by the transport layer with the decapsulated WASM payload.

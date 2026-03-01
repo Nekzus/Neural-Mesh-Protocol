@@ -44,6 +44,7 @@ export class MeshRpcServer {
 		});
 
 		const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
+		// biome-ignore lint/suspicious/noExplicitAny: Dynamic gRPC protocol mapping
 		const nmp = (protoDescriptor as any).nmp.v1;
 
 		this.server.addService(nmp.NeuralMesh.service, {
@@ -53,8 +54,11 @@ export class MeshRpcServer {
 	}
 
 	private negotiateIntent(
-		call: grpc.ServerUnaryCall<any, any>,
-		callback: grpc.sendUnaryData<any>,
+		call: grpc.ServerUnaryCall<
+			Record<string, unknown>,
+			Record<string, unknown>
+		>,
+		callback: grpc.sendUnaryData<Record<string, unknown>>,
 	) {
 		const request = call.request;
 		console.log(`[gRPC] Negotiating intent with Did: ${request.agent_did}`);
@@ -64,7 +68,7 @@ export class MeshRpcServer {
 		const pk = Buffer.from(pk_sk[0]);
 		const sk = Buffer.from(pk_sk[1]);
 
-		const sessionToken = "nmp_session_" + crypto.randomUUID();
+		const sessionToken = `nmp_session_${crypto.randomUUID()}`;
 		this.sessions.set(sessionToken, sk);
 
 		callback(null, {
@@ -75,7 +79,12 @@ export class MeshRpcServer {
 		});
 	}
 
-	private async executeLogic(call: grpc.ServerWritableStream<any, any>) {
+	private async executeLogic(
+		call: grpc.ServerWritableStream<
+			Record<string, unknown>,
+			Record<string, unknown>
+		>,
+	) {
 		const request = call.request;
 		console.log(`[gRPC] Executing Logic with token: ${request.session_token}`);
 
@@ -114,7 +123,7 @@ export class MeshRpcServer {
 					.update("ZK_SNARK_STUB_SEAL")
 					.digest(),
 			});
-		} catch (error: any) {
+		} catch (error: unknown) {
 			console.error(
 				`[gRPC] Capability Violation / Worker Error:`,
 				error.message,
@@ -151,7 +160,7 @@ export class MeshRpcServer {
 				);
 			}
 
-			this.server.bindAsync(bindAddr, credentials, (err, port) => {
+			this.server.bindAsync(bindAddr, credentials, (err, _port) => {
 				if (err) return reject(err);
 				console.log(`NMP gRPC Server listening intensely on ${bindAddr}`);
 				resolve();

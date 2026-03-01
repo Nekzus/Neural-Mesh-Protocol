@@ -1,13 +1,13 @@
 // NMP Compiler: Dynamic Client-Side Compilation
 // Takes high-level JS logic, injects it into a skeleton, and generates the executable payload.
 
-export class NmpCompiler {
+export const NmpCompiler = {
 	/**
 	 * Compiles an analysis function (written as a string) into an injectable NMP module.
 	 * The provided function must take a parameter (e.g., `db`) representing the read-only database,
 	 * and return the result that should be emitted to the host.
 	 */
-	public static compileAnalysis(
+	compileAnalysis(
 		analysisFunctionStr: string,
 		name: string = "DynamicAudit",
 	): string {
@@ -32,16 +32,13 @@ function nmp_main(env) {
 		return (
 			magicHeader + manifest + boundaryOpen + executableBody + boundaryClose
 		);
-	}
+	},
 
 	/**
 	 * Packages a pure malicious script, without the standard NMP wrapper.
 	 * Used exclusively to test the resilience of the Guardian AST or Sandbox.
 	 */
-	public static compileRaw(
-		rawScript: string,
-		name: string = "RawScript",
-	): string {
+	compileRaw(rawScript: string, name: string = "RawScript"): string {
 		const magicHeader = "NMP_MAGIC:0x00FF\n";
 		const manifest = `MANIFEST:{"target":"raw","name":"${name}","integrity_checks":false}\n`;
 
@@ -52,5 +49,5 @@ function nmp_main(env) {
 			rawScript +
 			"\n---END_LOGIC---"
 		);
-	}
-}
+	},
+};

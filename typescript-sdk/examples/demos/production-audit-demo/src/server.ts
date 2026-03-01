@@ -26,7 +26,7 @@ server.tool(
 		auditId: z.string(),
 		minRisk: z.number().default(0.7),
 	},
-	async (params, context) => {
+	async (params, _context) => {
 		console.log(
 			`[NMP-SERVER] Logic-on-Origin received for Audit: ${params.auditId}`,
 		);
@@ -37,7 +37,9 @@ server.tool(
 
 		console.log(`[NMP-SERVER] Executing logic over ${data.length} records...`);
 
-		const anomalies = data.filter((r: any) => r.risk_score >= params.minRisk);
+		const anomalies = data.filter(
+			(r: { risk_score: number }) => r.risk_score >= params.minRisk,
+		);
 
 		// The SDK packages the result and generates ZK receipts automatically
 		return {
@@ -48,10 +50,12 @@ server.tool(
 						status: "SUCCESS",
 						audit_id: params.auditId,
 						found_count: anomalies.length,
-						anomalies: anomalies.map((a: any) => ({
-							id: a.id,
-							risk: a.risk_score,
-						})),
+						anomalies: anomalies.map(
+							(a: { id: string | number; risk_score: number }) => ({
+								id: a.id,
+								risk: a.risk_score,
+							}),
+						),
 					}),
 				},
 			],

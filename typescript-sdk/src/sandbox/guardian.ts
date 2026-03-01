@@ -11,14 +11,14 @@ export class GuardianError extends Error {
  * before it reaches the V8 Wasmtime engine to prevent sandbox-escape
  * zero-days, resource exhaustion bombs, and evasive execution.
  */
-export class ASTGuardian {
+export const ASTGuardian = {
 	/**
 	 * Analyzes the WebAssembly Module interface proactively.
 	 *
 	 * @param module - The compiled WebAssembly.Module to inspect
 	 * @throws {GuardianError} If illegal imports or capabilities are detected
 	 */
-	public static analyze(module: WebAssembly.Module): void {
+	analyze(module: WebAssembly.Module): void {
 		console.log(
 			"[Guardian-TS] 🛡️ Starting Zero-Time AST heuristic inspection...",
 		);
@@ -44,5 +44,5 @@ export class ASTGuardian {
 		console.log(
 			`[Guardian-TS] ✅ AST clean. Validated ${importCount} WASI imports.`,
 		);
-	}
-}
+	},
+};

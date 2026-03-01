@@ -1,6 +1,5 @@
 /// <reference path="../../types/crystals-kyber.d.ts" />
 
-import { randomBytes } from "node:crypto";
 import * as kyber from "crystals-kyber";
 
 /**
@@ -9,25 +8,25 @@ import * as kyber from "crystals-kyber";
  * directly compatible with `pqcrypto-kyber` on the Mesh-Node Backend.
  */
 
-export class Kyber768Wrapper {
+export const Kyber768Wrapper = {
 	/**
 	 * Extracts and validates the 1184-byte Public Key from the Rust NMP Data Node
 	 * @param buffer Raw buffer sent via gRPC IntentResponse
 	 */
-	static importPublicKey(buffer: Uint8Array): Uint8Array {
+	importPublicKey(buffer: Uint8Array): Uint8Array {
 		if (buffer.length !== 1184) {
 			throw new Error(
 				`Kyber768 Public Key must be exactly 1184 bytes (Received: ${buffer.length})`,
 			);
 		}
 		return buffer;
-	}
+	},
 
 	/**
 	 * Encapsulates a shared secret using the server's public key.
 	 * Returns the 1088-byte ciphertext to be sent back, and the 32-byte shared AES secret.
 	 */
-	static encapsulateAsymmetric(publicKey: Uint8Array): {
+	encapsulateAsymmetric(publicKey: Uint8Array): {
 		ciphertext: Uint8Array;
 		sharedSecret: Uint8Array;
 	} {
@@ -52,5 +51,5 @@ export class Kyber768Wrapper {
 				`Failed to perform PQC encapsulation: ${(error as Error).message}`,
 			);
 		}
-	}
-}
+	},
+};
