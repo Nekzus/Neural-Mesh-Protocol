@@ -71,7 +71,7 @@ server.tool(
 		} catch (err: unknown) {
 			console.error(`[NMP-HOST] EXECUTION_TRAP: ${(err as Error).message}`);
 			return {
-				content: [{ type: "text", text: `Execution Error: ${err.message}` }],
+				content: [{ type: "text", text: `Execution Error: ${(err as Error).message}` }],
 				isError: true,
 			};
 		}

@@ -1,9 +1,6 @@
 import { NmpClient } from "@neural-mesh/sdk/client";
 
-const client = new NmpClient({
-	name: "Production-Audit-Agent",
-	version: "1.0.0",
-});
+const client = new NmpClient();
 
 async function main() {
 	console.log(

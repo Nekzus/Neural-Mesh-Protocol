@@ -1,10 +1,7 @@
 import { NmpClient } from "@neural-mesh/sdk/client";
 import { NmpCompiler } from "./lib/compiler.js";
 
-const client = new NmpClient({
-	name: "Strategic-Agent-Alpha",
-	version: "1.0.0",
-});
+const client = new NmpClient();
 
 console.log(`
 ------------------------------------------------------------------
@@ -56,7 +53,7 @@ const runAgent = async () => {
 			`------------------------------------------------------------------`,
 		);
 
-		const content = JSON.parse(response.content[0].text);
+		const content = JSON.parse((response as any).content[0].text);
 
 		console.log(`Audit ID: ${auditId}`);
 		console.log(`Status: ${content.status}`);
