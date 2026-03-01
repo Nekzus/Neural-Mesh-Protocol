@@ -54,6 +54,21 @@ Si el código se ve exactamente igual, ¿qué lo hace Neural Mesh?
 1. **Sin Polling:** El Nodo de Datos anuncia el esquema de `analyze_employee_data` criptográficamente sobre la DHT de Kademlia. El Agente sabe instantáneamente que el esquema existe sin desperdiciar una petición de red preguntando por `listTools()`.
 2. **Transporte Binario:** Cuando el Agente invoca esta herramienta, los parámetros (ej., `department: "HR"`) son comprimidos en bytes puros de Protobuf, omitiendo JSON por completo.
 
+## Exponiendo Esquemas de Datos (Resources)
+
+Los Servidores NMP también pueden exponer **Recursos** (datos estáticos, esquemas o descripciones) que los Agentes pueden descubrir para entender la forma y estructura de los datos que van a analizar *antes* de inyectar su lógica. Esto permite una verdadera autonomía *Zero-Shot*.
+
+```typescript
+server.resource(
+  "nmp://schema/employee_records",
+  "El esquema JSON exacto que representa las bases de datos de empleados.",
+  "application/json",
+  JSON.stringify(EmployeeSchema)
+);
+```
+
+Estos recursos son puenteados impecablemente a los LLMs genéricos mediante los métodos estándar de MCP `resources/list` y `resources/read`.
+
 ## Conectando Servidores MCP Heredados (Legacy)
 
 El objetivo principal de NMP es una rápida adopción por parte de la industria. Si has pasado meses construyendo un servidor estándar del Protocolo de Contexto de Modelos (MCP), no necesitas reescribirlo para unirte a la Neural Mesh.

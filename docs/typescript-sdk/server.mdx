@@ -54,6 +54,21 @@ If the code looks exactly the same, what makes it Neural Mesh?
 1. **No Polling:** The Data Node announces the `analyze_employee_data` schema cryptographically over the Kademlia DHT. The Agent instantly knows the schema exists without wasting a network request asking for `listTools()`.
 2. **Binary Transport:** When the Agent invokes this Tool, the parameters (e.g., `department: "HR"`) are compressed into pure Protobuf bytes, skipping JSON entirely.
 
+## Exposing Data Schemas (Resources)
+
+NMP Servers can also expose **Resources** (static data, schemas, or descriptions) that Agents can discover to understand the shape of the data they will analyze *before* they inject their logic. This enables true Zero-Shot autonomy.
+
+```typescript
+server.resource(
+  "nmp://schema/employee_records",
+  "The exact JSON schema representing the employee databases.",
+  "application/json",
+  JSON.stringify(EmployeeSchema)
+);
+```
+
+These resources are flawlessly bridged to LLMs via standard MCP `resources/list` and `resources/read` methods.
+
 ## Bridging Legacy MCP Servers
 
 NMP's primary goal is rapid industry adoption. If you have spent months building a standard Model Context Protocol (MCP) server, you do not need to rewrite it to join the Neural Mesh.

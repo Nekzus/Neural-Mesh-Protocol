@@ -61,6 +61,14 @@ server.tool(
     };
   }
 );
+
+// Expose Data Schemas for Zero-Shot Intelligence
+server.resource(
+  "nmp://schema/logs",
+  "The exact format of the local logs.",
+  "application/json",
+  JSON.stringify({ type: "object", properties: { target_error: { type: "string" } } })
+);
 ```
 
 ## Testing & CI

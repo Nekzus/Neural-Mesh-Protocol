@@ -68,8 +68,9 @@ In Tier-0 Enterprise Environments, the Neural Mesh Server fundamentally evolves 
 
 The TEE execution pipeline executes malicious or foreign logic under zero-trust assumptions through the following isolated modules:
 
-#### 1. Host Pre-Check (Decryption & Guardian AST)
+#### 1. Host Bounds & Checks (Guardian AST & Egress Filter)
 Before any logic touches the execution engine, the outermost Host Server interceptor unlocks the `.wasm` payload from its `Kyber768` / `AES-256-GCM` transport encryption. Instantly, the **Guardian AST Sentinel** parses the WebAssembly Abstract Syntax Tree. If it detects attempted imports from arbitrary Host functions rather than authorized `wasi_snapshot_preview1` bounds, the payload is purged before entry.
+Upon successful execution, a **Layer 3 Egress Filter** mathematically analyzes the outgoing buffer to prevent PII or sensitive schema data exfiltration prior to transmission.
 
 #### 2. Hardware Isolated Enclave (TEE)
 The core computation does not run in the Host OS. It is pushed into a physical Hardware Enclave (such as **AWS Nitro Enclaves** or **Intel SGX**). This ensures *Blind Computation*: the Host’s RAM is hardware-encrypted, meaning not even the Server Administrator or Cloud Provider can dump the memory to steal the Agent's reasoning.
@@ -92,7 +93,7 @@ This Server acts primarily as a backward-compatibility layer and local endpoint 
 
 ### How the Bridge handles Legacy MCP Clients:
 1. **JSON-RPC Interception**: Legacy tools (like older MCP Clients) dispatch standard text-heavy `tools/call` JSON-RPC 2.0 requests over traditional network ports.
-2. **NmpMcpBridge Adapter**: The SDK intercepts these primitive payloads and translates them into an internalized `CallToolRequest`.
+2. **NmpMcpBridge Adapter**: The SDK intercepts these primitive payloads and translates them into an internalized `CallToolRequest`. It also flawlessly exposes registered `resources/list` and `resources/read` endpoints, enabling *Zero-Shot Self-Discovery* of Data Schemas for generic LLMs.
 3. **NmpServer Zod Validation**: Before any logic touches the Node.js Main Thread, the `NmpServer` imposes strict Zod schema runtime validations ensuring structural integrity.
 4. **Native Node.js Execution**: The registered Tool Handler executes locally (using standard Node.js/TypeScript code) rather than isolating itself in a sandboxed WebAssembly boundary.
 5. **JSON-RPC Response**: The finding returns seamlessly down the pipeline formatted as a legacy `result` block.

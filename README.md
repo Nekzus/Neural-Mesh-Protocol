@@ -17,7 +17,7 @@ NMP introduces a decentralized, Zero-Trust architectural model where AI agents i
 
 - **Dramatically reduce network latency and bandwidth consumption.**
 - **Save millions of tokens** by returning only semantically relevant, cryptographically verified evidence from the origin.
-- **Provide Zero-Trust security** natively, ensuring the host is never exposed to arbitrary or unsandboxed agent execution via strict WASI capabilities.
+- **Provide Zero-Trust security** natively, ensuring the host is never exposed to arbitrary or unsandboxed agent execution via strict WASI capabilities and Layer 3 Egress Filters.
 
 ## Architecture
 
@@ -38,6 +38,7 @@ The developer tooling, designed to act as a direct, Zero-Friction drop-in replac
 3. **Zero-Trust Sandboxing:** Powered by Wasmtime and WASI Preview 1.
 4. **Decentralized Mesh Topology:** Peer-to-peer agent discovery via libp2p.
 5. **Persistent Multiplexing:** QUIC transport.
+6. **Universal MCP Bridge:** 100% legacy compatibility with standard MCP tools and resources.
 
 ---
 *Developed as the next evolution in Agentic Data Context.*

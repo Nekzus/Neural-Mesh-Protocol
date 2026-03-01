@@ -68,8 +68,9 @@ En entornos empresariales de Nivel-0 (Tier-0), el Servidor Neural Mesh evolucion
 
 El pipeline de ejecución TEE procesa lógica foránea bajo asunciones de cero-confianza a través de los siguientes módulos aislados:
 
-#### 1. Host Pre-Check (Descifrado y Guardian AST)
+#### 1. Host Bounds & Checks (Guardian AST y Egress Filter)
 Antes de que la lógica toque el motor de ejecución, el interceptor del Host descifra el payload `.wasm` de su encriptación de transporte `Kyber768` / `AES-256-GCM`. Instantáneamente, el **Guardian AST Sentinel** analiza el Árbol de Sintaxis Abstracta del WebAssembly. Si detecta intentos de importación de funciones del Host arbitrarias fuera de los límites autorizados de `wasi_snapshot_preview1`, el payload es purgado.
+Tras una ejecución exitosa de la lógica aislada, un **Filtro Anti-Exfiltración (Egress Filter) de Capa 3** analiza matemáticamente el buffer saliente para prevenir la fuga de PII o esquemas de datos sensibles antes de su transmisión al cliente.
 
 #### 2. Hardware Isolated Enclave (TEE)
 La computación central no corre en el SO del Host. Se empuja a un Enclave de Hardware físico (como **AWS Nitro Enclaves** o **Intel SGX**). Esto garantiza la *Computación Ciega*: la RAM del Host está encriptada por hardware, lo que significa que ni siquiera el administrador del servidor o el proveedor de la nube pueden volcar la memoria para robar el razonamiento del Agente.
@@ -93,7 +94,7 @@ Este servidor actúa principalmente como una capa de compatibilidad hacia atrás
 
 ### Cómo el Bridge maneja Clientes MCP Heredados:
 1. **Intercepción JSON-RPC**: Las herramientas heredadas envían peticiones JSON-RPC 2.0 estándar sobre puertos tradicionales.
-2. **NmpMcpBridge Adapter**: El SDK intercepta estos payloads y los traduce internamente en un `CallToolRequest`.
+2. **NmpMcpBridge Adapter**: El SDK intercepta estos payloads y los traduce internamente en un `CallToolRequest`. También expone impecablemente los endpoints `resources/list` y `resources/read`, permitiendo el *Descubrimiento Zero-Shot* de esquemas de datos para LLMs genéricos.
 3. **Validación Zod en NmpServer**: Antes de que la lógica toque el hilo principal de Node.js, el `NmpServer` impone validaciones estrictas de esquema Zod.
 4. **Ejecución Nativa en Node.js**: El manejador de la herramienta se ejecuta localmente usando código estándar de Node.js/TypeScript.
 5. **Respuesta JSON-RPC**: El resultado se devuelve formateado como un bloque `result` estándar de MCP.

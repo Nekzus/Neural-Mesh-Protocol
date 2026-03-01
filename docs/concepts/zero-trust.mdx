@@ -30,17 +30,23 @@ The **Guardian Module** inspects the WebAssembly Abstract Syntax Tree (AST). Sin
 
 This effectively neutralizes entire classes of evasive malware in *zero-time* before execution begins.
 
-## 3. Sandboxing (WASI)
+## 3. Anti-Exfiltration (Egress Filter)
+
+Even if a malicious payload miraculously bypasses the Sandbox limits to produce unauthorized data, the NMP Server enforces a final **Layer 3 Egress Filter** before transmitting the response back across the QUIC pipeline.
+
+This filter dynamically analyzes the output buffer (checking for Personally Identifiable Information, API keys, or restricted schema patterns like `patientId`). If privacy violations are detected, the response is instantly blocked and the payload drops.
+
+## 4. Sandboxing (WASI)
 
 As detailed in the [WASI Sandboxing](/concepts/wasi-sandboxing) chapter, the execution layer is fundamentally isolated by the CPU restrictions imposed by the bytecode runtime, ensuring zero unauthorized I/O or network escalation.
 
-## 4. Hardware Isolation (TEEs)
+## 5. Hardware Isolation (TEEs)
 
 Software isolation is never perfect against advanced persistent threats (APT) leveraging hypervisor bypasses or zero-days. NMP's ultimate tier of security defines native architecture for **Trusted Execution Environments (TEEs)** like AWS Nitro Enclaves or Intel SGX.
 
 By running the `Wasmtime` engine inside an Enclave, we guarantee that neither the Cloud Provider (e.g., Amazon) nor a compromised root administrator on the Host machine can dump the RAM to steal the proprietary datasets being analyzed by the Agent. This is a baseline requirement for Financial and Healthcare AI agents.
 
-## 5. Computacional Integrity (ZK-SNARKs)
+## 6. Computacional Integrity (ZK-SNARKs)
 
 In scenarios where an Agent must trust a dark untrusted Server (e.g., "Did the Server actually execute my sorting algorithm, or did it fake the response?"), NMP implements integrated structural abstractions for **Zero-Knowledge Virtual Machines**.
 

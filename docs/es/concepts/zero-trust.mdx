@@ -28,17 +28,23 @@ El **Módulo Guardián** inspecciona el Árbol de Sintaxis Abstracta (AST) del W
 
 Esto neutraliza malware y ataques de escape en *tiempo cero*, antes de que comience la ejecución.
 
-## 3. Sandboxing (WASI)
+## 3. Filtro Anti-Exfiltración (Egress Filter)
+
+Incluso si un payload malicioso lograse milagrosamente acceder a datos no autorizados dentro del Sandbox, el Servidor NMP impone una última **Capa 3 de Defensa (Egress Filter)** antes de enviar la respuesta a través del túnel QUIC.
+
+Este filtro inspecciona dinámicamente el buffer de salida (buscando PII, claves API o esquemas restringidos como `patientId`). Si se detectan métricas de contrabando o violación de privacidad, la respuesta se bloquea instantáneamente, impidiendo la fuga de datos.
+
+## 4. Sandboxing (WASI)
 
 Como se detalla en [Sandboxing con WASI](/es/concepts/wasi-sandboxing), la ejecución está aislada por las restricciones de CPU del runtime, garantizando que no haya acceso no autorizado a I/O o red.
 
-## 4. Aislamiento por Hardware (TEEs)
+## 5. Aislamiento por Hardware (TEEs)
 
 El aislamiento de software no es perfecto contra amenazas persistentes avanzadas (APT) que explotan vulnerabilidades del kernel o del hipervisor. Por ello, NMP soporta nativamente **Enclaves de Ejecución Confiable (TEEs)** como AWS Nitro o Intel SGX.
 
 Al ejecutar `Wasmtime` dentro de un Enclave, garantizamos que ni el proveedor de la nube ni un administrador con acceso root puedan volcar la memoria RAM para robar los datos que el Agente está analizando. Esta "Computación Ciega" es un requisito esencial para sectores financieros y de salud.
 
-## 5. Integridad Computacional (ZK-SNARKs)
+## 6. Integridad Computacional (ZK-SNARKs)
 
 ¿Cómo sabe un Agente que el servidor ejecutó realmente su lógica y no falsificó la respuesta? NMP implementa abstracciones para **Máquinas Virtuales de Cero Conocimiento (zkVMs)**.
 
