@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import type {
+import {
 	CallToolRequest,
 	CallToolResult,
 	GetPromptRequest,
@@ -11,6 +11,9 @@ import type {
 	ServerInfo,
 	Tool,
 } from "../types.js";
+import { PiiScanner, type PiiRule, PII_PATTERNS } from "./pii.js";
+
+export { PiiScanner, type PiiRule, PII_PATTERNS };
 
 export type ToolHandler<T extends z.ZodRawShape = z.ZodRawShape> = (
 	args: z.infer<z.ZodObject<T>>,
@@ -45,13 +48,17 @@ export class NmpServer {
 		}
 	> = new Map();
 
+	private piiScanner: PiiScanner;
+
 	constructor(
 		private serverInfo: ServerInfo,
 		private config?: {
 			capabilities?: Record<string, unknown>;
-			security?: { piiPatterns?: string[] };
+			security?: { piiPatterns?: PiiRule[] };
 		},
-	) { }
+	) {
+		this.piiScanner = new PiiScanner(this.config?.security?.piiPatterns || []);
+	}
 
 	/**
 	 * Register a new Tool
@@ -172,34 +179,22 @@ export class NmpServer {
 						};
 					}
 
-					// NMP Native Egress Filter (PII Protection)
-					const piiPatterns = this.config?.security?.piiPatterns;
-					if (
-						!result.isError &&
-						piiPatterns &&
-						piiPatterns.length > 0 &&
-						result.content
-					) {
-						for (const item of result.content) {
-							if (item.type === "text" && item.text) {
-								const lowerText = item.text.toLowerCase();
-								for (const pattern of piiPatterns) {
-									if (lowerText.includes(pattern.toLowerCase())) {
-										console.error(
-											`\n🚨 [NMP-SDK] SECURITY VIOLATION: Native Egress Filter blocked PII leak (${pattern}).`,
-										);
-										return {
-											content: [
-												{
-													type: "text",
-													text: `[NMP] Egress Security Violation. Output blocked due to PII leakage (${pattern}).`,
-												},
-											],
-											isError: true,
-										};
-									}
-								}
-							}
+					// NMP Native Egress Filter (Professional PII Protection V2)
+					if (!result.isError) {
+						const violation = this.piiScanner.scan(result.content);
+						if (violation) {
+							console.error(
+								`\n🚨 [NMP-SDK] SECURITY VIOLATION: Professional Egress Filter blocked PII leak (${violation}).`,
+							);
+							return {
+								content: [
+									{
+										type: "text",
+										text: `[NMP] Egress Security Violation. Output blocked due to PII leakage (${violation}).`,
+									},
+								],
+								isError: true,
+							};
 						}
 					}
 

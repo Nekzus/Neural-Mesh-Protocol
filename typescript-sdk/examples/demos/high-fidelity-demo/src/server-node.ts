@@ -1,6 +1,6 @@
 // "The Vault" - Hi-Fi NMP Data Node
 
-import { NmpServer } from "@neural-mesh/sdk/server";
+import { NmpServer, PII_PATTERNS } from "@neural-mesh/sdk/server";
 import { z } from "zod";
 import { GuardianAST } from "./lib/guardian-ast.js";
 import { WasiSandbox } from "./lib/wasi-sandbox.js";
@@ -18,7 +18,13 @@ export const theVaultServer = new NmpServer(
 	{
 		capabilities: { tools: { listChanged: true } },
 		security: {
-			piiPatterns: ['"id":', '"patientid":', '"name":', '"nombre":'],
+			piiPatterns: [
+				PII_PATTERNS.EMAIL,
+				PII_PATTERNS.IP_ADDRESS,
+				PII_PATTERNS.CREDIT_CARD,
+				'"ssn":',
+				'"password":',
+			],
 		},
 	},
 );
