@@ -1,6 +1,6 @@
-import type { CallToolRequest, CallToolResult, ServerInfo } from "../types.js";
-import { Kyber768Wrapper } from "../rpc/crypto/kyber.js";
 import { AesGcmWrapper } from "../rpc/crypto/aes.js";
+import { Kyber768Wrapper } from "../rpc/crypto/kyber.js";
+import type { CallToolRequest, CallToolResult, ServerInfo } from "../types.js";
 /**
  * NmpClient interfaces with the P2P Mesh (or local Bridge) to dynamically
  * request or inject Logic-on-Origin capabilities into remote execution environments.

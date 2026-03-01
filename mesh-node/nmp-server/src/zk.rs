@@ -1,23 +1,23 @@
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256}; // NEW: Reemplaza Stubs por Hashes dinámicos
+use sha2::{Digest, Sha256}; // NEW: Replaces Stubs with dynamic Hashes
 
 /// NMP Zk Receipt
-/// Este struct viaja a través del Payload gRPC NMP para que el Cliente
-/// (TS SDK o Agente IA) verifique la ejecución.
+/// This struct travels through the NMP gRPC Payload so that the Client
+/// (TS SDK or AI Agent) verifies the execution.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NmpZkReceipt {
     pub journal: Vec<u8>,
-    pub seal: Vec<u8>, // La prueba matemática ZK-SNARK
+    pub seal: Vec<u8>, // The ZK-SNARK mathematical proof
 }
 
-/// Request que inyecta el Host al Guest (WASM + Archivos)
+/// Request injected by the Host into the Guest (WASM + Files)
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ZkExecutionRequest {
     pub wasm_logic: Vec<u8>,
     pub input_data: Vec<u8>,
 }
 
-/// Respuesta Generada y Asegurada por el zkVM
+/// Response Generated and Secured by the zkVM
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ZkExecutionResult {
     pub output: String,
@@ -32,19 +32,19 @@ pub const ZK_WASM_GUEST_ELF: &[u8] = &[];
 pub struct ZkExecutionEngine;
 
 impl ZkExecutionEngine {
-    /// Genera la prueba matemática Zero-Knowledge para un WASM procesando
-    /// unos datos confidenciales.
-    /// Retorna (Resultado de Ejecución, Prueba Serializada Bincode).
+    /// Generates the Zero-Knowledge mathematical proof for a WASM processing
+    /// confidential data.
+    /// Returns (Execution Result, Bincode Serialized Proof).
     pub fn prove_wasm_execution(
         _wasm_logic: &[u8],
         _input_data: &[u8],
     ) -> Result<(ZkExecutionResult, Vec<u8>), Box<dyn std::error::Error>> {
-        println!("[ZK] Inicializando RISC Zero ZK-VM Prover (STUB - Arch Node)...");
+        println!("[ZK] Initializing RISC Zero ZK-VM Prover (STUB - Arch Node)...");
 
-        // IMPORTANTE: En desarrollo local sobre Windows, RISC Zero falla
-        // por dependencias de Unix (os::unix::net::UnixStream).
+        // IMPORTANT: In local development on Windows, RISC Zero fails
+        // due to Unix dependencies (os::unix::net::UnixStream).
         // Prove function takes the ELF and the environment setup.
-        println!("[ZK] Generando Receipt Computacional Hyper-realista basado en payload...");
+        println!("[ZK] Generating Hyper-realistic Computational Receipt based on payload...");
 
         // let prove_info = prover.prove(env, ZK_WASM_GUEST_ELF)?;
         // let receipt = prove_info.receipt;
@@ -54,12 +54,12 @@ impl ZkExecutionEngine {
             is_valid: true,
         };
 
-        // Generar Cryptographic Mock del Journal (ImageID derivado)
+        // Generate Cryptographic Mock of the Journal (Derived ImageID)
         let mut journal_hasher = Sha256::new();
         journal_hasher.update(_wasm_logic);
         let journal_hash = journal_hasher.finalize().to_vec();
 
-        // Generar Cryptographic Mock del Seal
+        // Generate Cryptographic Mock of the Seal
         let mut seal_hasher = Sha256::new();
         seal_hasher.update(&journal_hash);
         seal_hasher.update(_input_data);

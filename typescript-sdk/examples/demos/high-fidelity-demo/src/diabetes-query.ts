@@ -11,30 +11,27 @@ function(records) {
 }`;
 
 async function main() {
-	console.log(`🤖 Compilando Filtro Médico para Diabetes...`);
+	console.log(`🤖 Compiling Medical Filter for Diabetes...`);
 	const payload = NmpCompiler.compileAnalysis(
 		SCENARIO_DIABETES,
 		"DiabetesAnalytics",
 	);
 
-	console.log(`🚀 Enviando Payload Logic-on-Origin a The Vault...`);
+	console.log(`🚀 Sending Logic-on-Origin Payload to The Vault...`);
 	const result = await theVaultServer.callTool({
 		name: "nmp_audit_sandbox",
-		arguments: { payload }, // AQUI ESTÁ EL PAYLOAD REQUERIDO
+		arguments: { payload }, // HERE IS THE REQUIRED PAYLOAD
 	});
 
 	const msg = result.content.find((c: any) => c.type === "text");
 	if (result.isError) {
 		if (msg && typeof msg.text === "string")
-			console.error(`🛡️ Bloqueado:`, msg.text);
+			console.error(`🛡️ Blocked:`, msg.text);
 	} else {
 		if (msg && typeof msg.text === "string") {
 			const data = JSON.parse(msg.text);
-			console.log(
-				`\n💎 RESULTADO EXACTO DE LA CONSULTA:`,
-				data.computation_result,
-			);
-			console.log(`✅ ZK-Receipt STARK:`, data.zk_receipt);
+			console.log(`\n💎 EXACT QUERY RESULT:`, data.computation_result);
+			console.log(`✅ STARK ZK-Receipt:`, data.zk_receipt);
 		}
 	}
 	process.exit(0);

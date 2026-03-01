@@ -1,8 +1,8 @@
-import { NmpServer } from "@neural-mesh/sdk/server";
-import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { NmpServer } from "@neural-mesh/sdk/server";
+import { z } from "zod";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_PATH = path.resolve(__dirname, "../data/medical_records.json");
@@ -12,13 +12,13 @@ const server = new NmpServer({
 	version: "1.0.0",
 });
 
-// Rescatamos los datos locales que el servidor protege
+// Rescue the local data that the server protects
 const loadLocalData = async () => {
 	const content = await fs.readFile(DATA_PATH, "utf-8");
 	return JSON.parse(content);
 };
 
-// Registramos la herramienta de auditoría de forma nativa
+// Register the audit tool natively
 server.tool(
 	"audit_records",
 	"Performs a secure multi-variable audit on protected medical records using logic-on-origin",
@@ -31,15 +31,15 @@ server.tool(
 			`[NMP-SERVER] Logic-on-Origin received for Audit: ${params.auditId}`,
 		);
 
-		// El SDK maneja internamente la seguridad, PQC y el Sandbox
-		// Aquí simulamos el acceso seguro que el Sandbox tiene a los datos
+		// The SDK handles security, PQC, and the Sandbox internally
+		// Here we simulate the secure access the Sandbox has to the data
 		const data = await loadLocalData();
 
 		console.log(`[NMP-SERVER] Executing logic over ${data.length} records...`);
 
 		const anomalies = data.filter((r: any) => r.risk_score >= params.minRisk);
 
-		// El SDK empaqueta el resultado y genera los recibos ZK automáticamente
+		// The SDK packages the result and generates ZK receipts automatically
 		return {
 			content: [
 				{

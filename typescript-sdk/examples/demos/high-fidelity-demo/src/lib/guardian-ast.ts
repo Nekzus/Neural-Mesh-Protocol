@@ -1,5 +1,5 @@
 // Guardian AST: Zero-Time Static Analysis
-// Escanea el código del lado del servidor antes de considerarlo para ejecución.
+// Scans server-side code before considering it for execution.
 
 export class GuardianAST {
 	private static readonly RESTRICTED_PATTERNS = [
@@ -13,27 +13,27 @@ export class GuardianAST {
 	];
 
 	/**
-	 * Inspecciona el código entrante buscando intentos de Sandbox Escape o I/O no autorizado.
-	 * Si encuentra un patrón dudoso, lanza una excepción letal (Zero-Time Block).
+	 * Inspects incoming code looking for Sandbox Escape attempts or unauthorized I/O.
+	 * If it finds a doubtful pattern, it throws a lethal exception (Zero-Time Block).
 	 */
 	public static inspect(code: string): void {
 		console.error(
-			`\n🛡️  [Guardian AST] Inicializando inspección heurística de Zero-Time...`,
+			`\n🛡️  [Guardian AST] Initializing Zero-Time heuristic inspection...`,
 		);
 		console.error(
-			`🛡️  [Guardian AST] Tamaño del payload: ${Buffer.byteLength(code, "utf8")} bytes`,
+			`🛡️  [Guardian AST] Payload size: ${Buffer.byteLength(code, "utf8")} bytes`,
 		);
 
-		for (const pattern of this.RESTRICTED_PATTERNS) {
+		for (const pattern of GuardianAST.RESTRICTED_PATTERNS) {
 			if (pattern.test(code)) {
 				console.error(
-					`\n🚨 [Guardian AST] FATAL: INTENTO DE SANDBOX ESCAPE DETECTADO!`,
+					`\n🚨 [Guardian AST] FATAL: SANDBOX ESCAPE ATTEMPT DETECTED!`,
 				);
 				console.error(
-					`🚨 [Guardian AST] Regla infringida: ${pattern.toString()}`,
+					`🚨 [Guardian AST] Infringed rule: ${pattern.toString()}`,
 				);
 				console.error(
-					`🚨 [Guardian AST] El payload contenía I/O no autorizado hacia el Host.`,
+					`🚨 [Guardian AST] The payload contained unauthorized I/O towards the Host.`,
 				);
 				throw new Error(
 					"[NMP] AST Security Violation. The server rejected the payload.",
@@ -42,7 +42,7 @@ export class GuardianAST {
 		}
 
 		console.error(
-			`✅ [Guardian AST] Inspección exitosa. No se detectaron patrones maliciosos.`,
+			`✅ [Guardian AST] Successful inspection. No malicious patterns detected.`,
 		);
 	}
 }

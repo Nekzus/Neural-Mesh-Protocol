@@ -115,8 +115,8 @@ export class NmpMcpBridge {
 	}
 
 	/**
-	 * Conecta el puente escuchando a stdio utilizando readline.
-	 * Responde a los comandos JSON-RPC 2.0 y maneja la inicialización.
+	 * Connects the bridge by listening to stdio using readline.
+	 * Responds to JSON-RPC 2.0 commands and handles initialization.
 	 */
 	public async connect(): Promise<void> {
 		const readline = await import("readline");
@@ -162,7 +162,7 @@ export class NmpMcpBridge {
 				}
 			} catch (e: any) {
 				console.error(
-					`[NMP-Bridge] Error procesando payload JSON-RPC: ${e.message}`,
+					`[NMP-Bridge] Error processing JSON-RPC payload: ${e.message}`,
 				);
 			}
 		});

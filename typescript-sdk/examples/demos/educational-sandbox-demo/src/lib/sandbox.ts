@@ -1,4 +1,4 @@
-import { Buffer } from "node:buffer";
+import type { Buffer } from "node:buffer";
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -40,9 +40,9 @@ export class WasiSandbox {
 
 		// Simulate Processing Records one by one
 		for (const record of records) {
-			consumedFuel += this.FUEL_PER_RECORD;
+			consumedFuel += WasiSandbox.FUEL_PER_RECORD;
 
-			if (consumedFuel > this.MAX_FUEL) {
+			if (consumedFuel > WasiSandbox.MAX_FUEL) {
 				throw new Error(
 					"[WasiSandbox] TRAP: Fuel Exhaustion (Infinite Loop detected or Budget exceeded)",
 				);

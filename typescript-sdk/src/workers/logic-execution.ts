@@ -1,13 +1,12 @@
 import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
-// @ts-ignore
 import kyber from "crystals-kyber";
 import { ASTGuardian } from "../sandbox/guardian.js";
 import { WasiSandbox } from "../sandbox/wasi.js";
 
 export interface WorkerData {
 	ciphertext: Uint8Array;
-	secretKeyObj: any;
+	secretKeyObj: ArrayLike<number>;
 	kyberPublicKey: Uint8Array;
 	wasmBinary: Uint8Array;
 	inputs: Record<string, Uint8Array>;
@@ -50,7 +49,6 @@ export default async function processLogicExecution(
 
 	// 4. Instantiate and Execute WASI Sandbox
 	const sandbox = new WasiSandbox();
-	const sandboxArgs = ["nmp-logic", `--session=${sessionToken}`];
 
 	// Convert Uint8Array back to Buffer for WASI if needed
 	await sandbox.execute(Buffer.from(decryptedWasm));

@@ -1,7 +1,7 @@
+import type { Buffer } from "node:buffer";
 import { NmpServer } from "@neural-mesh/sdk/server";
 import { GuardianAST } from "./lib/guardian.js";
 import { WasiSandbox } from "./lib/sandbox.js";
-import { Buffer } from "node:buffer";
 
 const server = new NmpServer({
 	name: "Strategic-Data-Node-Alpha",

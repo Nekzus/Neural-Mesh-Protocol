@@ -1,6 +1,6 @@
+import { randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { AesGcmWrapper } from "./aes.js";
-import { randomBytes } from "node:crypto";
 
 describe("AesGcmWrapper", () => {
 	it("should encrypt and decrypt payload successfully from Buffer string", () => {

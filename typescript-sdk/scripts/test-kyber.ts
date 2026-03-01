@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Buffer } from "node:buffer";
-// @ts-ignore
+// @ts-expect-error
 import kyber from "crystals-kyber";
 
 async function test() {

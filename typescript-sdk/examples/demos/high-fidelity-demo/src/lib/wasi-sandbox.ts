@@ -13,21 +13,21 @@ export interface WasiExecutionResult {
 }
 
 export class WasiSandbox {
-	private static MAX_FUEL = 100_000; // Unidades abstractas de CPU
+	private static MAX_FUEL = 100_000; // Abstract CPU units
 
 	/**
-	 * Ejecuta el código en un entorno aislado con un límite estricto de recursos.
-	 * Previene bucles infinitos y ataques de agotamiento de memoria.
+	 * Executes the code in an isolated environment with a strict resource limit.
+	 * Prevents infinite loops and memory exhaustion attacks.
 	 */
 	public static async execute(
 		compiledLogic: string,
 	): Promise<WasiExecutionResult> {
-		console.error(`\n📦 [WASI Sandbox] Instanciando Sandbox V8...`);
+		console.error(`\n📦 [WASI Sandbox] Instantiating V8 Sandbox...`);
 		console.error(
-			`📦 [WASI Sandbox] Límite estricto de Fuel inyectado: ${this.MAX_FUEL} Unidades`,
+			`📦 [WASI Sandbox] Strict Fuel limit injected: ${WasiSandbox.MAX_FUEL} Units`,
 		);
 
-		// 1. Cargar la base de datos de manera controlada bajo el Sandbox (VFS Simulation)
+		// 1. Load the database in a controlled manner under the Sandbox (VFS Simulation)
 		let recordsData = "[]";
 		try {
 			const dataPath = path.resolve(
@@ -36,40 +36,40 @@ export class WasiSandbox {
 			);
 			recordsData = await fs.readFile(dataPath, "utf-8");
 			console.error(
-				`📦 [WASI Sandbox] VirtualFS montado: medical_records.json (${recordsData.length} bytes)`,
+				`📦 [WASI Sandbox] VirtualFS mounted: medical_records.json (${recordsData.length} bytes)`,
 			);
 		} catch (e) {
-			console.error(`[WASI Sandbox] Error montando VirtualFS: ${e}`);
+			console.error(`[WASI Sandbox] Error mounting VirtualFS: ${e}`);
 		}
 
 		let resultOutput = "";
 		let fuelUsed = 0;
 
-		// 2. Ejecución simulada con Control de Fuel
+		// 2. Simulated execution with Fuel Control
 		try {
-			// Inyectamos instrumentación de Fuel al código del cliente si contiene loops
+			// We inject Fuel instrumentation into the client code if it contains loops
 			const hasLoop = /while\s*\(true\)|for\s*\(;;\)/.test(compiledLogic);
 
 			if (hasLoop) {
 				console.error(
-					`⚠️  [WASI Monitor] Detectado patrón de bucle potencialmente infinito...`,
+					`⚠️  [WASI Monitor] Potentially infinite loop pattern detected...`,
 				);
-				// Simulamos la explosión del contador de fuel tras unos pocos ciclos
-				fuelUsed = this.MAX_FUEL + 1;
+				// We simulate the fuel counter explosion after a few cycles
+				fuelUsed = WasiSandbox.MAX_FUEL + 1;
 				throw new Error(
 					"Wasmtime: Resource Exhaustion (Fuel consumed overflow)",
 				);
 			}
 
-			// 3. Ejecutar la lógica de manera "Ciega" (Emulamos V8 Isolates/vm module aquí de forma segura para la demo)
-			// En producción NMP usa Wasmtime en Rust. Aquí construimos una función asilada.
-			// Le pasamos *solo* el objeto puro de los registros, sin exponer dependencias.
+			// 3. Execute logic "Blindly" (We emulate V8 Isolates/vm module here safely for the demo)
+			// In production NMP uses Wasmtime in Rust. Here we build an isolated function.
+			// We pass *only* the pure records object, without exposing dependencies.
 			const runLogic = new Function(
 				"recordsRaw",
 				`
         try {
            const db = JSON.parse(recordsRaw);
-           // Inyectar contexto blindado como 'env' coherente con el System Prompt
+           // Inject shielded context as 'env' consistent with the System Prompt
            const env = { records: db };
            
            ${compiledLogic}
@@ -81,34 +81,32 @@ export class WasiSandbox {
       `,
 			);
 
-			// Simulamos latencia de computación
+			// We simulate computation latency
 			const startMark = performance.now();
 			resultOutput = String(runLogic(recordsData));
 			const endMark = performance.now();
 
-			// Calcular combustible gastado basado en la duración matemática (Aprox)
+			// Calculate spent fuel based on mathematical duration (Approx)
 			fuelUsed = Math.floor((endMark - startMark) * 1500 + 500);
 
-			if (fuelUsed > this.MAX_FUEL) {
+			if (fuelUsed > WasiSandbox.MAX_FUEL) {
 				throw new Error("Wasmtime: Resource Exhaustion (Fuel limit exceeded)");
 			}
 
 			console.error(
-				`✅ [WASI Sandbox] Ejecución Completada. Fuel resturante: ${this.MAX_FUEL - fuelUsed}`,
+				`✅ [WASI Sandbox] Execution Completed. Remaining fuel: ${WasiSandbox.MAX_FUEL - fuelUsed}`,
 			);
 		} catch (error: any) {
-			console.error(
-				`\n💥 [WASI Sandbox - FATAL ERROR] Ejecución Interrumpida!`,
-			);
-			console.error(`💥 Detalle: ${error.message}`);
+			console.error(`\n💥 [WASI Sandbox - FATAL ERROR] Execution Interrupted!`);
+			console.error(`💥 Detail: ${error.message}`);
 			throw new Error(`[NMP Sandbox Crash] ${error.message}`);
 		}
 
-		// 4. Generar Prueba Cero-Conocimiento (ZK-Receipt)
-		console.error(`🔒 [ZK Prover] Generando recibo criptográfico STARK...`);
+		// 4. Generate Zero-Knowledge Proof (ZK-Receipt)
+		console.error(`🔒 [ZK Prover] Generating STARK cryptographic receipt...`);
 		const logicHash = createHash("sha256").update(compiledLogic).digest("hex");
 		const outputHash = createHash("sha256").update(resultOutput).digest("hex");
-		// Simulamos la Prueba Cero Conocimiento: Asegura la integridad del pipeline Lógica -> Datos -> Output
+		// We simulate the Zero-Knowledge Proof: Ensures the integrity of the Logic -> Data -> Output pipeline
 		const zkReceipt = createHash("sha512")
 			.update(`RISC0_SEAL:${logicHash}:${outputHash}:NMP_V1`)
 			.digest("hex");

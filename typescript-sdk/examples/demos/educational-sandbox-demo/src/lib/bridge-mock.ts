@@ -1,6 +1,6 @@
+import type { Buffer } from "node:buffer";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { Buffer } from "node:buffer";
 
 /**
  * BridgeMock simulates the NMP P2P / gRPC transport layer.

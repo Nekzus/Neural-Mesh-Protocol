@@ -1,6 +1,7 @@
-// "The Vault" - Nodo de Datos NMP Hi-Fi
-import { z } from "zod";
+// "The Vault" - Hi-Fi NMP Data Node
+
 import { NmpServer } from "@neural-mesh/sdk/server";
+import { z } from "zod";
 import { GuardianAST } from "./lib/guardian-ast.js";
 import { WasiSandbox } from "./lib/wasi-sandbox.js";
 
@@ -17,7 +18,7 @@ export const theVaultServer = new NmpServer(
 	{ capabilities: { tools: { listChanged: true } } },
 );
 
-// NMP Plug & Play: Inyecta MCP Prompts de Autoridad en el Bridge Stdio
+// NMP Plug & Play: Injects Authority MCP Prompts into the Stdio Bridge
 theVaultServer.enableZeroShotAutonomy();
 
 theVaultServer.tool(
@@ -35,7 +36,7 @@ theVaultServer.tool(
 		console.error(`📥 [The Vault] Dynamic Injection Request Received.`);
 		console.error(`======================================================`);
 
-		// 1. El SDK Zero-Shot Middleware ya lo desempaquetó y purificó
+		// 1. The SDK Zero-Shot Middleware has already unpacked and purified it
 		const logicCore = payload;
 		console.error(
 			`📥 [The Vault] Payload successfully passed Zero-Shot Format Check.`,
@@ -49,7 +50,7 @@ theVaultServer.tool(
 			const result = await WasiSandbox.execute(logicCore);
 
 			// 4. THE SHIELD - Phase 3: Egress Filter (Anti-Exfiltration)
-			// Revisamos la salida matemática para asegurarnos de que la IA no intente robar un ID.
+			// We review the mathematical output to ensure the AI doesn't try to steal an ID.
 			try {
 				const parsedOutput = JSON.parse(result.output);
 				const stringifiedKeys = JSON.stringify(parsedOutput).toLowerCase();
@@ -69,7 +70,7 @@ theVaultServer.tool(
 				}
 			} catch (e: any) {
 				if (e.message.includes("Egress Security Violation")) throw e;
-				// Si no es JSON, dejamos pasar o aplicamos Regex para texto plano según la regla de negocio.
+				// If it's not JSON, let it pass or apply Regex for plain text according to the business rule.
 			}
 
 			console.error(
@@ -77,7 +78,7 @@ theVaultServer.tool(
 			);
 			console.error(`======================================================\n`);
 
-			// 4. Retornar los resultados y el recibo criptográfico STARK
+			// 4. Return the results and the STARK cryptographic receipt
 			const responseData = {
 				success: true,
 				computation_result: result.output,

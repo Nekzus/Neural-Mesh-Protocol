@@ -1,7 +1,7 @@
-// "The Blind Analyst" - Agente Dinámico NMP Hi-Fi
+// "The Blind Analyst" - Hi-Fi NMP Dynamic Agent
 import { NmpCompiler } from "./lib/nmp-compiler.js";
 
-// -- Escenarios de Análisis (The Power) --
+// -- Analysis Scenarios (The Power) --
 
 const SCENARIO_HYPERTENSION = `
 function(records) {
@@ -20,7 +20,7 @@ function(records) {
   return { analysis: "Global Age Mean", meanAge: Math.round(sum / records.length) };
 }`;
 
-// -- Escenarios de Seguridad (The Shield) --
+// -- Security Scenarios (The Shield) --
 
 const SCENARIO_AST_ATTACK = `
   const fs = require('fs');
@@ -44,15 +44,15 @@ async function main() {
 		args.find((a) => a.startsWith("--scenario="))?.split("=")[1] ||
 		"average-age";
 
-	console.log(`\n🤖 [The Blind Analyst] Inicializando Cliente Dinámico IA...`);
-	console.log(`🤖 Scenario Seleccionado: [${scenarioArg}]`);
+	console.log(`\n🤖 [The Blind Analyst] Initializing Dynamic AI Client...`);
+	console.log(`🤖 Selected Scenario: [${scenarioArg}]`);
 
 	let payload = "";
 
-	// 1. Compilación Dinámica basada en intención
+	// 1. Dynamic Compilation based on intention
 	switch (scenarioArg) {
 		case "hypertension":
-			console.log(`🔧 [Compiler] Compilando Filtro Médico Estricto...`);
+			console.log(`🔧 [Compiler] Compiling Strict Medical Filter...`);
 			payload = NmpCompiler.compileAnalysis(
 				SCENARIO_HYPERTENSION,
 				"HypertensionAnalytics",
@@ -60,7 +60,7 @@ async function main() {
 			break;
 		case "average-age":
 			console.log(
-				`🔧 [Compiler] Compilando Transformación Estadística (Anonimizada)...`,
+				`🔧 [Compiler] Compiling Statistical Transformation (Anonymized)...`,
 			);
 			payload = NmpCompiler.compileAnalysis(
 				SCENARIO_AVERAGE_AGE,
@@ -69,17 +69,17 @@ async function main() {
 			break;
 		case "ast-attack":
 			console.log(
-				`⚠️  [Compiler] Empaquetando Lógica Maliciosa (Sandbox Escape Attempt)...`,
+				`⚠️  [Compiler] Packaging Malicious Logic (Sandbox Escape Attempt)...`,
 			);
 			console.log(
-				`⚠️  [Compiler] ADVERTENCIA: Este ataque debería ser bloqueado en Cero-Tiempo por el Guardian AST.`,
+				`⚠️  [Compiler] WARNING: This attack should be blocked in Zero-Time by the Guardian AST.`,
 			);
 			payload = NmpCompiler.compileRaw(SCENARIO_AST_ATTACK, "MalwareAST");
 			break;
 		case "fuel-exhaustion":
-			console.log(`⚠️  [Compiler] Compilando Bomba Lógica (Infinite Loop)...`);
+			console.log(`⚠️  [Compiler] Compiling Logic Bomb (Infinite Loop)...`);
 			console.log(
-				`⚠️  [Compiler] ADVERTENCIA: El WASI Sandbox debería detener esto amputando el Fuel.`,
+				`⚠️  [Compiler] WARNING: The WASI Sandbox should stop this by amputating the Fuel.`,
 			);
 			payload = NmpCompiler.compileAnalysis(
 				SCENARIO_FUEL_EXHAUSTION,
@@ -88,21 +88,23 @@ async function main() {
 			break;
 		default:
 			console.error(
-				`❌ Escenario desconocido. Use: hypertension, average-age, ast-attack, fuel-exhaustion`,
+				`❌ Unknown scenario. Use: hypertension, average-age, ast-attack, fuel-exhaustion`,
 			);
 			process.exit(1);
 	}
 
 	console.log(
-		`\n🔒 [PQC Protocol] Iniciando Handshake Kyber ML-KEM-768... (Simulado)`,
+		`\n🔒 [PQC Protocol] Initiating Kyber ML-KEM-768 Handshake... (Simulated)`,
 	);
 
-	// 2. Conexión P2P (Simulada vía puente nativo Node para el Agent local)
-	console.log(`🔒 [PQC Protocol] Canal AES-256-GCM Establecido con 'TheVault'`);
+	// 2. P2P Connection (Simulated via Node native bridge for local Agent)
+	console.log(
+		`🔒 [PQC Protocol] AES-256-GCM Channel Established with 'TheVault'`,
+	);
 
 	try {
 		console.log(
-			`🚀 [Injector] Enviando Payload Logic-on-Origin al Nodo Remoto...`,
+			`🚀 [Injector] Sending Logic-on-Origin Payload to Remote Node...`,
 		);
 		const { theVaultServer } = await import("./server-node.js");
 
@@ -113,32 +115,32 @@ async function main() {
 
 		if (result.isError) {
 			console.error(`\n======================================================`);
-			console.error(`🛡️  THE SHIELD HAS ACTIVATED (Ejecución Bloqueada)`);
+			console.error(`🛡️  THE SHIELD HAS ACTIVATED (Execution Blocked)`);
 			console.error(`======================================================`);
-			// Extrayendo el text puro
+			// Extracting pure text
 			const msg = result.content.find((c: any) => c.type === "text");
 			if (msg && typeof msg.text === "string") console.error(msg.text);
 		} else {
 			console.log(`\n======================================================`);
-			console.log(`💎 THE POWER DETECTED (Ejecución Exitosa)`);
+			console.log(`💎 THE POWER DETECTED (Successful Execution)`);
 			console.log(`======================================================`);
 			const msg = result.content.find((c: any) => c.type === "text");
 			if (msg && typeof msg.text === "string") {
 				const data = JSON.parse(msg.text);
-				console.log(`📊 Resultado Análisis:`, data.computation_result);
-				console.log(`⛽ Fuel Consumido:`, data.security_metrics.fuel_consumed);
+				console.log(`📊 Analysis Result:`, data.computation_result);
+				console.log(`⛽ Fuel Consumed:`, data.security_metrics.fuel_consumed);
 				console.log(
-					`\n✅ [ZK Verifier] Verificando Recibo STARK del Servidor...`,
+					`\n✅ [ZK Verifier] Verifying STARK Receipt from Server...`,
 				);
 				console.log(
-					`✅ [ZK Verifier] Prueba Criptográfica Válida: ${data.zk_receipt}`,
+					`✅ [ZK Verifier] Valid Cryptographic Proof: ${data.zk_receipt}`,
 				);
 			}
 		}
 	} catch (error) {
 		console.error("Agent encountered a fatal execution error:", error);
 	} finally {
-		console.log(`\n🔌 Desconectando de la Mesh...`);
+		console.log(`\n🔌 Disconnecting from the Mesh...`);
 	}
 }
 

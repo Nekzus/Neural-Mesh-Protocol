@@ -1,4 +1,4 @@
-import { Buffer } from "node:buffer";
+import type { Buffer } from "node:buffer";
 
 /**
  * GuardianAST simulates the Zero-Time safety inspector that scans
@@ -26,7 +26,7 @@ export class GuardianAST {
 		// Here we simulate it by scanning the string part of the bundle.
 		const content = payload.toString("utf8");
 
-		for (const pattern of this.FORBIDDEN_PATTERNS) {
+		for (const pattern of GuardianAST.FORBIDDEN_PATTERNS) {
 			if (content.includes(pattern)) {
 				console.error(
 					`[GuardianAST] ❌ CRITICAL: Security Violation! Found forbidden pattern: "${pattern}"`,

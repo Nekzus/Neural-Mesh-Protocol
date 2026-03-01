@@ -1,11 +1,11 @@
-// NMP Compiler: Compilación Dinámica del Lado del Cliente
-// Toma lógica JS de alto nivel, la inyecta en un esqueleto y genera el payload ejecutable.
+// NMP Compiler: Dynamic Client-Side Compilation
+// Takes high-level JS logic, injects it into a skeleton, and generates the executable payload.
 
 export class NmpCompiler {
 	/**
-	 * Compila una función de análisis (escrita en string) en un módulo NMP inyectable.
-	 * La función provista debe tomar un parámetro (e.g., `db`) que representa la base de datos de solo lectura,
-	 * e imprimir (return) el resultado que debe ser emitido al host.
+	 * Compiles an analysis function (written as a string) into an injectable NMP module.
+	 * The provided function must take a parameter (e.g., `db`) representing the read-only database,
+	 * and return the result that should be emitted to the host.
 	 */
 	public static compileAnalysis(
 		analysisFunctionStr: string,
@@ -16,7 +16,7 @@ export class NmpCompiler {
 		const boundaryOpen = "---BEGIN_LOGIC---\n";
 		const boundaryClose = "\n---END_LOGIC---";
 
-		// El esqueleto inyecta un entry point estándar requerido por el servidor (nmp_main)
+		// The skeleton injects a standard entry point required by the server (nmp_main)
 		const executableBody = `
 const _clientLogic = ${analysisFunctionStr};
 
@@ -35,8 +35,8 @@ function nmp_main(env) {
 	}
 
 	/**
-	 * Empaqueta un script malicioso puro, sin el envoltori estándar de NMP.
-	 * Utilizado exclusivamente para probar la resiliencia del Guardian AST o del Sandbox.
+	 * Packages a pure malicious script, without the standard NMP wrapper.
+	 * Used exclusively to test the resilience of the Guardian AST or Sandbox.
 	 */
 	public static compileRaw(
 		rawScript: string,

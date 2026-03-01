@@ -28,7 +28,7 @@ impl EnclaveProvider for AwsNitroEnclaveStub {
     }
 
     fn generate_attestation_report(&self, nonce: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
-        println!("[TEE] 🛡️ Generando Attestation Report firmado por Nitro Hypervisor (Hyper-realistic Mock)...");
+        println!("[TEE] 🛡️ Generating Attestation Report signed by Nitro Hypervisor (Hyper-realistic Mock)...");
         let mut hasher = Sha256::new();
         hasher.update(b"AWS_NITRO_ENCLAVE_V1_COSE_SIGN1");
         hasher.update(nonce);
