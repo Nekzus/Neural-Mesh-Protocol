@@ -8,7 +8,7 @@ import type { CallToolRequest, CallToolResult } from "../types.js";
  * NmpServer logic (or eventually packaging them to WASM).
  */
 export class NmpMcpBridge {
-	constructor(private internalServer: NmpServer) {}
+	constructor(private internalServer: NmpServer) { }
 
 	/**
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
@@ -17,99 +17,100 @@ export class NmpMcpBridge {
 	public async handleJsonRpcRequest(
 		payload: Record<string, unknown>,
 	): Promise<unknown> {
+		const id = payload.id as string | number;
+		const method = payload.method as string;
+		const params = payload.params as Record<string, unknown> | undefined;
+
 		if (payload.jsonrpc !== "2.0") {
-			return this.errorResponse(payload.id, -32600, "Invalid Request");
+			return this.errorResponse(id, -32600, "Invalid Request");
 		}
 
-		if (payload.method === "tools/list") {
+		if (method === "tools/list") {
 			const tools = this.internalServer.listTools();
-			return this.successResponse(payload.id, { tools });
+			return this.successResponse(id, { tools });
 		}
 
-		if (payload.method === "resources/list") {
+		if (method === "resources/list") {
 			const resources = this.internalServer.listResources();
-			return this.successResponse(payload.id, { resources });
+			return this.successResponse(id, { resources });
 		}
 
-		if (payload.method === "prompts/list") {
+		if (method === "prompts/list") {
 			const prompts = this.internalServer.listPrompts();
-			return this.successResponse(payload.id, { prompts });
+			return this.successResponse(id, { prompts });
 		}
 
-		if (payload.method === "prompts/get") {
-			const { params } = payload;
+		if (method === "prompts/get") {
 			if (!params || !params.name) {
 				return this.errorResponse(
-					payload.id,
+					id,
 					-32602,
 					"Missing prompt name in params",
 				);
 			}
 			try {
 				const result = await this.internalServer.getPrompt({
-					name: params.name,
-					arguments: params.arguments,
+					name: params.name as string,
+					arguments: params.arguments as Record<string, string> | undefined,
 				});
-				return this.successResponse(payload.id, result);
+				return this.successResponse(id, result);
 			} catch (err: unknown) {
 				return this.errorResponse(
-					payload.id as string | number,
+					id,
 					-32000,
 					(err as Error).message,
 				);
 			}
 		}
 
-		if (payload.method === "resources/read") {
-			const { params } = payload;
+		if (method === "resources/read") {
 			if (!params || !params.uri) {
 				return this.errorResponse(
-					payload.id,
+					id,
 					-32602,
 					"Missing resource uri in params",
 				);
 			}
 			try {
-				const result = this.internalServer.readResource(params.uri);
-				return this.successResponse(payload.id, result);
+				const result = this.internalServer.readResource(params.uri as string);
+				return this.successResponse(id, result);
 			} catch (err: unknown) {
 				return this.errorResponse(
-					payload.id as string | number,
+					id,
 					-32000,
 					(err as Error).message,
 				);
 			}
 		}
 
-		if (payload.method === "tools/call") {
-			const { params } = payload;
+		if (method === "tools/call") {
 			if (!params || !params.name) {
 				return this.errorResponse(
-					payload.id,
+					id,
 					-32602,
 					"Missing tool name in params",
 				);
 			}
 
 			const request: CallToolRequest = {
-				name: params.name,
-				arguments: params.arguments || {},
+				name: params.name as string,
+				arguments: (params.arguments as Record<string, unknown>) || {},
 			};
 
 			try {
 				const result: CallToolResult =
 					await this.internalServer.callTool(request);
-				return this.successResponse(payload.id, result);
+				return this.successResponse(id, result);
 			} catch (err: unknown) {
 				return this.errorResponse(
-					payload.id as string | number,
+					id,
 					-32000,
 					(err as Error).message,
 				);
 			}
 		}
 
-		return this.errorResponse(payload.id, -32601, "Method not found");
+		return this.errorResponse(id, -32601, "Method not found");
 	}
 
 	private successResponse(
@@ -150,8 +151,11 @@ export class NmpMcpBridge {
 
 				// Standard MCP initialization bypass
 				if (payload.method === "initialize") {
-					const response = this.successResponse(payload.id, {
-						protocolVersion: payload.params?.protocolVersion || "2024-11-05",
+					const id = payload.id as string | number;
+					const params = payload.params as Record<string, unknown> | undefined;
+
+					const response = this.successResponse(id, {
+						protocolVersion: params?.protocolVersion || "2024-11-05",
 						capabilities: {
 							tools: {
 								listChanged: true,

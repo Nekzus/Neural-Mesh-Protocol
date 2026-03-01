@@ -86,17 +86,18 @@ export class MeshRpcServer {
 		>,
 	) {
 		const request = call.request;
-		console.log(`[gRPC] Executing Logic with token: ${request.session_token}`);
+		const sessionToken = request.session_token as string;
+		console.log(`[gRPC] Executing Logic with token: ${sessionToken}`);
 
-		const sk = this.sessions.get(request.session_token);
+		const sk = this.sessions.get(sessionToken);
 		if (!sk) {
 			console.error(
-				`[gRPC] Invalid or expired session token: ${request.session_token}`,
+				`[gRPC] Invalid or expired session token: ${sessionToken}`,
 			);
 			call.end();
 			return;
 		}
-		this.sessions.delete(request.session_token);
+		this.sessions.delete(sessionToken);
 
 		try {
 			console.log("[-] Offloading Execution to Multi-Core Worker Pool...");
@@ -126,10 +127,10 @@ export class MeshRpcServer {
 		} catch (error: unknown) {
 			console.error(
 				`[gRPC] Capability Violation / Worker Error:`,
-				error.message,
+				(error as Error).message,
 			);
 			call.write({
-				semantic_evidence: `Capability Violation: ${error.message}`,
+				semantic_evidence: `Capability Violation: ${(error as Error).message}`,
 				cryptographic_proof: Buffer.alloc(0),
 				zk_receipt: Buffer.alloc(0),
 			});

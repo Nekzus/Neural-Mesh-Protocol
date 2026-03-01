@@ -32,9 +32,9 @@ export class NmpMcpBridge {
 		// that uses a generic WASM fetcher to hit the original JSON endpoint.
 		for (const mcpTool of toolsDef) {
 			this.server.tool(
-				mcpTool.name,
-				`[LEGACY-BRIDGED] ${mcpTool.description}`,
-				mcpTool.schema,
+				mcpTool.name as string,
+				`[LEGACY-BRIDGED] ${mcpTool.description as string}`,
+				mcpTool.schema as any,
 				async (_args) => {
 					// In a real implementation, this runtime handler compiles to a WASM
 					// that makes an outward HTTP subrequest to the legacy server.
