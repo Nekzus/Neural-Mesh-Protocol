@@ -30,7 +30,7 @@ En lugar de forzar a que un enorme conjunto de datos viaje hacia el algoritmo ma
 
 Cuando un Agente NMP necesita una respuesta, escribe dinámicamente la lógica requerida para encontrar esa respuesta. Compila dicha lógica en un microscópico portador de bytes `WebAssembly (.wasm)` y lo empuja a través de la Malla Zero-Trust.
 
-Al llegar al destino (El Fuerte / *The Vault*):
+Al llegar al Servidor de Destino:
 1. **Es Aislado**: La lógica queda atrapada dentro de un `WASI Sandbox`. No puede tocar el SO anfitrión (Host).
 2. **Fuerza Bruta Local**: El código WebAssembly procesa los gigabytes de datos localmente a velocidades de hardware integrado. Busca, filtra, analiza y agrega los datos in situ.
 3. **Retorno Estrictamente Semántico**: El código WASM finaliza su ciclo de vida y devuelve una cadena de texto puramente matemática/semántica (ej., *"El valor de latencia promedio es 42%"*) junto con un Recibo Matemático ZK (*ZK-Receipt*) que confirma su honestidad.

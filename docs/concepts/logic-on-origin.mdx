@@ -30,7 +30,7 @@ Instead of forcing the massive dataset to travel to the mathematical algorithm (
 
 When an NMP Agent needs an answer, it dynamically writes the logic required to find that answer. It compiles this logic into a microscopic `WebAssembly (.wasm)` byte-carrier and pushes it across the Zero-Trust Mesh.
 
-Upon arriving at the destination (The Vault):
+Upon arriving at the Target Server:
 1. **It is Isolated**: The logic is trapped inside a `WASI Sandbox`. It cannot touch the host OS.
 2. **It Executes Locally**: The WebAssembly code processes the gigabytes of data locally at hardware-native speeds. It searches, filters, analyzes, and aggregates.
 3. **It Returns Only Semantics**: The WASM code terminates and returns a highly distilled string (e.g., *"The average value is 42% latency"*) along with a mathematical ZK-Receipt confirming honesty. 
