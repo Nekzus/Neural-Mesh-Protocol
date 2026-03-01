@@ -32,6 +32,26 @@ En las arquitecturas tradicionales, transferir gigabytes de datos (logs, bases d
   </Card>
 </CardGroup>
 
+## El Poder de Logic-on-Origin: Casos de Uso Innovadores
+
+El paradigma *Logic-on-Origin* no es solo una optimización de rendimiento; desbloquea de forma fundamental formas completamente nuevas de procesar datos restringidos a través de redes globales sin violar fronteras de privacidad. Al enviar un algoritmo matemático verificado a la fuente de datos en lugar de extraer los datos hacia el algoritmo, erradicamos por completo la **Gravedad de los Datos** (Data Gravity).
+
+### 1. Salud y Bioinformática (Zero-Exfiltración)
+Un Agente Médico de IA desea analizar 10 años de historiales de pacientes en múltiples hospitales para encontrar correlaciones entre medicamentos específicos y efectos secundarios.
+En la computación tradicional, esto es imposible debido a HIPAA y GDPR: los hospitales no pueden exportar miles de registros médicos (que contienen Información de Identidad Personal o PII).
+Con NMP, el Agente inyecta un filtro WebAssembly dentro de un sandbox seguro. El Nodo de Datos del hospital ejecuta la lógica localmente contra su base de datos. El Agente recibe *únicamente* la conclusión matemática final (ej., "85% de correlación encontrada para el Medicamento X con el efecto secundario objetivo") respaldada por un recibo criptográfico, **sin haber visto jamás el nombre de un solo paciente.**
+
+### 2. Auditoría Financiera y Trading de Alta Frecuencia (HFT)
+Se encarga a un Auditor de IA validar millones de transacciones de bancos internacionales para detectar fraudes. El inmenso tamaño del libro mayor bancario global, combinado con las leyes de secreto bancario, hace que transferir estos datos a un LLM central en la nube sea ilegal e inviable.
+A través de NMP, el auditor inyecta una heurística de detección de fraudes directamente dentro del Enclave Nitro seguro del banco. La lógica opera sobre el libro mayor crudo a velocidades de hardware (bare-metal), devolviendo solo las anomalías marcadas.
+
+### 3. Edge Computing y Telemetría IoT Masiva
+Las fábricas inteligentes, los drones autónomos o los satélites generan gigabytes de telemetría por segundo. Una IA central no puede ingerir este volumen en tiempo real.
+En su lugar, NMP empuja lógica de inteligencia dinámica hacia la antena en el borde (Edge). El Agente instala un **Watchdog** WASM que "duerme" perpetuamente en el satélite. Procesa terabytes de datos localmente en órbita y transmite una alerta asíncrona vía gRPC *solo* cuando detecta un patrón de fallo crítico.
+
+### 4. Investigación Colaborativa Descentralizada
+Múltiples consorcios farmacéuticos desean entrenar modelos avanzados sobre sus bases de datos genómicas combinadas sin compartir sus moléculas patentadas crudas con la competencia. Utilizan NMP para empujar algoritmos de entrenamiento a los orígenes del otro, extrayendo solo actualizaciones de gradiente encriptadas para ensamblar el modelo compartido final de forma segura.
+
 ## ¿Para quién es NMP?
 
 *   **Desarrolladores de Aplicaciones IA:** Permite analizar repositorios o bases de datos remotas al instante sin latencia de red masiva.

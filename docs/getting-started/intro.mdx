@@ -34,6 +34,26 @@ NMP solves this by completely inverting the architecture: **We move the math to 
   </Card>
 </CardGroup>
 
+## The Power of Logic-on-Origin: Innovative Use Cases
+
+The *Logic-on-Origin* paradigm is not just a performance optimization; it fundamentally unlocks completely new ways to process restricted data across global networks without violating privacy boundaries. By sending a verified mathematical algorithm to the data source rather than extracting the data to the algorithm, we eradicate **Data Gravity** entirely.
+
+### 1. Healthcare & Bio-Informatics (Zero-Exfiltration)
+An AI Doctor Agent wants to analyze 10 years of patient history across multiple hospitals to find correlations between specific medications and side effects. 
+In traditional computing, this is impossible due to HIPAA and GDPR: hospitals cannot export thousands of medical records (containing Personally Identifiable Information). 
+With NMP, the Agent injects a securely sandboxed WebAssembly filter. The hospital's Data Node runs the logic locally against its database. The Agent receives *only* the final mathematical conclusion (e.g., "85% correlation found for Medication X with target side effect") backed by a cryptography receipt, **without ever seeing a single patient's name.**
+
+### 2. Financial Auditing & High-Frequency Trading (HFT)
+An AI Auditor is tasked with validating millions of transactions across international banks for fraud detection. The sheer size of a global banking ledger, combined with banking secrecy laws, makes transferring this data to a central cloud LLM illegal and unfeasible. 
+Via NMP, the auditor injects a fraud-detection heuristic directly into the Bank's secure Nitro Enclave. The logic runs over the raw ledger at bare-metal speeds, returning only the flagged anomalies.
+
+### 3. Edge Computing & Massive IoT Telemetry
+Smart factories, autonomous drones, or satellites generate gigabytes of telemetry per second. A central AI cannot ingest this sheer volume in real-time. 
+Instead, NMP pushes dynamic intelligence logic down to the Edge antenna. The Agent installs a perpetually sleeping WASM **Watchdog** on the satellite. It processes terabytes of data locally in orbit, and asynchronously streams an alert via gRPC *only* when a critical failure pattern is detected.
+
+### 4. Decentralized Collaborative AI Research
+Multiple pharmaceutical consortiums want to train advanced models on their combined genomic databases without sharing their raw proprietary molecules with competitors. They use NMP to push training algorithms to each other's origins, extracting only encrypted gradient updates to assemble the final shared model securely.
+
 ## Who is NMP for?
 
 NMP provides significant benefits across the entire AI ecosystem:
