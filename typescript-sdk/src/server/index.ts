@@ -48,7 +48,7 @@ export class NmpServer {
 	constructor(
 		private serverInfo: ServerInfo,
 		_config?: { capabilities?: Record<string, unknown> },
-	) {}
+	) { }
 
 	/**
 	 * Register a new Tool
@@ -147,7 +147,27 @@ export class NmpServer {
 				try {
 					// Extract pure logic and deliver it to the developer's function
 					args.payload = logicMatch[1].trim();
-					const result = await handler(args, extra);
+					let result = await handler(args, extra);
+
+					// NMP Native Serialization: Ensure 'text' content is stringified if it's an object/array
+					if (result.content && Array.isArray(result.content)) {
+						result = {
+							...result,
+							content: result.content.map((item) => {
+								if (
+									item.type === "text" &&
+									item.text !== undefined &&
+									typeof item.text === "object"
+								) {
+									return {
+										...item,
+										text: JSON.stringify(item.text),
+									};
+								}
+								return item;
+							}),
+						};
+					}
 
 					if (!result.isError) {
 						this.connectionStats.set(clientId, {
