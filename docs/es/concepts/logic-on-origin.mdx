@@ -1,0 +1,44 @@
+---
+title: "El Paradigma Logic-on-Origin"
+description: "Cómo NMP elimina la Gravedad de los Datos moviendo la Matemática Neuronal hacia el Origen."
+---
+
+El avance por excelencia del **Neural Mesh Protocol (NMP)** es la introducción y maestría del paradigma **Logic-on-Origin** (Lógica en el Origen).
+
+A medida que avanza la escala de la IA, la industria ha reconocido un defecto fundamental en la forma en que operan los agentes autónomos: El cuello de botella de la ventana de contexto. Los protocolos tradicionales (como el *Model Context Protocol*) operan bajo un patrón fundamentalmente anticuado: **Context-Pulling** (Extracción de Contexto).
+
+<Frame>
+  <img className="block dark:hidden w-full" src="/images/logic-vs-pull-light.svg" alt="Comparación animada entre Logic-on-Origin y Context-Pulling" />
+  <img className="hidden dark:block w-full" src="/images/logic-vs-pull-dark.svg" alt="Comparación animada entre Logic-on-Origin y Context-Pulling" />
+</Frame>
+
+## La Trampa de la Gravedad de los Datos (Context-Pulling)
+
+En las aplicaciones de IA estándar, cuando un LLM necesita analizar datos, leer un libro de contabilidad o buscar en un repositorio, el servidor debe extraer los datos brutos y transmitirlos a través de la red hacia el modelo.
+
+Esto es fundamentalmente defectuoso por tres razones:
+
+1. **Riesgo de Exfiltración (Privacidad):** Transmitir bases de datos crudas viola directamente estándares de cumplimiento como HIPAA, GDPR o las Leyes de Secreto Bancario. El proveedor del LLM posee de repente la Información de Identificación Personal (PII) de miles de usuarios en su memoria RAM.
+2. **Colapso de Ancho de Banda:** Enviar gigabytes de registros o datos de telemetría a través del mundo sobre JSON/HTTP es severamente lento y un desperdicio.
+3. **Saturación de la Ventana de Contexto:** Alimentar una base de datos de 10GB en un prompt es imposible o financieramente ruinoso debido a los costos por token.
+
+Los datos poseen "Gravedad". Cuanto más grande es el conjunto de datos, más difícil y costoso resulta moverlo.
+
+## La Solución NMP: Logic-on-Origin Puro
+
+En lugar de forzar a que un enorme conjunto de datos viaje hacia el algoritmo matemático (el LLM), **NMP fuerza al algoritmo matemático a viajar hacia el conjunto de datos.**
+
+Cuando un Agente NMP necesita una respuesta, escribe dinámicamente la lógica requerida para encontrar esa respuesta. Compila dicha lógica en un microscópico portador de bytes `WebAssembly (.wasm)` y lo empuja a través de la Malla Zero-Trust.
+
+Al llegar al destino (El Fuerte / *The Vault*):
+1. **Es Aislado**: La lógica queda atrapada dentro de un `WASI Sandbox`. No puede tocar el SO anfitrión (Host).
+2. **Fuerza Bruta Local**: El código WebAssembly procesa los gigabytes de datos localmente a velocidades de hardware integrado. Busca, filtra, analiza y agrega los datos in situ.
+3. **Retorno Estrictamente Semántico**: El código WASM finaliza su ciclo de vida y devuelve una cadena de texto puramente matemática/semántica (ej., *"El valor de latencia promedio es 42%"*) junto con un Recibo Matemático ZK (*ZK-Receipt*) que confirma su honestidad.
+
+**Cero bytes de datos crudos abandonaron jamás el sistema de origen.**
+
+## Estableciendo la Columna Vertebral de la Inteligencia
+
+Hemso diseñado NMP para reclamar la frontera intelectual y arquitectónica definitiva. Al utilizar este protocolo, los desarrolladores ya no están construyendo simples "integraciones de chatbots". Están desplegando **Sondas de Inteligencia Asíncrona** en territorios digitales estrictamente restringidos, dotados de supremacía y certeza matemática.
+
+Desde orquestar *Consorcios Analíticos de la Salud* sin romper Leyes de Privacidad Universales, hasta el despliegue de *Detectores de Fraude de Alta Frecuencia (HFT)* dentro de Nitro Enclaves bancarios, el paradigma Logic-on-Origin es el futuro innegable de la inteligencia autónoma entre máquinas (M2M).

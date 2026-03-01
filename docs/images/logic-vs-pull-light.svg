@@ -1,0 +1,395 @@
+<svg width="1000" height="420" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="1000" height="420" fill="#FAFAFA" rx="16" />
+
+    <!-- CSS Animations (Zero-SMIL per global rule) -->
+    <style>
+        .nmp-text {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            fill: #09090b;
+        }
+
+        .nmp-text-sm {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            fill: #52525b;
+        }
+
+        .nmp-title {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #000000;
+        }
+
+        .nmp-heading {
+            font-weight: 800;
+            font-size: 18px;
+            fill: #000000;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nmp-subtitle {
+            font-size: 11px;
+            fill: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Zones */
+        .nmp-zone-bad {
+            fill: #fef2f2;
+            stroke: #fecaca;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .nmp-zone-good {
+            fill: #ecfdf5;
+            stroke: #a7f3d0;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        /* Elements */
+        .nmp-box {
+            fill: #ffffff;
+            stroke: #e4e4e7;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-red {
+            fill: #ffffff;
+            stroke: #ef4444;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-green {
+            fill: #ffffff;
+            stroke: #10b981;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-blue {
+            fill: #ffffff;
+            stroke: #38bdf8;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        /* Lines */
+        .nmp-line {
+            stroke: #d4d4d8;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nmp-line-red {
+            stroke: #ef4444;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 6 4;
+            opacity: 0.8;
+        }
+
+        .nmp-line-green {
+            stroke: #10b981;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        .nmp-line-purple {
+            stroke: #a855f7;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        /* Markers */
+        .nmp-arrow {
+            fill: #a1a1aa;
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideRedL {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-160px);
+                opacity: 0;
+            }
+        }
+
+        .anim-pull-1-l {
+            animation: slideRedL 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .anim-pull-2-l {
+            animation: slideRedL 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.8s;
+        }
+
+        .anim-pull-3-l {
+            animation: slideRedL 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.6s;
+        }
+
+        @keyframes slideBlueL {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(160px);
+                opacity: 0;
+            }
+        }
+
+        .anim-push-l {
+            animation: slideBlueL 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes slidePurpleL {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-160px);
+                opacity: 0;
+            }
+        }
+
+        .anim-return-l {
+            animation: slidePurpleL 2s cubic-bezier(0.4, 0, 0.2, 1) infinite 1s;
+        }
+
+        @keyframes pulseAlertL {
+
+            0%,
+            100% {
+                stroke: #ef4444;
+                filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4));
+            }
+
+            50% {
+                stroke: #b91c1c;
+                filter: none;
+            }
+        }
+
+        .anim-alert-l {
+            animation: pulseAlertL 1.5s infinite;
+        }
+
+        @keyframes pulseShieldL {
+
+            0%,
+            100% {
+                stroke: #10b981;
+                filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.4));
+            }
+
+            50% {
+                stroke: #047857;
+                filter: none;
+            }
+        }
+
+        .anim-shield-l {
+            animation: pulseShieldL 2s infinite;
+        }
+
+        @keyframes marchLineRedL {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        .anim-line-red-l {
+            animation: marchLineRedL 1s linear infinite;
+        }
+
+        @keyframes marchLineGreenL {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+
+        .anim-line-green-l {
+            animation: marchLineGreenL 1s linear infinite;
+        }
+
+        @keyframes marchLinePurpleL {
+            to {
+                stroke-dashoffset: 16;
+            }
+        }
+
+        .anim-line-purple-l {
+            animation: marchLinePurpleL 1s linear infinite;
+        }
+    </style>
+
+    <defs>
+        <marker id="arr-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a1a1aa" />
+        </marker>
+        <filter id="glowL" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComponentTransfer in="blur" result="glow">
+                <feFuncA type="linear" slope="0.3" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+
+    <!-- CENTER DIVIDER -->
+    <line x1="500" y1="30" x2="500" y2="390" class="nmp-line" stroke-dasharray="8 8" opacity="0.4" />
+
+    <rect x="440" y="200" width="120" height="24" fill="#ffffff" stroke="#e4e4e7" stroke-width="1" rx="4" />
+    <text x="500" y="216" text-anchor="middle" class="nmp-text-sm" fill="#52525b">PARADIGM SHIFT</text>
+
+    <!-- ========================================== -->
+    <!-- LEFT SIDE: CONTEXT-PULLING (DATA GRAVITY)  -->
+    <!-- ========================================== -->
+    <text x="250" y="45" text-anchor="middle" class="nmp-heading" fill="#dc2626">1. Context-Pulling (Legacy)</text>
+    <text x="250" y="65" text-anchor="middle" class="nmp-subtitle" fill="#71717a">"The Data Gravity Trap"</text>
+
+    <rect x="30" y="80" width="440" height="310" class="nmp-zone-bad" />
+
+    <!-- LLM Cloud (Top) -->
+    <rect x="150" y="100" width="200" height="50" class="nmp-box" />
+    <text x="250" y="122" text-anchor="middle" class="nmp-title">LLM API / Client Agent</text>
+    <text x="250" y="140" text-anchor="middle" class="nmp-text-sm" fill="#dc2626">Context Window Choking</text>
+
+    <!-- Source Database (Bottom) -->
+    <rect x="150" y="320" width="200" height="50" class="nmp-box" />
+    <text x="250" y="342" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
+    <text x="250" y="360" text-anchor="middle" class="nmp-text-sm">Terabytes of Raw PII Data</text>
+
+    <!-- Flow Line -->
+    <path d="M 230 310 L 230 160" class="nmp-line-red anim-line-red-l" />
+    <path d="M 270 310 L 270 160" class="nmp-line-red anim-line-red-l" />
+
+    <!-- Red Data Packets (Upward) -->
+    <g transform="translate(250, 310)">
+        <g class="anim-pull-1-l">
+            <rect x="-60" y="-15" width="120" height="30" class="nmp-box-red anim-alert-l" />
+            <text x="0" y="4" text-anchor="middle" class="nmp-text" fill="#dc2626">GBs of Raw Logs</text>
+        </g>
+    </g>
+    <g transform="translate(250, 310)">
+        <g class="anim-pull-2-l">
+            <rect x="-60" y="-15" width="120" height="30" class="nmp-box-red anim-alert-l" />
+            <text x="0" y="4" text-anchor="middle" class="nmp-text" fill="#dc2626">User Passwords</text>
+        </g>
+    </g>
+    <g transform="translate(250, 310)">
+        <g class="anim-pull-3-l">
+            <rect x="-60" y="-15" width="120" height="30" class="nmp-box-red anim-alert-l" />
+            <text x="0" y="4" text-anchor="middle" class="nmp-text" fill="#dc2626">Medical Records</text>
+        </g>
+    </g>
+
+    <!-- Warning Labels -->
+    <text x="100" y="210" text-anchor="end" class="nmp-subtitle" fill="#dc2626">SLOW</text>
+    <text x="100" y="230" text-anchor="end" class="nmp-subtitle" fill="#dc2626">EXPENSIVE</text>
+    <text x="100" y="250" text-anchor="end" class="nmp-subtitle" fill="#dc2626">EXFILTRATION RISK</text>
+
+    <!-- ========================================== -->
+    <!-- RIGHT SIDE: LOGIC-ON-ORIGIN (NMP)          -->
+    <!-- ========================================== -->
+    <text x="750" y="45" text-anchor="middle" class="nmp-heading" fill="#059669">2. Logic-on-Origin (NMP)</text>
+    <text x="750" y="65" text-anchor="middle" class="nmp-subtitle" fill="#71717a">"Moving Math to the Data"</text>
+
+    <rect x="530" y="80" width="440" height="310" class="nmp-zone-good" />
+
+    <!-- LLM Cloud (Top) -->
+    <rect x="650" y="100" width="200" height="50" class="nmp-box" />
+    <text x="750" y="122" text-anchor="middle" class="nmp-title">NMP Agent (Zero-Shot)</text>
+    <text x="750" y="140" text-anchor="middle" class="nmp-text-sm" fill="#059669">Zero Data Overhead</text>
+
+    <!-- Target Environment (Bottom) -->
+    <rect x="630" y="290" width="240" height="85" class="nmp-box-green anim-shield-l" fill="rgba(16, 185, 129, 0.05)" />
+
+    <rect x="650" y="300" width="200" height="40" class="nmp-box" />
+    <text x="750" y="320" text-anchor="middle" class="nmp-title">Data Origin (The Vault)</text>
+    <text x="750" y="335" text-anchor="middle" class="nmp-text-sm">Terabytes safely kept inside</text>
+
+    <rect x="690" y="348" width="120" height="20" class="nmp-box" style="stroke:#f59e0b" />
+    <text x="750" y="361" text-anchor="middle" class="nmp-text-sm" fill="#d97706">WASI Sandbox Exec</text>
+
+    <!-- Push Flow Line -->
+    <path d="M 700 160 L 700 280" class="nmp-line-green anim-line-green-l" />
+
+    <!-- Return Flow Line -->
+    <path d="M 800 280 L 800 160" class="nmp-line-purple anim-line-purple-l" />
+
+    <!-- WASM Capsule (Downward) -->
+    <g transform="translate(700, 160)">
+        <g class="anim-push-l">
+            <rect x="-45" y="0" width="90" height="24" class="nmp-box-blue" filter="url(#glowL)" />
+            <text x="0" y="16" text-anchor="middle" class="nmp-text" fill="#0284c7">WASM .wasm</text>
+        </g>
+    </g>
+
+    <!-- ZK Receipt (Upward) -->
+    <g transform="translate(800, 280)">
+        <g class="anim-return-l">
+            <rect x="-45" y="-24" width="90" height="24" class="nmp-box" style="stroke:#a855f7" filter="url(#glowL)" />
+            <text x="0" y="-8" text-anchor="middle" class="nmp-text" fill="#9333ea">ZK-Receipt</text>
+        </g>
+    </g>
+
+    <!-- Action Labels -->
+    <text x="610" y="222" text-anchor="end" class="nmp-text-sm" fill="#0284c7">1. Push Logic</text>
+    <text x="890" y="222" text-anchor="start" class="nmp-text-sm" fill="#9333ea">2. Pull Semantics</text>
+
+    <text x="750" y="220" text-anchor="middle" font-size="28" fill="#10b981" opacity="0.1"
+        font-family="'Inter', sans-serif">⚡</text>
+
+</svg>

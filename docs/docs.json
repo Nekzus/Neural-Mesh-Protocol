@@ -26,6 +26,7 @@
               {
                 "group": "Core Concepts",
                 "pages": [
+                  "concepts/logic-on-origin",
                   "concepts/architecture",
                   "concepts/server-concepts",
                   "concepts/client-concepts",
@@ -78,6 +79,7 @@
               {
                 "group": "Conceptos Fundamentales",
                 "pages": [
+                  "es/concepts/logic-on-origin",
                   "es/concepts/architecture",
                   "es/concepts/server-concepts",
                   "es/concepts/client-concepts",
