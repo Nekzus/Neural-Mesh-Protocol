@@ -117,13 +117,13 @@ async function main() {
 			console.error(`======================================================`);
 			// Extrayendo el text puro
 			const msg = result.content.find((c: any) => c.type === "text");
-			if (msg && "text" in msg) console.error(msg.text);
+			if (msg && typeof msg.text === "string") console.error(msg.text);
 		} else {
 			console.log(`\n======================================================`);
 			console.log(`💎 THE POWER DETECTED (Ejecución Exitosa)`);
 			console.log(`======================================================`);
 			const msg = result.content.find((c: any) => c.type === "text");
-			if (msg && "text" in msg) {
+			if (msg && typeof msg.text === "string") {
 				const data = JSON.parse(msg.text);
 				console.log(`📊 Resultado Análisis:`, data.computation_result);
 				console.log(`⛽ Fuel Consumido:`, data.security_metrics.fuel_consumed);

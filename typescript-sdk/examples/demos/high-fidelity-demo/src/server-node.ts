@@ -17,37 +17,27 @@ export const theVaultServer = new NmpServer(
 	{ capabilities: { tools: { listChanged: true } } },
 );
 
+// NMP Plug & Play: Inyecta MCP Prompts de Autoridad en el Bridge Stdio
+theVaultServer.enableZeroShotAutonomy();
+
 theVaultServer.tool(
 	"nmp_audit_sandbox",
-	"Inyectar código WASM/JS remoto para análisis ciego sobre datos médicos sensibles. Protegido por Guardian AST y WASI Fuel.",
+	"Inject remote WASM/JS code for blind analysis over sensitive medical data. Protected by Guardian AST and WASI Fuel Limits.",
 	{
 		payload: z
 			.string()
-			.describe("El string empaquetado del módulo Logic-on-Origin."),
+			.describe(
+				"The packed Logic-on-Origin module string encapsulating JavaScript.",
+			),
 	},
 	async ({ payload }) => {
 		console.error(`\n======================================================`);
-		console.error(`📥 [The Vault] Solicitud de Inyección Dinámica Recibida.`);
+		console.error(`📥 [The Vault] Dynamic Injection Request Received.`);
 		console.error(`======================================================`);
 
-		// 1. Extraer la lógica pura del Payload (Parseo del Protocolo)
-		const logicMatch = payload.match(
-			/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
-		);
-		if (!logicMatch || logicMatch.length < 2) {
-			return {
-				content: [
-					{
-						type: "text",
-						text: "Error: Payload malformado. Faltan magic bytes o boundaries de lógica.",
-					},
-				],
-				isError: true,
-			};
-		}
-
-		const logicCore = logicMatch[1];
-		console.error(`📥 [The Vault] Payload desempaquetado con éxito.`);
+		// 1. El SDK Zero-Shot Middleware ya lo desempaquetó y purificó
+		const logicCore = payload;
+		console.error(`📥 [The Vault] Payload successfully passed Zero-Shot Format Check.`);
 
 		try {
 			// 2. THE SHIELD - Phase 1: Zero-Time AST Guardian
@@ -62,8 +52,8 @@ theVaultServer.tool(
 				const parsedOutput = JSON.parse(result.output);
 				const stringifiedKeys = JSON.stringify(parsedOutput).toLowerCase();
 				if (stringifiedKeys.includes('"id":') || stringifiedKeys.includes('"patientid":')) {
-					console.error(`\n🚨 [Egress Filter] FATAL: INTENTO DE EXFILTRACIÓN DE DATOS (PII) DETECTADO!`);
-					console.error(`🚨 [Egress Filter] El resultado intentó exportar identificadores de pacientes.`);
+					console.error(`\n🚨 [Egress Filter] FATAL: DATA EXFILTRATION ATTEMPT (PII) DETECTED!`);
+					console.error(`🚨 [Egress Filter] The computational output attempted to export patient identifiers.`);
 					throw new Error("[NMP] Egress Security Violation. Output blocked due to PII leakage.");
 				}
 			} catch (e: any) {
@@ -72,7 +62,7 @@ theVaultServer.tool(
 			}
 
 			console.error(
-				`\n📤 [The Vault] Análisis completado. Retornando ZK-Receipt al emisor.`,
+				`\n📤 [The Vault] Analysis completed. Returning ZK-Receipt to the issuer.`,
 			);
 			console.error(`======================================================\n`);
 
@@ -94,9 +84,9 @@ theVaultServer.tool(
 			};
 		} catch (error: any) {
 			console.error(
-				`\n🚫 [The Vault] EJECUCIÓN ABORTADA POR PROTOCOLOS DE SEGURIDAD.`,
+				`\n🚫 [The Vault] EXECUTION ABORTED BY SECURITY PROTOCOLS.`,
 			);
-			console.error(`🚫 Motivo: ${error.message}\n`);
+			console.error(`🚫 Reason: ${error.message}\n`);
 
 			return {
 				content: [
@@ -119,18 +109,18 @@ theVaultServer.tool(
 	},
 );
 
-// Registrar Recursos Descubribles (Diccionario de Datos)
+// Register Discoverable Resources (Data Dictionary)
 theVaultServer.resource(
 	"medical_records_schema",
 	"nmp://schema/medical_records",
-	`Esquema JSON estricto de la base de datos de pacientes (records).
-	El entorno de la sandbox inyecta una variable global llamada 'env' que contiene 'env.records'.
-	Cada objeto en el array 'records' sigue esta estructura:
+	`Strict JSON schema for the patient database (records).
+	The sandbox environment injects a global variable called 'env' containing 'env.records'.
+	Each object in the 'records' array follows this structure:
 	{
-		"id": "string", // Identificador anonimizado del paciente (PII Sensible)
-		"age": "number", // Edad del paciente en años
-		"condition": "string", // Condición médica primaria (Healthy, Hypertension, Diabetes, etc.)
-		"riskScore": "number" // Puntaje numérico de riesgo de 0.0 a 1.0 (Flotante)
+		"id": "string", // Anonymized patient identifier (Sensitive PII)
+		"age": "number", // Patient age in years
+		"condition": "string", // Primary medical condition (Healthy, Hypertension, Diabetes, etc.)
+		"riskScore": "number" // Float risk numeric score from 0.0 to 1.0
 	}`,
 	"text/markdown"
 );

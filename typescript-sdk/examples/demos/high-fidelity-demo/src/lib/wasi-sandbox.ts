@@ -69,12 +69,12 @@ export class WasiSandbox {
 				`
         try {
            const db = JSON.parse(recordsRaw);
-           // Inyectar contexto blindado
-           const nmp_env = { records: db };
+           // Inyectar contexto blindado como 'env' coherente con el System Prompt
+           const env = { records: db };
            
            ${compiledLogic}
            
-           return typeof nmp_main === 'function' ? nmp_main(nmp_env) : "Error: nmp_main missing";
+           return typeof nmp_main === 'function' ? nmp_main(env) : "Execution completed successfully, but no data was returned by the script. Ensure you use 'return' at the end of your logic.";
         } catch(e) {
            return "RuntimeException: " + e.message;
         }

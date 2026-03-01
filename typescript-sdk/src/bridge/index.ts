@@ -29,6 +29,31 @@ export class NmpMcpBridge {
 			return this.successResponse(payload.id, { resources });
 		}
 
+		if (payload.method === "prompts/list") {
+			const prompts = this.internalServer.listPrompts();
+			return this.successResponse(payload.id, { prompts });
+		}
+
+		if (payload.method === "prompts/get") {
+			const { params } = payload;
+			if (!params || !params.name) {
+				return this.errorResponse(
+					payload.id,
+					-32602,
+					"Missing prompt name in params",
+				);
+			}
+			try {
+				const result = await this.internalServer.getPrompt({
+					name: params.name,
+					arguments: params.arguments,
+				});
+				return this.successResponse(payload.id, result);
+			} catch (err: any) {
+				return this.errorResponse(payload.id, -32000, err.message);
+			}
+		}
+
 		if (payload.method === "resources/read") {
 			const { params } = payload;
 			if (!params || !params.uri) {
@@ -115,6 +140,9 @@ export class NmpMcpBridge {
 								listChanged: true
 							},
 							resources: {
+								listChanged: true
+							},
+							prompts: {
 								listChanged: true
 							}
 						},

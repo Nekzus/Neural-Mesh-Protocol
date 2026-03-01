@@ -57,6 +57,22 @@ export interface CallToolResult {
 	isError?: boolean;
 }
 
+export interface GetPromptRequest {
+	name: string;
+	arguments?: Record<string, string>;
+}
+
+export interface GetPromptResult {
+	description?: string;
+	messages: Array<{
+		role: "user" | "assistant";
+		content:
+		| { type: "text"; text: string; }
+		| { type: "image"; data: string; mimeType: string; }
+		| { type: "resource"; resource: { uri: string; text?: string; blob?: string; }; };
+	}>;
+}
+
 export interface ServerInfo {
 	name: string;
 	version: string;
