@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import crypto from "crypto";
 import type {
 	CallToolRequest,
 	CallToolResult,
@@ -17,11 +18,22 @@ export type ToolHandler<T extends z.ZodRawShape = z.ZodRawShape> = (
 ) => Promise<CallToolResult>;
 
 export class NmpServer {
+	private logicCache: Map<string, { hash: string; timestamp: number }> =
+		new Map();
+	private connectionStats: Map<
+		string,
+		{ failures: number; lastAttempt: number }
+	> = new Map();
+	private readonly CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+	private readonly THROTTLE_THRESHOLD = 5;
+	private readonly THROTTLE_COOLDOWN_MS = 60 * 1000; // 60 seconds
+
 	private tools: Map<
 		string,
 		{ tool: Tool; handler: ToolHandler<any>; schema: z.ZodObject<any> }
 	> = new Map();
-	private resources: Map<string, Resource> = new Map();
+	private resources: Map<string, Resource & { contentText?: string }> =
+		new Map();
 	private prompts: Map<
 		string,
 		{
@@ -35,7 +47,7 @@ export class NmpServer {
 	constructor(
 		private serverInfo: ServerInfo,
 		private config?: { capabilities?: Record<string, unknown> },
-	) { }
+	) {}
 
 	/**
 	 * Register a new Tool
@@ -59,14 +71,70 @@ export class NmpServer {
 		// NMP Zero-Shot Autonomy Middleware: Detect Logic-on-Origin tools
 		if (shape.payload && shape.payload instanceof z.ZodString) {
 			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n---END_LOGIC---`;
+			finalDescription += `\n\nOptional: You can include an "__nmp_bypass_ast_cache" boolean parameter set to true to force AST re-evaluation.`;
 
 			finalHandler = async (args: any, extra: any) => {
+				const clientId = "global_connection"; // Simplify for now, treating the instance as one connection
+				const now = Date.now();
+				const stats = this.connectionStats.get(clientId) || {
+					failures: 0,
+					lastAttempt: 0,
+				};
+
+				if (
+					stats.failures >= this.THROTTLE_THRESHOLD &&
+					now - stats.lastAttempt < this.THROTTLE_COOLDOWN_MS
+				) {
+					return {
+						content: [
+							{
+								type: "text",
+								text: "NMP_THROTTLED: Too many violations. Cooling down for 60 seconds.",
+							},
+						],
+						isError: true,
+					};
+				}
+
 				const payloadValue = args.payload as string;
+				const bypassCache = args.__nmp_bypass_ast_cache === true;
+
+				const payloadHash = crypto
+					.createHash("sha256")
+					.update(payloadValue)
+					.digest("hex");
+				const cached = this.logicCache.get(payloadHash);
+
+				if (
+					!bypassCache &&
+					cached &&
+					now - cached.timestamp < this.CACHE_TTL_MS
+				) {
+					// Hash verified. Skips boundaries check (already validated!). Extract logic directly.
+					console.log(
+						`[NMP-SDK] AST Cache Hit for ${payloadHash.substring(0, 8)}. Bypassing Heuristics.`,
+					);
+					const logicMatch = payloadValue.match(
+						/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
+					);
+					if (logicMatch && logicMatch.length >= 2) {
+						args.payload = logicMatch[1].trim();
+						try {
+							return await handler(args, extra);
+						} catch (e) {
+							throw e;
+						} // Bubbles up
+					}
+				}
+
 				const logicMatch = payloadValue.match(
 					/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
 				);
 
 				if (!logicMatch || logicMatch.length < 2) {
+					stats.failures++;
+					stats.lastAttempt = now;
+					this.connectionStats.set(clientId, stats);
 					return {
 						content: [
 							{
@@ -78,9 +146,39 @@ export class NmpServer {
 					};
 				}
 
-				// Extract pure logic and deliver it to the developer's function
-				args.payload = logicMatch[1].trim();
-				return handler(args, extra);
+				try {
+					// Extract pure logic and deliver it to the developer's function
+					args.payload = logicMatch[1].trim();
+					const result = await handler(args, extra);
+
+					if (!result.isError) {
+						this.connectionStats.set(clientId, {
+							failures: 0,
+							lastAttempt: now,
+						});
+						this.logicCache.set(payloadHash, {
+							hash: payloadHash,
+							timestamp: now,
+						});
+					} else if (
+						result.content.find(
+							(c) => c.text && c.text.includes("VIOLETION_DETECTED"),
+						)
+					) {
+						stats.failures++;
+						stats.lastAttempt = now;
+						this.connectionStats.set(clientId, stats);
+					}
+
+					return result;
+				} catch (error: any) {
+					if (error.message && error.message.includes("VIOLETION_DETECTED")) {
+						stats.failures++;
+						stats.lastAttempt = now;
+						this.connectionStats.set(clientId, stats);
+					}
+					throw error;
+				}
 			};
 		}
 
@@ -162,11 +260,38 @@ Failure to follow these rules will result in an immediate violation and the exec
 		uri: string,
 		description?: string,
 		mimeType?: string,
+		contentText?: string,
 	): void {
 		if (this.resources.has(uri)) {
 			throw new Error(`Resource URI already registered: ${uri}`);
 		}
-		this.resources.set(uri, { name, uri, description, mimeType });
+		this.resources.set(uri, { name, uri, description, mimeType, contentText });
+	}
+
+	/**
+	 * Broadcasts the Data Dictionary to the LLM prior to code injection.
+	 */
+	public dataDictionary(
+		schema: Record<string, unknown>,
+		name: string = "Global Medical Data Dictionary",
+		uri: string = "nmp://schema/global",
+		description: string = "Exposes the internal database schema for Zero-Shot Autonomy planning",
+	): void {
+		this.resource(
+			name,
+			uri,
+			description,
+			"application/json",
+			JSON.stringify(schema, null, 2),
+		);
+	}
+
+	/**
+	 * Manually invalidates the AST Logic Cache (e.g. for Zero-Day patches).
+	 */
+	public clearAstCache(): void {
+		this.logicCache.clear();
+		console.log("[NMP-SDK] AST Security Cache cleared by Admin.");
 	}
 
 	/**
@@ -181,6 +306,12 @@ Failure to follow these rules will result in an immediate violation and the exec
 		try {
 			// Validate inputs natively with Zod before execution
 			const parsedArgs = entry.schema.parse(request.arguments || {});
+
+			// Re-inject the bypass flag if present since Zod might strip unrecognized keys
+			if ((request.arguments as any)?.__nmp_bypass_ast_cache === true) {
+				(parsedArgs as any).__nmp_bypass_ast_cache = true;
+			}
+
 			const result = await entry.handler(parsedArgs, {});
 			return result;
 		} catch (error: any) {
@@ -218,9 +349,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 	/**
 	 * Gets a specific prompt by name
 	 */
-	public async getPrompt(
-		request: GetPromptRequest,
-	): Promise<GetPromptResult> {
+	public async getPrompt(request: GetPromptRequest): Promise<GetPromptResult> {
 		const entry = this.prompts.get(request.name);
 		if (!entry) {
 			throw new Error(`Prompt not found: ${request.name}`);
@@ -238,7 +367,9 @@ Failure to follow these rules will result in an immediate violation and the exec
 	/**
 	 * Reads a specific resource by URI
 	 */
-	public readResource(uri: string): { contents: Array<{ uri: string, mimeType?: string, text: string }> } {
+	public readResource(uri: string): {
+		contents: Array<{ uri: string; mimeType?: string; text: string }>;
+	} {
 		const resource = this.resources.get(uri);
 		if (!resource) {
 			throw new Error(`Resource not found: ${uri}`);
@@ -251,10 +382,13 @@ Failure to follow these rules will result in an immediate violation and the exec
 				{
 					uri: resource.uri,
 					mimeType: resource.mimeType || "text/plain",
-					text: resource.description || "No description provided",
-				}
-			]
-		}
+					text:
+						resource.contentText ||
+						resource.description ||
+						"No description provided",
+				},
+			],
+		};
 	}
 
 	public getServerInfo(): ServerInfo {

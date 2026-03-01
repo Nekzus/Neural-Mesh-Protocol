@@ -37,7 +37,9 @@ theVaultServer.tool(
 
 		// 1. El SDK Zero-Shot Middleware ya lo desempaquetó y purificó
 		const logicCore = payload;
-		console.error(`📥 [The Vault] Payload successfully passed Zero-Shot Format Check.`);
+		console.error(
+			`📥 [The Vault] Payload successfully passed Zero-Shot Format Check.`,
+		);
 
 		try {
 			// 2. THE SHIELD - Phase 1: Zero-Time AST Guardian
@@ -51,10 +53,19 @@ theVaultServer.tool(
 			try {
 				const parsedOutput = JSON.parse(result.output);
 				const stringifiedKeys = JSON.stringify(parsedOutput).toLowerCase();
-				if (stringifiedKeys.includes('"id":') || stringifiedKeys.includes('"patientid":')) {
-					console.error(`\n🚨 [Egress Filter] FATAL: DATA EXFILTRATION ATTEMPT (PII) DETECTED!`);
-					console.error(`🚨 [Egress Filter] The computational output attempted to export patient identifiers.`);
-					throw new Error("[NMP] Egress Security Violation. Output blocked due to PII leakage.");
+				if (
+					stringifiedKeys.includes('"id":') ||
+					stringifiedKeys.includes('"patientid":')
+				) {
+					console.error(
+						`\n🚨 [Egress Filter] FATAL: DATA EXFILTRATION ATTEMPT (PII) DETECTED!`,
+					);
+					console.error(
+						`🚨 [Egress Filter] The computational output attempted to export patient identifiers.`,
+					);
+					throw new Error(
+						"[NMP] Egress Security Violation. Output blocked due to PII leakage.",
+					);
 				}
 			} catch (e: any) {
 				if (e.message.includes("Egress Security Violation")) throw e;
@@ -110,17 +121,16 @@ theVaultServer.tool(
 );
 
 // Register Discoverable Resources (Data Dictionary)
-theVaultServer.resource(
+theVaultServer.dataDictionary(
+	{
+		id: "string (Anonymized patient identifier, strictly PII)",
+		age: "number (Patient age in years)",
+		condition:
+			"string (Primary medical condition: Healthy, Hypertension, Asthma, Diabetes Type 1, Diabetes Type 2, Heart Disease)",
+		riskScore: "number (Float risk numeric score from 0.0 to 1.0)",
+		lastVisit: "string (ISO 8601 Date of the last medical appointment)",
+	},
 	"medical_records_schema",
 	"nmp://schema/medical_records",
-	`Strict JSON schema for the patient database (records).
-	The sandbox environment injects a global variable called 'env' containing 'env.records'.
-	Each object in the 'records' array follows this structure:
-	{
-		"id": "string", // Anonymized patient identifier (Sensitive PII)
-		"age": "number", // Patient age in years
-		"condition": "string", // Primary medical condition (Healthy, Hypertension, Diabetes, etc.)
-		"riskScore": "number" // Float risk numeric score from 0.0 to 1.0
-	}`,
-	"text/markdown"
+	"Strict JSON schema for the patient database (records). The sandbox injects 'env.records'.",
 );

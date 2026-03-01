@@ -31,8 +31,16 @@ export class Kyber768Wrapper {
 		sharedSecret: Uint8Array;
 	} {
 		try {
+			if (publicKey.length !== 1184) {
+				throw new Error("Kyber768 Public Key must be exactly 1184 bytes.");
+			}
+
 			// Encapsulate the shared secret using ML-KEM-768
 			const result = kyber.Encrypt768(publicKey);
+
+			if (!result || !result[0] || !result[1]) {
+				throw new Error("Invalid key encapsulation result from engine.");
+			}
 
 			return {
 				ciphertext: new Uint8Array(result[0]), // Ciphertext to send via network

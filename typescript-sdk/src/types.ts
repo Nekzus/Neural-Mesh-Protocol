@@ -67,9 +67,12 @@ export interface GetPromptResult {
 	messages: Array<{
 		role: "user" | "assistant";
 		content:
-		| { type: "text"; text: string; }
-		| { type: "image"; data: string; mimeType: string; }
-		| { type: "resource"; resource: { uri: string; text?: string; blob?: string; }; };
+			| { type: "text"; text: string }
+			| { type: "image"; data: string; mimeType: string }
+			| {
+					type: "resource";
+					resource: { uri: string; text?: string; blob?: string };
+			  };
 	}>;
 }
 
