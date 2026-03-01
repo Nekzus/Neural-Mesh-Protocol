@@ -209,12 +209,10 @@
             0%,
             100% {
                 stroke: #ef4444;
-                filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4));
             }
 
             50% {
                 stroke: #b91c1c;
-                filter: none;
             }
         }
 
@@ -227,12 +225,10 @@
             0%,
             100% {
                 stroke: #10b981;
-                filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.4));
             }
 
             50% {
                 stroke: #047857;
-                filter: none;
             }
         }
 
@@ -275,16 +271,6 @@
         <marker id="arr-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#a1a1aa" />
         </marker>
-        <filter id="glowL" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComponentTransfer in="blur" result="glow">
-                <feFuncA type="linear" slope="0.3" />
-            </feComponentTransfer>
-            <feMerge>
-                <feMergeNode in="glow" />
-                <feMergeNode in="SourceGraphic" />
-            </feMerge>
-        </filter>
     </defs>
 
     <!-- CENTER DIVIDER -->
@@ -303,12 +289,12 @@
 
     <!-- LLM Cloud (Top) -->
     <rect x="150" y="100" width="200" height="50" class="nmp-box" />
-    <text x="250" y="122" text-anchor="middle" class="nmp-title">LLM API / Client Agent</text>
+    <text x="250" y="121" text-anchor="middle" class="nmp-title">LLM API / Client Agent</text>
     <text x="250" y="140" text-anchor="middle" class="nmp-text-sm" fill="#dc2626">Context Window Choking</text>
 
     <!-- Source Database (Bottom) -->
     <rect x="150" y="320" width="200" height="50" class="nmp-box" />
-    <text x="250" y="342" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
+    <text x="250" y="341" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
     <text x="250" y="360" text-anchor="middle" class="nmp-text-sm">Terabytes of Raw PII Data</text>
 
     <!-- Flow Line -->
@@ -350,18 +336,18 @@
 
     <!-- LLM Cloud (Top) -->
     <rect x="650" y="100" width="200" height="50" class="nmp-box" />
-    <text x="750" y="122" text-anchor="middle" class="nmp-title">NMP Agent (Zero-Shot)</text>
+    <text x="750" y="121" text-anchor="middle" class="nmp-title">NMP Agent (Zero-Shot)</text>
     <text x="750" y="140" text-anchor="middle" class="nmp-text-sm" fill="#059669">Zero Data Overhead</text>
 
     <!-- Target Environment (Bottom) -->
-    <rect x="630" y="290" width="240" height="85" class="nmp-box-green anim-shield-l" fill="rgba(16, 185, 129, 0.05)" />
+    <rect x="630" y="293" width="240" height="88" class="nmp-box-green anim-shield-l" fill="rgba(16, 185, 129, 0.05)" />
 
-    <rect x="650" y="300" width="200" height="40" class="nmp-box" />
-    <text x="750" y="320" text-anchor="middle" class="nmp-title">Data Origin (The Vault)</text>
-    <text x="750" y="335" text-anchor="middle" class="nmp-text-sm">Terabytes safely kept inside</text>
+    <rect x="650" y="302" width="200" height="52" class="nmp-box" />
+    <text x="750" y="324" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
+    <text x="750" y="343" text-anchor="middle" class="nmp-text-sm">Terabytes safely kept inside</text>
 
-    <rect x="690" y="348" width="120" height="20" class="nmp-box" style="stroke:#f59e0b" />
-    <text x="750" y="361" text-anchor="middle" class="nmp-text-sm" fill="#d97706">WASI Sandbox Exec</text>
+    <rect x="690" y="360" width="120" height="18" class="nmp-box" style="stroke:#f59e0b" />
+    <text x="750" y="373" text-anchor="middle" class="nmp-text-sm" fill="#d97706">WASI Sandbox Exec</text>
 
     <!-- Push Flow Line -->
     <path d="M 700 160 L 700 280" class="nmp-line-green anim-line-green-l" />
@@ -372,7 +358,7 @@
     <!-- WASM Capsule (Downward) -->
     <g transform="translate(700, 160)">
         <g class="anim-push-l">
-            <rect x="-45" y="0" width="90" height="24" class="nmp-box-blue" filter="url(#glowL)" />
+            <rect x="-45" y="0" width="90" height="24" class="nmp-box-blue" />
             <text x="0" y="16" text-anchor="middle" class="nmp-text" fill="#0284c7">WASM .wasm</text>
         </g>
     </g>
@@ -380,7 +366,7 @@
     <!-- ZK Receipt (Upward) -->
     <g transform="translate(800, 280)">
         <g class="anim-return-l">
-            <rect x="-45" y="-24" width="90" height="24" class="nmp-box" style="stroke:#a855f7" filter="url(#glowL)" />
+            <rect x="-45" y="-24" width="90" height="24" class="nmp-box" style="stroke:#a855f7" />
             <text x="0" y="-8" text-anchor="middle" class="nmp-text" fill="#9333ea">ZK-Receipt</text>
         </g>
     </g>

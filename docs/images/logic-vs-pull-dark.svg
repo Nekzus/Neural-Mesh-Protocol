@@ -1,101 +1,281 @@
 <svg width="1000" height="420" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
     <!-- Background -->
     <rect width="1000" height="420" fill="#09090b" rx="16" />
-    
+
     <!-- CSS Animations (Zero-SMIL per global rule) -->
     <style>
-        .nmp-text { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 500; fill: #FAFAFA; }
-        .nmp-text-sm { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #A1A1AA; }
-        .nmp-title { font-weight: 700; font-size: 16px; fill: #FFFFFF; }
-        .nmp-heading { font-weight: 800; font-size: 18px; fill: #FFFFFF; letter-spacing: 0.5px; text-transform: uppercase; }
-        .nmp-subtitle { font-size: 11px; fill: #A1A1AA; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        
+        .nmp-text {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            fill: #FAFAFA;
+        }
+
+        .nmp-text-sm {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            fill: #A1A1AA;
+        }
+
+        .nmp-title {
+            font-weight: 700;
+            font-size: 16px;
+            fill: #FFFFFF;
+        }
+
+        .nmp-heading {
+            font-weight: 800;
+            font-size: 18px;
+            fill: #FFFFFF;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nmp-subtitle {
+            font-size: 11px;
+            fill: #A1A1AA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
         /* Zones */
-        .nmp-zone-bad { fill: #181111; stroke: #450a0a; stroke-width: 2; rx: 12; stroke-dasharray: 4 4; }
-        .nmp-zone-good { fill: #061811; stroke: #064e3b; stroke-width: 2; rx: 12; stroke-dasharray: 4 4; }
-        
+        .nmp-zone-bad {
+            fill: #181111;
+            stroke: #450a0a;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
+        .nmp-zone-good {
+            fill: #061811;
+            stroke: #064e3b;
+            stroke-width: 2;
+            rx: 12;
+            stroke-dasharray: 4 4;
+        }
+
         /* Elements */
-        .nmp-box { fill: #18181b; stroke: #3f3f46; stroke-width: 2; rx: 8; }
-        .nmp-box-red { fill: #27272a; stroke: #ef4444; stroke-width: 2; rx: 8; }
-        .nmp-box-green { fill: #27272a; stroke: #10b981; stroke-width: 2; rx: 8; }
-        .nmp-box-blue { fill: #27272a; stroke: #38bdf8; stroke-width: 2; rx: 8; }
-        
+        .nmp-box {
+            fill: #18181b;
+            stroke: #3f3f46;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-red {
+            fill: #27272a;
+            stroke: #ef4444;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-green {
+            fill: #27272a;
+            stroke: #10b981;
+            stroke-width: 2;
+            rx: 8;
+        }
+
+        .nmp-box-blue {
+            fill: #27272a;
+            stroke: #38bdf8;
+            stroke-width: 2;
+            rx: 8;
+        }
+
         /* Lines */
-        .nmp-line { stroke: #52525b; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .nmp-line-red { stroke: #ef4444; stroke-width: 3; fill: none; stroke-dasharray: 6 4; opacity: 0.6; }
-        .nmp-line-green { stroke: #10b981; stroke-width: 2; fill: none; stroke-dasharray: 4 4; opacity: 0.8; }
-        .nmp-line-purple { stroke: #c084fc; stroke-width: 2; fill: none; stroke-dasharray: 4 4; opacity: 0.8; }
-        
+        .nmp-line {
+            stroke: #52525b;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nmp-line-red {
+            stroke: #ef4444;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 6 4;
+            opacity: 0.6;
+        }
+
+        .nmp-line-green {
+            stroke: #10b981;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
+        .nmp-line-purple {
+            stroke: #c084fc;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4 4;
+            opacity: 0.8;
+        }
+
         /* Markers */
-        .nmp-arrow { fill: #52525b; }
-        
+        .nmp-arrow {
+            fill: #52525b;
+        }
+
         /* ANIMATIONS */
         @keyframes slideRedD {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-160px); opacity: 0; }
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-160px);
+                opacity: 0;
+            }
         }
-        .anim-pull-1 { animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        .anim-pull-2 { animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.8s; }
-        .anim-pull-3 { animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.6s; }
+
+        .anim-pull-1 {
+            animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .anim-pull-2 {
+            animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.8s;
+        }
+
+        .anim-pull-3 {
+            animation: slideRedD 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.6s;
+        }
 
         @keyframes slideBlueD {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(160px); opacity: 0; }
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(160px);
+                opacity: 0;
+            }
         }
-        .anim-push { animation: slideBlueD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+        .anim-push {
+            animation: slideBlueD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
 
         @keyframes slidePurpleD {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-160px); opacity: 0; }
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-160px);
+                opacity: 0;
+            }
         }
-        .anim-return { animation: slidePurpleD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite 1s; }
+
+        .anim-return {
+            animation: slidePurpleD 2s cubic-bezier(0.4, 0, 0.2, 1) infinite 1s;
+        }
 
         @keyframes pulseAlertD {
-            0%, 100% { stroke: #ef4444; filter: drop-shadow(0 0 2px #ef4444); }
-            50% { stroke: #7f1d1d; filter: none; }
+
+            0%,
+            100% {
+                stroke: #ef4444;
+            }
+
+            50% {
+                stroke: #7f1d1d;
+            }
         }
-        .anim-alert { animation: pulseAlertD 1.5s infinite; }
-        
+
+        .anim-alert {
+            animation: pulseAlertD 1.5s infinite;
+        }
+
         @keyframes pulseShieldD {
-            0%, 100% { stroke: #10b981; filter: drop-shadow(0 0 2px #10b981); }
-            50% { stroke: #047857; filter: none; }
+
+            0%,
+            100% {
+                stroke: #10b981;
+            }
+
+            50% {
+                stroke: #047857;
+            }
         }
-        .anim-shield { animation: pulseShieldD 2s infinite; }
-        
-        @keyframes marchLineRedD { to { stroke-dashoffset: -20; } }
-        .anim-line-red { animation: marchLineRedD 1s linear infinite; }
-        
-        @keyframes marchLineGreenD { to { stroke-dashoffset: -16; } }
-        .anim-line-green { animation: marchLineGreenD 1s linear infinite; }
-        
-        @keyframes marchLinePurpleD { to { stroke-dashoffset: 16; } }
-        .anim-line-purple { animation: marchLinePurpleD 1s linear infinite; }
+
+        .anim-shield {
+            animation: pulseShieldD 2s infinite;
+        }
+
+        @keyframes marchLineRedD {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        .anim-line-red {
+            animation: marchLineRedD 1s linear infinite;
+        }
+
+        @keyframes marchLineGreenD {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+
+        .anim-line-green {
+            animation: marchLineGreenD 1s linear infinite;
+        }
+
+        @keyframes marchLinePurpleD {
+            to {
+                stroke-dashoffset: 16;
+            }
+        }
+
+        .anim-line-purple {
+            animation: marchLinePurpleD 1s linear infinite;
+        }
     </style>
 
     <defs>
         <marker id="arr-dark" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" class="nmp-arrow" />
         </marker>
-        <filter id="glowD" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        <filter id="glow-redD" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComponentTransfer in="blur" result="glow"><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
-            <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
     </defs>
 
     <!-- CENTER DIVIDER -->
     <line x1="500" y1="30" x2="500" y2="390" class="nmp-line" stroke-dasharray="8 8" opacity="0.4" />
-    
+
     <rect x="440" y="200" width="120" height="24" fill="#18181b" rx="4" />
     <text x="500" y="216" text-anchor="middle" class="nmp-text-sm" fill="#71717a">PARADIGM SHIFT</text>
 
@@ -109,18 +289,18 @@
 
     <!-- LLM Cloud (Top) -->
     <rect x="150" y="100" width="200" height="50" class="nmp-box" />
-    <text x="250" y="122" text-anchor="middle" class="nmp-title">LLM API / Client Agent</text>
+    <text x="250" y="121" text-anchor="middle" class="nmp-title">LLM API / Client Agent</text>
     <text x="250" y="140" text-anchor="middle" class="nmp-text-sm" fill="#ef4444">Context Window Choking</text>
 
     <!-- Source Database (Bottom) -->
     <rect x="150" y="320" width="200" height="50" class="nmp-box" />
-    <text x="250" y="342" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
+    <text x="250" y="341" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
     <text x="250" y="360" text-anchor="middle" class="nmp-text-sm">Terabytes of Raw PII Data</text>
 
     <!-- Flow Line -->
     <path d="M 230 310 L 230 160" class="nmp-line-red anim-line-red" />
     <path d="M 270 310 L 270 160" class="nmp-line-red anim-line-red" />
-    
+
     <!-- Red Data Packets (Upward) -->
     <g transform="translate(250, 310)">
         <g class="anim-pull-1">
@@ -156,29 +336,29 @@
 
     <!-- LLM Cloud (Top) -->
     <rect x="650" y="100" width="200" height="50" class="nmp-box" />
-    <text x="750" y="122" text-anchor="middle" class="nmp-title">NMP Agent (Zero-Shot)</text>
+    <text x="750" y="121" text-anchor="middle" class="nmp-title">NMP Agent (Zero-Shot)</text>
     <text x="750" y="140" text-anchor="middle" class="nmp-text-sm" fill="#10b981">Zero Data Overhead</text>
 
     <!-- Target Environment (Bottom) -->
-    <rect x="630" y="290" width="240" height="85" class="nmp-box-green anim-shield" fill="rgba(6, 78, 59, 0.1)" />
-    
-    <rect x="650" y="300" width="200" height="40" class="nmp-box" />
-    <text x="750" y="320" text-anchor="middle" class="nmp-title">Data Origin (The Vault)</text>
-    <text x="750" y="335" text-anchor="middle" class="nmp-text-sm">Terabytes safely kept inside</text>
-    
-    <rect x="690" y="348" width="120" height="20" class="nmp-box" style="stroke:#f59e0b" />
-    <text x="750" y="361" text-anchor="middle" class="nmp-text-sm" fill="#fcd34d">WASI Sandbox Exec</text>
+    <rect x="630" y="293" width="240" height="88" class="nmp-box-green anim-shield" fill="rgba(6, 78, 59, 0.1)" />
+
+    <rect x="650" y="302" width="200" height="52" class="nmp-box" />
+    <text x="750" y="324" text-anchor="middle" class="nmp-title">Data Origin (Server)</text>
+    <text x="750" y="343" text-anchor="middle" class="nmp-text-sm">Terabytes safely kept inside</text>
+
+    <rect x="690" y="360" width="120" height="18" class="nmp-box" style="stroke:#f59e0b" />
+    <text x="750" y="373" text-anchor="middle" class="nmp-text-sm" fill="#fcd34d">WASI Sandbox Exec</text>
 
     <!-- Push Flow Line -->
     <path d="M 700 160 L 700 280" class="nmp-line-green anim-line-green" />
-    
+
     <!-- Return Flow Line -->
     <path d="M 800 280 L 800 160" class="nmp-line-purple anim-line-purple" />
 
     <!-- WASM Capsule (Downward) -->
     <g transform="translate(700, 160)">
         <g class="anim-push">
-            <rect x="-45" y="0" width="90" height="24" class="nmp-box-blue" filter="url(#glowD)" />
+            <rect x="-45" y="0" width="90" height="24" class="nmp-box-blue" />
             <text x="0" y="16" text-anchor="middle" class="nmp-text" fill="#7dd3fc">WASM .wasm</text>
         </g>
     </g>
@@ -186,7 +366,7 @@
     <!-- ZK Receipt (Upward) -->
     <g transform="translate(800, 280)">
         <g class="anim-return">
-            <rect x="-45" y="-24" width="90" height="24" class="nmp-box" style="stroke:#c084fc" filter="url(#glowD)" />
+            <rect x="-45" y="-24" width="90" height="24" class="nmp-box" style="stroke:#c084fc" />
             <text x="0" y="-8" text-anchor="middle" class="nmp-text" fill="#e879f9">ZK-Receipt</text>
         </g>
     </g>
@@ -195,6 +375,7 @@
     <text x="610" y="222" text-anchor="end" class="nmp-text-sm" fill="#38bdf8">1. Push Logic</text>
     <text x="890" y="222" text-anchor="start" class="nmp-text-sm" fill="#c084fc">2. Pull Semantics</text>
 
-    <text x="750" y="220" text-anchor="middle" font-size="28" fill="#10b981" opacity="0.3" font-family="'Inter', sans-serif">⚡</text>
+    <text x="750" y="220" text-anchor="middle" font-size="28" fill="#10b981" opacity="0.3"
+        font-family="'Inter', sans-serif">⚡</text>
 
 </svg>
