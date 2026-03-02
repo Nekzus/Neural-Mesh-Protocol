@@ -24,6 +24,7 @@ export const theVaultServer = new NmpServer(
 				PII_PATTERNS.CREDIT_CARD,
 				'"ssn":',
 				'"password":',
+				'"id":',
 			],
 		},
 	},
