@@ -1,0 +1,57 @@
+---
+title: "Especificación Técnica"
+description: "Las 6 capas arquitectónicas inquebrantables del Neural Mesh Protocol."
+---
+
+> © 2026 Mauricio Ortega aka. Nekzus & Organización Nekzus Solutions.
+> The **Neural Mesh Protocol (NMP) Specification** is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+> **Attribution Required / Atribución Requerida:** Cualquier uso, adaptación o distribución de estos conceptos arquitectónicos debe atribuirse explícitamente a **Mauricio Ortega (Nekzus)** y **Nekzus Solutions**, e incluir un enlace oficial a este proyecto.
+
+## 1. Introducción
+El Neural Mesh Protocol (NMP) es una red de transporte binario de alto rendimiento y descentralizada, diseñada para una comunicación robusta de Inteligencia Artificial Máquina-a-Máquina (M2M). Reemplaza la arquitectura clásica de "Context-Pulling" típica de las redes de Agentes con el paradigma **Logic-on-Origin (LoO)**.
+
+## 2. El Postulado Logic-on-Origin (LoO)
+**Postulado de Origen (Núcleo de Ejecución):** Los datos nunca deben ser extraídos hacia la inteligencia. La inteligencia debe ser enviada hacia los datos.
+
+Un Agente NMP interactuando con un Servidor explícito NMP inyecta una lógica ejecutable (en forma de microscópicos módulos `.wasm` o algoritmos transpilados dinámicamente). El servidor ejecuta de forma segura esta lógica dentro de un estricto sandbox y retorna únicamente resultados matemáticos agregados o listas filtradas, negando matemáticamente la posibilidad de exfiltración involuntaria de PII (Información de Identidad Personal) a causa de extracciones masivas de contexto.
+
+## 3. Arquitectura Topográfica
+
+### 3.1 Capa de Red (libp2p & Malla de Red)
+- NMP opera sobre una arquitectura superpuesta descentralizada de `libp2p`.
+- Los Servidores (Data Nodes) escuchan en puertos TCP/QUIC y se anuncian como demonios de larga duración.
+- Los Clientes (Inyectores Agentes) se conectan de forma ad-hoc.
+- NMP erradica por completo hubs o puntos de conexión centralizados.
+
+### 3.2 Transporte y Multiplexación
+- Las conexiones utilizan multiplexación vía Yamux o Mplex, permitiendo cientos de inyecciones `Logic-on-Origin` concurrentes sobre un solo socket TCP sin sufrir Bloqueos de Cabecera (Head-Of-Line Blocking).
+
+### 3.3 Capa RPC (Tonic / gRPC)
+- Los payloads binarios crudos se encapsulan en definiciones estrictas de Protobuf (`.proto`).
+- Toda la interacción NMP se basa en Protocol Buffers transmitidos sobre HTTP/2 mediante Tonic, desechando el sobrecoste de JSON-RPC de forma nativa.
+
+## 4. Seguridad Criptográfica (El Escudo)
+
+### 4.1 Encapsulamiento de Claves Post-Cuánticas
+- En su inicio, las conexiones instancian un apretón de manos Post-Cuánticos. NMP emplea **ML-KEM-768 (Kyber)** para negociar secretos compartidos de manera segura contra ataques de descifrado informático cuántico, protegiendo contra "Harvest Now, Decrypt Later".
+
+### 4.2 Sellado Simétrico del Payload
+- El secreto Post-Cuántic simétrico acordado se emplea como cifrado para `AES-256-GCM`, envolviendo el payload de ejecución entero dentro de una cápsula zero-trust.
+
+### 4.3 Integridad Computacional (ZK-SNARKs)
+- Los entornos anfitriones pueden generar Recibos de Cero Conocimiento (ZK-Receipts) empleando la integración `risc0-zkvm`. El recibo garantiza criptográficamente que la salida proveída concuerda exactamente con la ejecución de la lógica solicitada *y* el conjunto de datos, sin revelar el conjunto de datos por sí mismo.
+
+## 5. Núcleo de Ejecución (El Sandbox)
+
+### 5.1 Instanciación WASI
+- La lógica inyectada se despliega en una Máquina Virtual `Wasmtime` implementando la interfaz WebAssembly System Interface (WASI).
+- No hay ninguna capacidad de Sistema o de Red permitida por defecto (`wasi_snapshot_preview1` strictly limits).
+
+### 5.2 Guardián AST Cero-Tiempo
+- Previo a que un payload sea inyectado en Wasmtime Engine, NMP analiza su Árbol de Sintaxis Abstracto (AST). Aniquila payloads que pretendan importar módulos del sistema fuera de las restricciones de la especificacion de NMP.
+
+### 5.3 Defensa PII de Grado Militar
+- El NMP SDK inyecta un escudo PII Tier-1 en la fase de Egreso. Emplea el Algoritmo Luhn para asimilar validaciones de tarjetas de crédito, precisiones límites compatibles con NIST (`\b`), y revisiones semánticas especificas de listas de permitidos (Safe Words) para garantizar que jamás el nodo origen sufra exfiltración de PII cruda.
+
+## 6. Autonomía Zero-Shot (Self-Healing AI)
+NMP implementa un middleware de auto-instrucción integrado. Si un Agente intenta interactuar mediante solicitudes JSON-RPC por encima de un puente adaptativo tradicional MCP, violando en su defecto el paradigma Logic-on-Origin (ej, pedir descargar datos brutos en lugar de proveer y alojar lógica WebAssembly), NMP intercepta la request, la deniega de facto, y devuelve en su lugar manual cognitivos legibles a texto a manera que el Agente pueda auto-corregir dinamicamente su propia aproximación o intensión.

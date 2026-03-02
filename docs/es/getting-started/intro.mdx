@@ -3,7 +3,9 @@ title: "Introducción"
 description: "Bienvenido a la documentación del Neural Mesh Protocol (NMP)"
 ---
 
-NMP es una red de transporte binario de alto rendimiento diseñada específicamente para la comunicación avanzada entre Agentes de Inteligencia Artificial. Concebido como la evolución técnica de los protocolos de contexto (como el **Model Context Protocol**), NMP cambia el paradigma de la transferencia masiva de datos hacia la **ejecución segura de Logic-on-Origin** (Lógica en el Origen).
+NMP es una red de transporte binario de alto rendimiento diseñada específicamente para la comunicación avanzada entre Agentes de Inteligencia Artificial. Concebido como la evolución técnica de los protocolos de contexto (como el **Model Context Protocol**), NMP cambia el paradigma de la transferencia masiva de datos hacia la **ejecución segura de Logic-on-Origin (LoO)** (Lógica en el Origen).
+
+LoO es el **Postulado de Origen (Núcleo de Ejecución)** de la red neuronal: los datos son sagrados y nunca deben abandonar su ubicación física a menos que sean agregados matemáticamente.
 
 Si MCP es el "puerto USB-C para aplicaciones de IA", **NMP es el sistema nervioso de fibra óptica** que habilita una verdadera inteligencia descentralizada.
 
@@ -15,8 +17,11 @@ En las arquitecturas tradicionales, transferir gigabytes de datos (logs, bases d
   <Card title="Logic-on-Origin" icon="bolt">
     En lugar de descargar datos masivos, los Agentes compilan su lógica en un módulo WebAssembly (`.wasm`) y lo ejecutan exactamente donde residen los datos.
   </Card>
-  <Card title="Sandboxing Zero-Trust" icon="shield-check">
-    La lógica inyectada corre en un sandbox `WASI` mediante `Wasmtime`, bloqueando cualquier acceso no autorizado al sistema host.
+  <Card title="Seguridad Multi-Capa (Tier-1)" icon="shield-halved">
+    Sandboxing AST Zero-Trust (WASI), verificación de egreso PII con algoritmos de Grado Militar (Luhn, límites NIST, Safe Words) y criptografía Post-Cuántica.
+  </Card>
+  <Card title="Autonomía Zero-Shot" icon="brain">
+    NMP auto-educa a los LLMs remotos al vuelo. Si un Agente viola el paradigma LoO, el Servidor instruye cognitivamente al Agente para que reescriba su código WASM de forma segura.
   </Card>
   <Card title="Rendimiento Binario" icon="rocket">
     Basado en Protobuf y gRPC. Reduce el tamaño de los payloads en más de un 60% al eliminar el parsing de JSON.
@@ -32,9 +37,9 @@ En las arquitecturas tradicionales, transferir gigabytes de datos (logs, bases d
   </Card>
 </CardGroup>
 
-## El Poder de Logic-on-Origin: Casos de Uso Innovadores
+## El Poder de Logic-on-Origin (LoO): Casos de Uso Innovadores
 
-El paradigma *Logic-on-Origin* no es solo una optimización de rendimiento; desbloquea de forma fundamental formas completamente nuevas de procesar datos restringidos a través de redes globales sin violar fronteras de privacidad. Al enviar un algoritmo matemático verificado a la fuente de datos en lugar de extraer los datos hacia el algoritmo, erradicamos por completo la **Gravedad de los Datos** (Data Gravity).
+El paradigma *Logic-on-Origin (LoO)* no es solo una optimización de rendimiento; es nuestro postulado arquitectónico innegable. Desbloquea de forma fundamental formas completamente nuevas de procesar datos restringidos a través de redes globales sin violar fronteras de privacidad. Al enviar un algoritmo matemático verificado a la fuente de datos en lugar de extraer los datos hacia el algoritmo, erradicamos por completo la **Gravedad de los Datos** (Data Gravity).
 
 ### 1. Salud y Bioinformática (Zero-Exfiltración)
 Un Agente Médico de IA desea analizar 10 años de historiales de pacientes en múltiples hospitales para encontrar correlaciones entre medicamentos específicos y efectos secundarios.

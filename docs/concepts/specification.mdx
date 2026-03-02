@@ -1,0 +1,57 @@
+---
+title: "Technical Specification"
+description: "The 6 architectural layers of the Neural Mesh Protocol."
+---
+
+> © 2026 Mauricio Ortega aka. Nekzus & Organización Nekzus Solutions.
+> The **Neural Mesh Protocol (NMP) Specification** is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+> **Attribution Required / Atribución Requerida:** Any use, adaptation, or distribution of these architectural concepts must explicitly attribute **Mauricio Ortega (Nekzus)** and **Nekzus Solutions**, and include an official link to this project.
+
+## 1. Introduction
+The Neural Mesh Protocol (NMP) is a decentralized, high-performance binary transport mesh engineered for robust Machine-to-Machine (M2M) artificial intelligence communication. It replaces the classical Context-Pulling architecture of typical Agent networks with the **Logic-on-Origin (LoO)** paradigm.
+
+## 2. The Logic-on-Origin (LoO) Postulate
+**Postulate of Origin (Execution Core):** Data must never be pulled to intelligence. Intelligence must be pushed to the data.
+
+An NMP Agent interacting with an explicit NMP Server pushes executable logic (in the form of microscopic `.wasm` modules or dynamically transpiled algorithms). The server securely executes this logic within a strict sandbox and returns only the aggregated mathematical results or filtered lists, mathematically negating the possibility of unintentional PII (Personally Identifiable Information) exfiltration due to large-context extraction.
+
+## 3. Topographical Architecture
+
+### 3.1 Network Layer (libp2p & Mesh Networking)
+- NMP operates atop a decentralized `libp2p` overlay.
+- Servers (Data Nodes) bind to TCP/QUIC ports and advertise themselves as long-running daemons.
+- Clients (Agent Injectors) connect ad-hoc.
+- NMP completely eliminates centralized brokering or hubs.
+
+### 3.2 Transport & Multiplexing
+- Connections use Multiplexing via Yamux or Mplex, allowing hundreds of concurrent `Logic-on-Origin` injections to occur over a single opened TCP socket without Head-Of-Line Blocking.
+
+### 3.3 RPC Layer (Tonic / gRPC)
+- Raw binary payloads are encapsulated in strict Protobuf definitions (`.proto`).
+- The entire NMP interaction relies on Protocol Buffers transmitted over HTTP/2 via Tonic, dropping JSON-RPC overhead natively.
+
+## 4. Cryptographic Security (The Shield)
+
+### 4.1 Post-Quantum Key Encapsulation
+- At initialization, connections instantiate a Post-Quantum Handshake. NMP employs **ML-KEM-768 (Kyber)** to negotiate shared secrets securely against quantum-computing decrypt attacks ("Harvest Now, Decrypt Later" protection).
+
+### 4.2 Symmetric Payload Sealing
+- The agreed Post-Quantum symmetric secret acts as the cipher for `AES-256-GCM`, enveloping the entirety of the execution payload inside a zero-trust capsule.
+
+### 4.3 Computational Integrity (ZK-SNARKs)
+- Host environments may generate Zero-Knowledge Receipts using the `risc0-zkvm` integration. The receipt cryptographically guarantees that the output provided exactly matches the execution of the requested logic *and* the dataset, without revealing the dataset.
+
+## 5. Execution Core (The Sandbox)
+
+### 5.1 WASI Instantiation
+- Injected logic is deployed into a bare-metal `Wasmtime` Virtual Machine implementing the WebAssembly System Interface (WASI).
+- No direct network or host filesystem capabilities are allowed by default (`wasi_snapshot_preview1` strict limits).
+
+### 5.2 Zero-Time AST Guardian
+- Before a payload enters the Wasmtime Engine, NMP evaluates its Abstract Syntax Tree (AST). It destructs payloads attempting to import forbidden JS/C++ system modules outside of the NMP specification.
+
+### 5.3 Military-Grade PII Defense
+- The NMP SDK injects a Tier-1 PII Shield at the Egress stage. Employs Luhn Algorithm matching for credits cards, precise NIST-compliant boundaries (`\b`), and specific whitelist semantic checks (Safe Words) to ensure no raw identifiers escape the Origin node.
+
+## 6. Zero-Shot Autonomy (Self-Healing AI)
+NMP features built-in self-instructing middleware. Should an Agent attempt a JSON-RPC interaction over MCP legacy adapters, but violate the Logic-on-Origin protocol structure (e.g., pulling raw data instead of pushing a module), NMP intercepts the request, blocks it, and returns a cognitive plaintext instruction manual to the Agent so it can rewrite its own intent.

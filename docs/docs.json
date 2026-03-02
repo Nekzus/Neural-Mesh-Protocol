@@ -26,6 +26,8 @@
               {
                 "group": "Core Concepts",
                 "pages": [
+                  "concepts/manifesto",
+                  "concepts/specification",
                   "concepts/logic-on-origin",
                   "concepts/architecture",
                   "concepts/server-concepts",
@@ -79,6 +81,8 @@
               {
                 "group": "Conceptos Fundamentales",
                 "pages": [
+                  "es/concepts/manifesto",
+                  "es/concepts/specification",
                   "es/concepts/logic-on-origin",
                   "es/concepts/architecture",
                   "es/concepts/server-concepts",
