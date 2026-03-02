@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../docs/logo/dark.svg">
-    <img alt="Neural Mesh Protocol Logo" src="../docs/logo/light.svg" width="400">
+    <img alt="Neural Mesh Protocol Logo" src="../docs/logo/light.svg" width="600">
   </picture>
 </div>
 
