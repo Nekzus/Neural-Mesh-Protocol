@@ -8,7 +8,7 @@ import kyber from "crystals-kyber";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PROTO_PATH = path.resolve(__dirname, "../proto/nmp_core.proto");
+const PROTO_PATH = path.resolve(__dirname, "../../../../protocol/proto/nmp_core.proto");
 
 export interface RpcClientConfig {
 	targetAddress: string;

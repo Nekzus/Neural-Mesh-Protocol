@@ -5,7 +5,7 @@ description: "La base de red y Protocol Buffers de alto rendimiento"
 
 Mientras que el `@neural-mesh/sdk` proporciona una excelente experiencia de desarrollador en Node.js y TypeScript, la verdad absoluta del protocolo reside en su núcleo: el **Backend en Rust**.
 
-Este espacio de trabajo (`mesh-node/`) contiene las estructuras de datos hiper-optimizadas, el bucle de ejecución del motor `Wasmtime` y las primitivas de red puras de Libp2p. 
+Este espacio de trabajo (`servers/mesh-node/`) contiene las estructuras de datos hiper-optimizadas, el bucle de ejecución del motor `Wasmtime` y las primitivas de red puras de Libp2p. 
 
 Solo deberías interactuar directamente con el Rust Core si estás:
 - Construyendo un SDK de NMP para un nuevo lenguaje (ej., Python, Go, C#).
@@ -44,7 +44,7 @@ El backend en Rust implementa esto combinando dos tecnologías de vanguardia:
 
 ## Motor de Ejecución
 
-El diferenciador central de todo el Neural Mesh Protocol reside en `mesh-node/nmp-server/src/executor.rs`.
+El diferenciador central de todo el Neural Mesh Protocol reside en `servers/mesh-node/src/executor.rs`.
 
 Aquí, el binario nativo de Rust recibe un array de bytes que representa la intención del Agente de IA. Antes de la ejecución, el motor limita la memoria dinámicamente basándose en el token de autorización del Agente, pre-abre descriptores de archivos estrictos usando `WasiCtxBuilder` y entrega la carga a la CPU virtual.
 

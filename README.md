@@ -23,13 +23,13 @@ NMP introduces a decentralized, Zero-Trust architectural model where AI agents i
 
 The project is divided into two distinct, highly isolated modules:
 
-### 1. The NMP Node (`mesh-node/`)
+### 1. The NMP Node (`servers/mesh-node/`)
 The underlying high-performance mesh network, node infrastructure, DHT Kademlia discovery, and the Wasmtime (WASI) sandboxing environment. This is where the core nodes (Client/Agent and Server/Data Source) operate on the metal.
-👉 [Read the Mesh Node Documentation](./mesh-node/README.md)
+👉 [Read the Mesh Node Documentation](./servers/mesh-node/README.md)
 
-### 2. The TypeScript SDK (`typescript-sdk/`)
+### 2. The TypeScript SDK (`sdks/typescript/`)
 The developer tooling, designed to act as a direct, Zero-Friction drop-in replacement for the current Model Context Protocol (MCP) APIs. It provides interfaces like `NmpServer` and `NmpClient`, Zod validation schemas, and transparent Javy/WASM compilation to connect Node.js environments to the Neural Mesh.
-👉 [Read the TypeScript SDK Documentation](./typescript-sdk/README.md)
+👉 [Read the TypeScript SDK Documentation](./sdks/typescript/README.md)
 
 ## Key Technical Pillars
 

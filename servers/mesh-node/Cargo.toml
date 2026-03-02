@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-nmp-core = { path = "../nmp-core" }
+nmp-core = { path = "../../sdks/rust/crates/core" }
 
 # gRPC y Async
 tonic = "0.11"

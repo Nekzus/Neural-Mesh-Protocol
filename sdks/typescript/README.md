@@ -27,7 +27,7 @@ This workspace uses `pnpm` under a strict configuration. It relies on Biome.js f
 
 ```bash
 # Navigate to the sdk root
-cd typescript-sdk
+cd sdks/typescript
 
 # Install dependencies (Node Modules are strictly git-ignored)
 pnpm install
@@ -84,4 +84,4 @@ pnpm lint
 pnpm format
 ```
 
-All source paths and dependencies are isolated. Modifying this SDK will not affect the core Rust backend at `../mesh-node`.
+All source paths and dependencies are isolated. Modifying this SDK will not affect the core Rust backend at `../../servers/mesh-node`.

@@ -1,9 +1,0 @@
-[workspace]
-members = [
-    "nmp-core",
-    "nmp-server",
-    "nmp-client",
-    "wasm-filter",
-    "wasm-watchdog"
-]
-resolver = "2"

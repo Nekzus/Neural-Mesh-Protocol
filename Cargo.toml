@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "sdks/rust/crates/core",
+    "sdks/rust/crates/client",
+    "servers/mesh-node",
+    "examples/wasm-filters/wasm-filter",
+    "examples/wasm-filters/wasm-watchdog"
+]
+resolver = "2"

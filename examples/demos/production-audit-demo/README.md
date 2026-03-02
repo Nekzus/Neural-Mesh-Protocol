@@ -10,7 +10,7 @@ A **Production-Grade Demo** showcasing the clean and direct usage of the Neural 
 
 ## Requirements
 - Node.js LTS
-- Built NMP SDK (`pnpm run build` in typescript-sdk root).
+- Built NMP SDK (`pnpm run build` in `sdks/typescript` root).
 
 ## How to Run
 
