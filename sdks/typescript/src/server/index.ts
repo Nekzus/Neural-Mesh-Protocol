@@ -11,7 +11,7 @@ import type {
 	ServerInfo,
 	Tool,
 } from "../types.js";
-import { PII_PATTERNS, type PiiRule, PiiScanner } from "./pii.js";
+import { PII_PATTERNS, type PiiRule, PiiScanner, FORBIDDEN_KEYS_LIST } from "./pii.js";
 
 export { PiiScanner, type PiiRule, PII_PATTERNS };
 
@@ -81,7 +81,8 @@ export class NmpServer {
 
 		// NMP Zero-Shot Autonomy Middleware: Detect Logic-on-Origin tools
 		if (shape.payload && shape.payload instanceof z.ZodString) {
-			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.\n---END_LOGIC---`;
+			const blockedKeys = FORBIDDEN_KEYS_LIST.join(", ");
+			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.\n// SECURITY RESTRICTION: Do NOT include any of the following fields in your returned objects to prevent PII leaks: ${blockedKeys}\n---END_LOGIC---`;
 			finalDescription += `\n\nOptional: You can include an "__nmp_bypass_ast_cache" boolean parameter set to true to force AST re-evaluation.`;
 
 			finalHandler = async (

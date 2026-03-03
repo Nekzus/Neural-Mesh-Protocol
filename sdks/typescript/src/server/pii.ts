@@ -40,6 +40,23 @@ export type PiiRuleDefinition = {
 
 export type PiiRule = string | RegExp | PiiRuleDefinition;
 
+export const FORBIDDEN_KEYS_LIST = [
+	"id",
+	"ssn",
+	"social_security",
+	"password",
+	"token",
+	"secret",
+	"address",
+	"phone",
+	"email",
+	"name",
+	"nombre",
+	"apellido",
+	"birth",
+	"nacimiento",
+];
+
 export const PII_PATTERNS = {
 	EMAIL: {
 		name: "EMAIL",
@@ -77,8 +94,7 @@ export const PII_PATTERNS = {
 		},
 	} as PiiRuleDefinition,
 	// Keys that should never be exported in a JSON object
-	FORBIDDEN_KEYS:
-		/^(id|ssn|social_security|password|token|secret|address|phone|email|name|nombre|apellido|birth|nacimiento)$/i,
+	FORBIDDEN_KEYS: new RegExp(`^(${FORBIDDEN_KEYS_LIST.join("|")})$`, "i"),
 };
 
 export class PiiScanner {
