@@ -50,11 +50,15 @@ export default async function processLogicExecution(
 	}
 
 	// 3. Inspect AST with Guardian-TS (if WASM)
-	if (decryptedPayload instanceof Buffer) {
+	const isWasm = decryptedPayload[0] === 0x00 && decryptedPayload[1] === 0x61 && decryptedPayload[2] === 0x73 && decryptedPayload[3] === 0x6d;
+
+	if (decryptedPayload instanceof Buffer && isWasm) {
 		// Ensure we pass a compatible BufferSource
 		const wasmBytes = new Uint8Array(decryptedPayload);
 		const compiledModule = await WebAssembly.compile(wasmBytes);
 		ASTGuardian.analyze(compiledModule);
+	} else if (decryptedPayload instanceof Buffer && !isWasm) {
+		decryptedPayload = decryptedPayload.toString("utf-8");
 	}
 
 	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)
