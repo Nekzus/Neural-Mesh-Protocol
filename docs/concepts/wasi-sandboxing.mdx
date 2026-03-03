@@ -34,6 +34,7 @@ If the agent asks to read `/var/log/nginx/` and the server allows it as `/logs`,
 - **Maximum Execution Time:** If the module enters an infinite loop, the runtime kills it via Out-Of-Fuel exhaustion.
 - **Maximum Memory Limit:** If the module attempts a buffer overflow or tries to allocate memory beyond its cap (e.g., 50MB), it triggers an uncatchable OOM Trap.
 - **Zero Sockets:** The Agent logic runs completely offline inside the Server. It cannot open a port, connect to the internet, or exfiltrate data directly over a TCP socket. Its only output is what it `returns` to the NMP invocation orchestrator.
+- **Node.js Parity (V8 Isolation):** In local development or SDK Demos (where WebAssembly isn't pre-installed), NMP utilizes identical strict boundaries via the `node:vm` module (`vm.createContext(Object.create(null))`). This establishes absolute hardware-level containment, explicitly stripping the Sandbox of Node globals (`process`, `require`, `fs`), thereby eliminating any possibility of Host-System escalation.
 - **Non-Blocking Pool:** The Sandbox execution is inherently computationally heavy. To prevent Node.js servers from freezing, the `@nekzus/neural-mesh` isolates this entire lifecycle inside native `worker_threads` (via `piscina`), achieving parallel throughput identical to the native Mesh-Node.
 
 ## Moving towards Component Model (Preview 2)

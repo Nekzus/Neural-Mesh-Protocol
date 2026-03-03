@@ -34,6 +34,9 @@ Incluso si un payload malicioso lograse milagrosamente acceder a datos no autori
 
 Este filtro inspecciona dinámicamente el buffer de salida (buscando PII, claves API o esquemas restringidos como `patientId`). Si se detectan métricas de contrabando o violación de privacidad, la respuesta se bloquea instantáneamente, impidiendo la fuga de datos.
 
+**Defensa contra Double JSON Encoding (Deep-Parsing Recursion)**:
+Los Agentes de IA podrían intentar evadir los escáneres estáticos de Regex doble-serializando las cadenas (`"\"id\":\"...\""`). Para neutralizar esto, el `PiiScanner` implementa *parsing profundo recursivo*. Si un string devuelto se asemeja a un objeto, el Escudo lo de-serializa dinámicamente para exponer su estructura ofuscada antes de aplicar las restricciones, volviendo inútil cualquier intento de contrabando de variables.
+
 ## 4. Sandboxing (WASI)
 
 Como se detalla en [Sandboxing con WASI](/es/concepts/wasi-sandboxing), la ejecución está aislada por las restricciones de CPU del runtime, garantizando que no haya acceso no autorizado a I/O o red.

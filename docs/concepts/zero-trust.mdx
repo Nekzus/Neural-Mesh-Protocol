@@ -36,6 +36,9 @@ Even if a malicious payload miraculously bypasses the Sandbox limits to produce 
 
 This filter dynamically analyzes the output buffer (checking for Personally Identifiable Information, API keys, or restricted schema patterns like `patientId`). If privacy violations are detected, the response is instantly blocked and the payload drops.
 
+**Double JSON Encoding Defense (Deep-Parsing Recursion)**:
+AI Agents may attempt to bypass static regex scanners by double-serializing strings (`"\"id\":\"...\""`). To counteract this, the `PiiScanner` implements recursive deep-parsing. If a returned string resembles an object, the Shield dynamically de-serializes it internally to expose the obfuscated schema before applying the matching algorithms, rendering string-contraband techniques entirely ineffective.
+
 ## 4. Sandboxing (WASI)
 
 As detailed in the [WASI Sandboxing](/concepts/wasi-sandboxing) chapter, the execution layer is fundamentally isolated by the CPU restrictions imposed by the bytecode runtime, ensuring zero unauthorized I/O or network escalation.
