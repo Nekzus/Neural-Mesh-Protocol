@@ -3,13 +3,27 @@
 
 export const GuardianAST = {
 	RESTRICTED_PATTERNS: [
-		/require\(['"]fs['"]\)/g,
-		/require\(['"]child_process['"]\)/g,
-		/fs\.(read|write)FileSync/g,
-		/process\.(env|exit|cwd|kill)/g,
-		/fetch\(/g,
-		/eval\(/g,
-		/new Function\(/g,
+		// Module Loading
+		/require\s*\(/g,
+		/import\s*\(/g,
+		// File System & OS
+		/\bfs\./g,
+		/child_process/g,
+		// Globals & Context Escapes
+		/\bprocess\b/g,
+		/\bglobal\b/g,
+		/\bglobalThis\b/g,
+		/\bwindow\b/g,
+		// Dynamic Execution
+		/\beval\s*\(/g,
+		/new\s+Function\s*\(/g,
+		/constructor\s*\(\s*['"]return/g,
+		// Network
+		/\bfetch\s*\(/g,
+		/\bXMLHttpRequest\b/g,
+		// Prototype Pollution
+		/__proto__/g,
+		/Object\.setPrototypeOf/g,
 	],
 
 	/**

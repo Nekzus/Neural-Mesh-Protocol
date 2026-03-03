@@ -97,6 +97,24 @@ export class PiiScanner {
 
 		// 1. String Scan (Direct Regex/String/Definition check)
 		if (typeof input === "string") {
+			// SECURITY PATCH: JSON Deep-Parsing Recursion (Fortification V2)
+			// Defeats Double JSON Encoding bypasses by forcefully parsing stringified JSON back into objects.
+			const trimmed = input.trim();
+			if (
+				(trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+				(trimmed.startsWith("[") && trimmed.endsWith("]"))
+			) {
+				try {
+					const parsed = JSON.parse(trimmed);
+					// Successfully parsed JSON string. Recursively scan the unescaped object.
+					const violation = this.scan(parsed, seen);
+					if (violation) return violation;
+				} catch (e) {
+					// Silent fallback: It looked like JSON but wasn't valid. Proceed with raw string check.
+				}
+			}
+
+			// Fallback: Check the raw string
 			return this.checkString(input);
 		}
 

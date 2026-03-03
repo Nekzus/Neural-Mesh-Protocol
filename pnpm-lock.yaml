@@ -60,6 +60,10 @@ importers:
       '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../../../sdks/typescript
+    devDependencies:
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(tsx@4.21.0)
 
   sdks/typescript:
     dependencies:

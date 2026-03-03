@@ -6,9 +6,13 @@
 	"main": "index.js",
 	"scripts": {
 		"start:server": "npx tsx src/server-node.ts",
-		"start:client": "npx tsx src/agent.ts"
+		"start:client": "npx tsx src/agent.ts",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@nekzus/neural-mesh": "workspace:*"
+	},
+	"devDependencies": {
+		"vitest": "^4.0.18"
 	}
 }

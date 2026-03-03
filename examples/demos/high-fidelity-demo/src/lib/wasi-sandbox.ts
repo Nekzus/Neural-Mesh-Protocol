@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import vm from "node:vm";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -59,29 +60,37 @@ export const WasiSandbox = {
 				);
 			}
 
-			// 3. Execute logic "Blindly" (We emulate V8 Isolates/vm module here safely for the demo)
-			// In production NMP uses Wasmtime in Rust. Here we build an isolated function.
-			// We pass *only* the pure records object, without exposing dependencies.
-			const runLogic = new Function(
-				"recordsRaw",
-				`
-        try {
-           const db = JSON.parse(recordsRaw);
-           // Inject shielded context as 'env' consistent with the System Prompt
-           const env = { records: db };
-           
-           ${compiledLogic}
-           
-           return typeof nmp_main === 'function' ? nmp_main(env) : "Execution completed successfully, but no data was returned by the script. Ensure you use 'return' at the end of your logic.";
-        } catch(e) {
-           return "RuntimeException: " + e.message;
-        }
-      `,
-			);
-
-			// We simulate computation latency
+			// 3. Execute logic "Blindly" using node:vm for strict V8 Isolates memory isolation
+			// We pass *only* the pure records object, without exposing any Node.js globals (process, require, etc.)
 			const startMark = performance.now();
-			resultOutput = runLogic(recordsData);
+
+			// Build the completely empty isolated context
+			const sandboxEnv = Object.create(null);
+			sandboxEnv.recordsRaw = recordsData;
+			const context = vm.createContext(sandboxEnv);
+
+			const wrappedLogic = `
+				(function() {
+					try {
+						const db = JSON.parse(recordsRaw);
+						const env = { records: db };
+						
+						const __user_logic = function(env) {
+							${compiledLogic}
+						};
+						
+						const userResult = __user_logic(env);
+						if (userResult !== undefined) return userResult;
+						
+						return (typeof nmp_main === 'function') ? nmp_main(env) : "Execution completed successfully, but no data was returned by the script. Ensure you use 'return' at the end of your logic.";
+					} catch(e) {
+						return "RuntimeException: " + e.message;
+					}
+				})();
+			`;
+
+			// Execute in the V8 isolate with a hard timeout as an ultimate fallback
+			resultOutput = vm.runInContext(wrappedLogic, context, { timeout: 3000 });
 			const endMark = performance.now();
 
 			// Calculate spent fuel based on mathematical duration (Approx)
@@ -97,7 +106,7 @@ export const WasiSandbox = {
 		} catch (error: unknown) {
 			const e = error as Error;
 			console.error(`\n💥 [WASI Sandbox - FATAL ERROR] Execution Interrupted!`);
-			console.error(`💥 Detail: ${e.message}`);
+			console.error(`💥 Detail: ${e.stack}`);
 			throw new Error(`[NMP Sandbox Crash] ${e.message}`);
 		}
 
