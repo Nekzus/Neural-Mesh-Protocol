@@ -12,7 +12,13 @@
         "lint": "pnpm --filter @nekzus/neural-mesh lint",
         "format": "pnpm --filter @nekzus/neural-mesh format",
         "check": "pnpm --filter @nekzus/neural-mesh check",
-        "semantic-release": "semantic-release --branches main"
+        "semantic-release": "semantic-release --branches main",
+        "commit": "cz"
+    },
+    "config": {
+        "commitizen": {
+            "path": "cz-conventional-changelog"
+        }
     },
     "devDependencies": {
         "@semantic-release/changelog": "^6.0.3",
@@ -20,7 +26,9 @@
         "@semantic-release/github": "^10.3.5",
         "@semantic-release/npm": "^10.0.6",
         "@semantic-release/release-notes-generator": "^14.0.3",
+        "commitizen": "^4.3.1",
         "conventional-changelog-conventionalcommits": "^8.0.0",
+        "cz-conventional-changelog": "^3.3.0",
         "semantic-release": "^24.2.1"
     },
     "engines": {
