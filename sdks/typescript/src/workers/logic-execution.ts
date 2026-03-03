@@ -15,7 +15,7 @@ export interface WorkerData {
 
 export default async function processLogicExecution(
 	data: WorkerData,
-): Promise<{ image_id: string; output: string }> {
+): Promise<{ image_id: string; output: string; fuel_consumed: number }> {
 	const { ciphertext, secretKeyObj, wasmBinary } = data;
 
 	// 1. Decapsulate Kyber secret
@@ -40,11 +40,12 @@ export default async function processLogicExecution(
 	const compiledModule = await WebAssembly.compile(decryptedWasm);
 	ASTGuardian.analyze(compiledModule);
 
-	// 4. Instantiate and Execute WASI Sandbox
+	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)
 	const sandbox = new WasiSandbox();
+	await sandbox.init();
 
 	// Convert Uint8Array back to Buffer for WASI if needed
-	await sandbox.execute(Buffer.from(decryptedWasm));
+	const result = await sandbox.execute(Buffer.from(decryptedWasm));
 
 	// 5. Generate ZK Receipt Mock / Cryptographic Proof of Execution
 	const hasher = crypto.createHash("sha256");
@@ -53,8 +54,7 @@ export default async function processLogicExecution(
 
 	return {
 		image_id: imageId,
-		output: Buffer.from("Execution successful from Worker Pool").toString(
-			"base64",
-		),
+		output: Buffer.from(result.output).toString("base64"),
+		fuel_consumed: result.fuelConsumed
 	};
 }

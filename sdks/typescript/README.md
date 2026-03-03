@@ -69,6 +69,17 @@ server.resource(
   "application/json",
   JSON.stringify({ type: "object", properties: { target_error: { type: "string" } } })
 );
+
+// Advanced Security & Anti-Hallucination (Fase 44/45)
+server.dataDictionary({
+  id: "string (PII)",
+  age: "number",
+  condition: "string"
+});
+
+const secureServer = new NmpServer(info, {
+  security: { forbiddenKeys: ["id", "password"] }
+});
 ```
 
 ## Testing & CI
