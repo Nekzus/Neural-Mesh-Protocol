@@ -1,0 +1,75 @@
+# ==========================================
+# Neural Mesh Protocol (NMP) - .npmignore
+# ==========================================
+
+# -----------------
+# confidential / AI
+# -----------------
+GEMINI.md
+.gemini
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# -----------------
+# Source Code & Tests
+# -----------------
+src/
+tests/
+examples/
+*.test.ts
+*.spec.ts
+tsconfig.json
+biome.json
+
+# -----------------
+# Workflows & Tooling
+# -----------------
+.github/
+.husky/
+.commitlintrc.json
+.releaserc.json
+fix_lints.cjs
+rename_script.js
+biome-errors.txt
+biome-output.txt
+
+# -----------------
+# Rust App (Cargo)
+# -----------------
+rust-app/
+mesh-node/
+Cargo.toml
+Cargo.lock
+target/
+
+# -----------------
+# Logs & Caches
+# -----------------
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.vite/
+tsconfig.tsbuildinfo
+coverage/
+.nyc_output/
+
+# -----------------
+# OS / IDEs
+# -----------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

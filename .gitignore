@@ -12,6 +12,10 @@ GEMINI.md
 !.env.example
 *.pem
 *.key
+.env.local
+.env.development
+.env.test
+.env.production
 
 # -----------------
 # TypeScript SDK (Node)
@@ -19,6 +23,7 @@ GEMINI.md
 node_modules/
 .pnpm-store/
 dist/
+build/
 coverage/
 .turbo/
 .nyc_output/
