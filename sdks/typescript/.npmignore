@@ -31,6 +31,8 @@ biome.json
 .husky/
 .commitlintrc.json
 .releaserc.json
+.npmignore
+.gitignore
 fix_lints.cjs
 rename_script.js
 biome-errors.txt
