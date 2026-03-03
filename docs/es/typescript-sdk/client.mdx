@@ -12,7 +12,7 @@ A diferencia de los clientes REST tradicionales que solo hacen un `<fetch>` a en
 Conectarse a la Malla requiere instanciar el cliente con metadatos de identificación. Estos metadatos se anuncian a la DHT.
 
 ```typescript
-import { NmpClient } from "@neural-mesh/sdk";
+import { NmpClient } from "@nekzus/neural-mesh";
 
 const client = new NmpClient(
   {
@@ -87,7 +87,7 @@ await client.deployWatchdog(
 Debido a que el Servidor impone un sandbox `WASI` estricto y utiliza el *Guardian Cero-Tiempo* para inspeccionar tu carga `.wasm` ANTES de la ejecución, tu cliente debe estar preparado para manejar rechazos del sandbox.
 
 ```typescript
-import { NmpError, ErrorCode } from "@neural-mesh/sdk";
+import { NmpError, ErrorCode } from "@nekzus/neural-mesh";
 
 try {
   await client.callTool("PeerID", "read_file", { path: "/etc/passwd" });

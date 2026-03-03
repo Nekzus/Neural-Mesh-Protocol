@@ -7,7 +7,7 @@
 
 # Neural Mesh Protocol (NMP) - TypeScript SDK
 
-The `@neural-mesh/sdk` is the official TypeScript tooling interface designed to bring NMP logic-on-origin and peer-to-peer context extraction seamlessly to Node.js environments.
+The `@nekzus/neural-mesh` is the official TypeScript tooling interface designed to bring NMP logic-on-origin and peer-to-peer context extraction seamlessly to Node.js environments.
 
 **Design Goal:** Be a trivial, drop-in replacement for Anthropic's Model Context Protocol (MCP) APIs.
 
@@ -41,7 +41,7 @@ pnpm build
 Declaring a node and exposing a tool is as simple as:
 
 ```typescript
-import { NmpServer } from '@neural-mesh/sdk';
+import { NmpServer } from '@nekzus/neural-mesh';
 import { z } from 'zod';
 
 const server = new NmpServer({

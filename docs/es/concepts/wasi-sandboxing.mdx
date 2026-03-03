@@ -34,7 +34,7 @@ Si el agente pide leer `/var/log/nginx/` y el servidor lo permite como `/logs`, 
 - **Tiempo Máximo de Ejecución:** Si el módulo entra en un bucle infinito, el tiempo de ejecución lo mata por agotamiento de combustible (Out-Of-Fuel).
 - **Límite de Memoria Máximo:** Si el módulo intenta un desbordamiento de búfer o alojar memoria más allá de su límite (ej., 50MB), lanza un Trap de OOM (Out Of Memory) inalcanzable.
 - **Cero Sockets:** La lógica corre completamente offline dentro del Servidor. No puede abrir puertos ni conectarse a internet. Su única salida es lo que `retorna` al orquestador.
-- **Pool No Bloqueante:** Para evitar que los servidores Node.js se congelen, el `@neural-mesh/sdk` aísla este ciclo dentro de `worker_threads` nativos (vía `piscina`), logrando un rendimiento paralelo idéntico al del Mesh-Node nativo.
+- **Pool No Bloqueante:** Para evitar que los servidores Node.js se congelen, el `@nekzus/neural-mesh` aísla este ciclo dentro de `worker_threads` nativos (vía `piscina`), logrando un rendimiento paralelo idéntico al del Mesh-Node nativo.
 
 ## Hacia el Modelo de Componentes (Preview 2)
 

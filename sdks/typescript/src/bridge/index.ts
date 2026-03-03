@@ -8,7 +8,7 @@ import type { CallToolRequest, CallToolResult } from "../types.js";
  * NmpServer logic (or eventually packaging them to WASM).
  */
 export class NmpMcpBridge {
-	constructor(private internalServer: NmpServer) { }
+	constructor(private internalServer: NmpServer) {}
 
 	/**
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
@@ -42,11 +42,7 @@ export class NmpMcpBridge {
 
 		if (method === "prompts/get") {
 			if (!params || !params.name) {
-				return this.errorResponse(
-					id,
-					-32602,
-					"Missing prompt name in params",
-				);
+				return this.errorResponse(id, -32602, "Missing prompt name in params");
 			}
 			try {
 				const result = await this.internalServer.getPrompt({
@@ -55,41 +51,25 @@ export class NmpMcpBridge {
 				});
 				return this.successResponse(id, result);
 			} catch (err: unknown) {
-				return this.errorResponse(
-					id,
-					-32000,
-					(err as Error).message,
-				);
+				return this.errorResponse(id, -32000, (err as Error).message);
 			}
 		}
 
 		if (method === "resources/read") {
 			if (!params || !params.uri) {
-				return this.errorResponse(
-					id,
-					-32602,
-					"Missing resource uri in params",
-				);
+				return this.errorResponse(id, -32602, "Missing resource uri in params");
 			}
 			try {
 				const result = this.internalServer.readResource(params.uri as string);
 				return this.successResponse(id, result);
 			} catch (err: unknown) {
-				return this.errorResponse(
-					id,
-					-32000,
-					(err as Error).message,
-				);
+				return this.errorResponse(id, -32000, (err as Error).message);
 			}
 		}
 
 		if (method === "tools/call") {
 			if (!params || !params.name) {
-				return this.errorResponse(
-					id,
-					-32602,
-					"Missing tool name in params",
-				);
+				return this.errorResponse(id, -32602, "Missing tool name in params");
 			}
 
 			const request: CallToolRequest = {
@@ -102,11 +82,7 @@ export class NmpMcpBridge {
 					await this.internalServer.callTool(request);
 				return this.successResponse(id, result);
 			} catch (err: unknown) {
-				return this.errorResponse(
-					id,
-					-32000,
-					(err as Error).message,
-				);
+				return this.errorResponse(id, -32000, (err as Error).message);
 			}
 		}
 

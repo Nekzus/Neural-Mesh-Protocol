@@ -34,6 +34,7 @@ export class NmpMcpBridge {
 			this.server.tool(
 				mcpTool.name as string,
 				`[LEGACY-BRIDGED] ${mcpTool.description as string}`,
+				// biome-ignore lint/suspicious/noExplicitAny: Legacy schema bridging
 				mcpTool.schema as any,
 				async (_args) => {
 					// In a real implementation, this runtime handler compiles to a WASM

@@ -4,7 +4,7 @@
 A **Production-Grade Demo** showcasing the clean and direct usage of the Neural Mesh Protocol SDK. This version focuses on real-world "Logic-on-Origin" implementation without external simulations.
 
 ## Features
-- **Native SDK**: Built exclusively using `@neural-mesh/sdk`.
+- **Native SDK**: Built exclusively using `@nekzus/neural-mesh`.
 - **Zero Simulation**: All cryptography (PQC, AES) and transport (P2P Mesh) are managed internally by the core protocol.
 - **Minimalist Architecture**: Designed to demonstrate developer-friendly implementation patterns.
 

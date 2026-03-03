@@ -12,7 +12,7 @@ Unlike traditional REST clients that just `<fetch>` static JSON endpoints, an `N
 Connecting to the Mesh requires instantiating the client with identifying metadata. This metadata is announced to the DHT.
 
 ```typescript
-import { NmpClient } from "@neural-mesh/sdk";
+import { NmpClient } from "@nekzus/neural-mesh";
 
 const client = new NmpClient(
   {
@@ -87,7 +87,7 @@ await client.deployWatchdog(
 Because the Server enforces a strict `WASI` sandbox and uses the *Zero-Time Guardian* to inspect your `.wasm` payload BEFORE execution, your client must be prepared to handle sandbox rejections.
 
 ```typescript
-import { NmpError, ErrorCode } from "@neural-mesh/sdk";
+import { NmpError, ErrorCode } from "@nekzus/neural-mesh";
 
 try {
   await client.callTool("PeerID", "read_file", { path: "/etc/passwd" });

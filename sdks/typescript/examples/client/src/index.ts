@@ -1,4 +1,4 @@
-import { type CallToolRequest, NmpClient } from "@neural-mesh/sdk";
+import { type CallToolRequest, NmpClient } from "@nekzus/neural-mesh";
 
 /**
  * NMP Advanced Client Example

@@ -1,5 +1,5 @@
 {
-	"name": "@neural-mesh/sdk",
+	"name": "@nekzus/neural-mesh",
 	"version": "1.0.0-alpha.1",
 	"description": "SDK oficial para Neural Mesh Protocol (NMP). Despliega Logic-on-Origin con WebAssembly a velocidad gRPC y compatibilidad MCP bidireccional.",
 	"main": "dist/index.js",
@@ -43,6 +43,22 @@
 	"author": "Nekzus",
 	"license": "MIT",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Nekzus/Neural-Mesh-Protocol.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Nekzus/Neural-Mesh-Protocol/issues"
+	},
+	"homepage": "https://github.com/Nekzus/Neural-Mesh-Protocol#readme",
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/",
+		"provenance": true
+	},
+	"engines": {
+		"node": ">=20.0"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.4",
 		"@types/node": "^25.3.1",

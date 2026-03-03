@@ -12,7 +12,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Carregamos as definições del proto NMP V1
-const PROTO_PATH = path.resolve(__dirname, "../../../../protocol/proto/nmp_core.proto");
+const PROTO_PATH = path.resolve(
+	__dirname,
+	"../../../../protocol/proto/nmp_core.proto",
+);
 
 export interface RpcServerConfig {
 	host: string;
@@ -91,9 +94,7 @@ export class MeshRpcServer {
 
 		const sk = this.sessions.get(sessionToken);
 		if (!sk) {
-			console.error(
-				`[gRPC] Invalid or expired session token: ${sessionToken}`,
-			);
+			console.error(`[gRPC] Invalid or expired session token: ${sessionToken}`);
 			call.end();
 			return;
 		}

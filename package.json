@@ -1,0 +1,30 @@
+{
+    "name": "nmp",
+    "version": "1.0.0-alpha.1",
+    "private": true,
+    "description": "Neural Mesh Protocol (NMP) - WebAssembly Logic-on-Origin Execution Sandbox",
+    "author": "Nekzus",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "pnpm --filter @nekzus/neural-mesh build",
+        "test": "pnpm --filter @nekzus/neural-mesh test",
+        "lint": "pnpm --filter @nekzus/neural-mesh lint",
+        "format": "pnpm --filter @nekzus/neural-mesh format",
+        "check": "pnpm --filter @nekzus/neural-mesh check",
+        "semantic-release": "semantic-release --branches main"
+    },
+    "devDependencies": {
+        "@semantic-release/changelog": "^6.0.3",
+        "@semantic-release/git": "^10.0.1",
+        "@semantic-release/github": "^10.3.5",
+        "@semantic-release/npm": "^10.0.6",
+        "@semantic-release/release-notes-generator": "^14.0.3",
+        "conventional-changelog-conventionalcommits": "^8.0.0",
+        "semantic-release": "^24.2.1"
+    },
+    "engines": {
+        "node": ">=20.0"
+    },
+    "packageManager": "pnpm@10.28.2"
+}

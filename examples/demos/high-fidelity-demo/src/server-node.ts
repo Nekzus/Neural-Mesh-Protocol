@@ -1,6 +1,6 @@
 // "The Vault" - Hi-Fi NMP Data Node
 
-import { NmpServer, PII_PATTERNS } from "@neural-mesh/sdk/server";
+import { NmpServer, PII_PATTERNS } from "@nekzus/neural-mesh/server";
 import { z } from "zod";
 import { GuardianAST } from "./lib/guardian-ast.js";
 import { WasiSandbox } from "./lib/wasi-sandbox.js";

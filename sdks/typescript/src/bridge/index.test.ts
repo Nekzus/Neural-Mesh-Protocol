@@ -8,6 +8,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "1.0",
 			id: 1,
@@ -24,6 +25,7 @@ describe("NmpMcpBridge", () => {
 		}));
 
 		const bridge = new NmpMcpBridge(server);
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: "req_1",
@@ -49,6 +51,7 @@ describe("NmpMcpBridge", () => {
 			params: { name: "greet", arguments: { name: "Mesh" } },
 		};
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest(payload);
 		expect(res.result.content[0].text).toBe("Hello Mesh");
 		expect(res.error).toBeUndefined();
@@ -58,6 +61,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 3,
@@ -74,6 +78,7 @@ describe("NmpMcpBridge", () => {
 		server.resource("test_res", "nmp://test", "desc", "text/plain", "content");
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 4,
@@ -88,6 +93,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 5,
@@ -103,6 +109,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 6,
@@ -122,6 +129,7 @@ describe("NmpMcpBridge", () => {
 
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 7,
@@ -139,6 +147,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 8,
@@ -153,6 +162,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 9,
@@ -168,6 +178,7 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1" });
 		const bridge = new NmpMcpBridge(server);
 
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
 		const res: any = await bridge.handleJsonRpcRequest({
 			jsonrpc: "2.0",
 			id: 10,

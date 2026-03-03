@@ -12,7 +12,7 @@ En lugar de escribir entornos de ejecución personalizados para gestionar WebAss
 Creas un Nodo de Datos indicándole a la Malla quién eres y proporcionando las propiedades de transporte.
 
 ```typescript
-import { NmpServer } from "@neural-mesh/sdk";
+import { NmpServer } from "@nekzus/neural-mesh";
 
 const server = new NmpServer({
   name: "EnterpriseDatabaseNode",
@@ -73,12 +73,12 @@ Estos recursos son puenteados impecablemente a los LLMs genéricos mediante los 
 
 El objetivo principal de NMP es una rápida adopción por parte de la industria. Si has pasado meses construyendo un servidor estándar del Protocolo de Contexto de Modelos (MCP), no necesitas reescribirlo para unirte a la Neural Mesh.
 
-El `@neural-mesh/sdk` incluye el `NmpMcpBridge`.
+El `@nekzus/neural-mesh` incluye el `NmpMcpBridge`.
 
 Este poderoso adaptador intercepta las peticiones binarias entrantes de la malla NMP, las traduce a estándar JSON-RPC 2.0 localmente, las reenvía a tu Servidor MCP sin modificar vía stdio o SSE, y empaqueta la respuesta estándar de MCP de vuelta hacia la red P2P ultra rápida.
 
 ```typescript
-import { NmpMcpBridge } from "@neural-mesh/sdk/bridge";
+import { NmpMcpBridge } from "@nekzus/neural-mesh/bridge";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
 // Tu implementación estándar de MCP heredado

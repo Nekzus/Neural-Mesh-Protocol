@@ -1,4 +1,4 @@
-import { NmpClient } from "@neural-mesh/sdk/client";
+import { NmpClient } from "@nekzus/neural-mesh/client";
 import { NmpCompiler } from "./lib/compiler.js";
 
 const client = new NmpClient();

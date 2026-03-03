@@ -75,7 +75,7 @@ importers:
 
   examples/client-quickstart:
     dependencies:
-      '@neural-mesh/sdk':
+      '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../..
     devDependencies:
@@ -94,7 +94,7 @@ importers:
 
   examples/demos:
     dependencies:
-      '@neural-mesh/sdk':
+      '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../..
       tsx:
@@ -113,13 +113,13 @@ importers:
 
   examples/demos/high-fidelity-demo:
     dependencies:
-      '@neural-mesh/sdk':
+      '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../../..
 
   examples/server:
     dependencies:
-      '@neural-mesh/sdk':
+      '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../..
     devDependencies:
@@ -141,7 +141,7 @@ importers:
 
   examples/server-quickstart:
     dependencies:
-      '@neural-mesh/sdk':
+      '@nekzus/neural-mesh':
         specifier: workspace:*
         version: link:../..
     devDependencies:

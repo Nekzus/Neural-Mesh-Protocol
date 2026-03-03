@@ -1,5 +1,5 @@
 import type { Buffer } from "node:buffer";
-import { NmpServer } from "@neural-mesh/sdk/server";
+import { NmpServer } from "@nekzus/neural-mesh/server";
 import { GuardianAST } from "./lib/guardian.js";
 import { WasiSandbox } from "./lib/sandbox.js";
 

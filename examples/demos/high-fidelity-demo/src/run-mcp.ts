@@ -1,5 +1,5 @@
 // MCP Bridge for "The Vault" - Execution from Cursor/Claude Desktop
-import { NmpMcpBridge } from "@neural-mesh/sdk/bridge";
+import { NmpMcpBridge } from "@nekzus/neural-mesh/bridge";
 import { theVaultServer } from "./server-node.js";
 
 async function main() {

@@ -3,7 +3,7 @@ title: "Quickstart"
 description: "Start building with NMP in under 5 minutes using the official TypeScript SDK"
 ---
 
-The Neural Mesh Protocol (NMP) provides the `@neural-mesh/sdk`, designed as a powerful yet highly familiar SDK. If you have previously built servers for MCP, transitioning to NMP architecture is almost effortless.
+The Neural Mesh Protocol (NMP) provides the `@nekzus/neural-mesh`, designed as a powerful yet highly familiar SDK. If you have previously built servers for MCP, transitioning to NMP architecture is almost effortless.
 
 In this guide, we'll build a basic NMP Server that exposes a tool, and a Client that invokes it.
 
@@ -17,13 +17,13 @@ Install the official SDK in your Node.js or TypeScript project.
 
 <CodeGroup>
 ```bash npm
-npm install @neural-mesh/sdk zod
+npm install @nekzus/neural-mesh zod
 ```
 ```bash pnpm
-pnpm add @neural-mesh/sdk zod
+pnpm add @nekzus/neural-mesh zod
 ```
 ```bash yarn
-yarn add @neural-mesh/sdk zod
+yarn add @nekzus/neural-mesh zod
 ```
 </CodeGroup>
 
@@ -34,7 +34,7 @@ An NMP Server acts as a Data Node. It connects to the mesh and listens for incom
 Create a file named `server.ts`:
 
 ```typescript server.ts
-import { NmpServer } from '@neural-mesh/sdk';
+import { NmpServer } from '@nekzus/neural-mesh';
 import { z } from 'zod';
 
 // Initialize the Server with identity and capabilities
@@ -77,7 +77,7 @@ An NMP Client acts as the Intelligence. It discovers servers on the mesh and pus
 Create a file named `client.ts`:
 
 ```typescript client.ts
-import { NmpClient } from '@neural-mesh/sdk';
+import { NmpClient } from '@nekzus/neural-mesh';
 
 async function main() {
   // Initialize the Client

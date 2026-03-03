@@ -245,7 +245,7 @@
     <rect x="210" y="80" width="540" height="320" class="sfl-zone" />
     <rect x="210" y="80" width="540" height="40" fill="#ffffff" style="border-radius: 12px 12px 0 0;" />
     <path d="M 210 120 L 750 120" stroke="#e4e4e7" stroke-width="2" />
-    <text x="230" y="105" class="sfl-title">TypeScript SDK (@neural-mesh/sdk)</text>
+    <text x="230" y="105" class="sfl-title">TypeScript SDK (@nekzus/neural-mesh)</text>
     <text x="730" y="105" class="sfl-subtitle" text-anchor="end">Node.js Tier-0 Environment</text>
 
     <!-- Components -->

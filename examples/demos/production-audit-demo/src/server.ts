@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { NmpServer } from "@neural-mesh/sdk/server";
+import { NmpServer } from "@nekzus/neural-mesh/server";
 import { z } from "zod";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

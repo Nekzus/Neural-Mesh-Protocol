@@ -46,7 +46,7 @@ Instead of dispatching sequential JSON commands to retrieve raw text, the Agent 
   <img className="hidden dark:block w-full" src="/images/sdk-flow-dark.svg" alt="TypeScript SDK E2E Flow" />
 </Frame>
 
-1. **Compilation**: The Agent (often leveraging a Javy/Component Model subsystem provided by the `@neural-mesh/sdk`) translates its high-level logic (JavaScript, Python) into a tiny binary WebAssembly module.
+1. **Compilation**: The Agent (often leveraging a Javy/Component Model subsystem provided by the `@nekzus/neural-mesh`) translates its high-level logic (JavaScript, Python) into a tiny binary WebAssembly module.
 2. **Client AST Sentinel (`GuardianTS`)**: Before departure, rigid Heuristic AST rules block malicious instructions within the `.wasm` file, averting "sandbox escape" strategies outright in zero-time.
 3. **Payload Stamping (`Crypto Module`)**: The Client encapsulates the session using `Kyber768` Post-Quantum Cryptography and seals the payload hermetically inside an `AES-256-GCM` envelope.
 4. **Streaming (`MeshNode`)**: The Client multiplexes the connection via `Yamux` along with `Noise` and streams the encrypted `.wasm` binary to the target Mesh exactly once.
@@ -63,7 +63,7 @@ Once the data is flowing, the Node.js Host orchestrates the process leveraging e
   <img className="hidden dark:block w-full" src="/images/animated-sdk-flow-dark.svg" alt="Animated SDK Runtime Flow" />
 </Frame>
 
-The visual flow above details the four pivotal components inside the local `@neural-mesh/sdk`:
+The visual flow above details the four pivotal components inside the local `@nekzus/neural-mesh`:
 
 #### 1. Agent App (LLM Logic Emitter)
 This is the origin point representing your custom application. Whether it is an AI Auto-Coder, a data scraper, or a local utility, it dictates the "Intent" and outputs the initial raw capabilities that need to be packaged and pushed to the remote Mesh Network.

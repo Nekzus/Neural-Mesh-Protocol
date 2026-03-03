@@ -82,7 +82,7 @@ Inside the TEE, the `Wasmtime` engine boots the WASI context. Since WebAssembly 
 When the `.wasm` finishes outputting data, the result passes to the **Zero-Knowledge Prover** (e.g., `RISC Zero` integration). This module generates a mathematical *Receipt* (consisting of a Journal and a cryptographic Seal). The returned packet proves unconditionally to the Agent that the specific logic payload executed flawlessly, and the output was not tampered with by the execution Node.
 
 ## 5. TypeScript Server & MCP Bridge (The SDK Node)
-While the Rust Dataplane dominates heavy WASI Sandboxing and Mathematical Evidence, the Neural Mesh Ecosystem also provides a lightweight, pure-TypeScript Server implementation (`@neural-mesh/sdk`). 
+While the Rust Dataplane dominates heavy WASI Sandboxing and Mathematical Evidence, the Neural Mesh Ecosystem also provides a lightweight, pure-TypeScript Server implementation (`@nekzus/neural-mesh`). 
 
 This Server acts primarily as a backward-compatibility layer and local endpoint for Agent logic.
 
@@ -98,4 +98,4 @@ This Server acts primarily as a backward-compatibility layer and local endpoint 
 4. **Native Node.js Execution**: The registered Tool Handler executes locally (using standard Node.js/TypeScript code) rather than isolating itself in a sandboxed WebAssembly boundary.
 5. **JSON-RPC Response**: The finding returns seamlessly down the pipeline formatted as a legacy `result` block.
 
-This guarantees that developers can immediately adopt `@neural-mesh/sdk` and serve their existing Tools into the NMP ecosystem with **Zero-Code modifications**, slowly transitioning towards full *WASM Logic-on-Origin* payloads when required.
+This guarantees that developers can immediately adopt `@nekzus/neural-mesh` and serve their existing Tools into the NMP ecosystem with **Zero-Code modifications**, slowly transitioning towards full *WASM Logic-on-Origin* payloads when required.

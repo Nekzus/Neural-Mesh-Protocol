@@ -232,7 +232,7 @@
     <!-- 2. Node.js SDK Container -->
     <rect x="230" y="80" width="550" height="280" rx="16" fill="#020617" stroke="#334155" stroke-width="2"
         stroke-dasharray="10 5" />
-    <text x="505" y="110" class="text-sub-d" text-anchor="middle" fill="#94a3b8">@neural-mesh/sdk (Node V8
+    <text x="505" y="110" class="text-sub-d" text-anchor="middle" fill="#94a3b8">@nekzus/neural-mesh (Node V8
         Environment)</text>
 
     <!-- 2A. GuardianTS -->

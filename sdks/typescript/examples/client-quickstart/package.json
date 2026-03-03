@@ -9,7 +9,7 @@
 		"build": "tsdown"
 	},
 	"dependencies": {
-		"@neural-mesh/sdk": "workspace:*"
+		"@nekzus/neural-mesh": "workspace:*"
 	},
 	"devDependencies": {
 		"tsx": "^4.7.0",

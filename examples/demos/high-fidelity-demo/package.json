@@ -9,6 +9,6 @@
 		"start:client": "tsx src/agent.ts"
 	},
 	"dependencies": {
-		"@neural-mesh/sdk": "workspace:*"
+		"@nekzus/neural-mesh": "workspace:*"
 	}
 }

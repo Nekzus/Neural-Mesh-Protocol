@@ -3,7 +3,7 @@ title: "TypeScript SDK Overview"
 description: "Bringing the power of the Neural Mesh to the Node.js ecosystem"
 ---
 
-The official `@neural-mesh/sdk` provides a complete, strongly-typed toolkit for building NMP Clients (Agent Nodes) and NMP Servers (Data Nodes) in TypeScript and JavaScript.
+The official `@nekzus/neural-mesh` provides a complete, strongly-typed toolkit for building NMP Clients (Agent Nodes) and NMP Servers (Data Nodes) in TypeScript and JavaScript.
 
 If you are migrating from the Model Context Protocol (MCP), you will find the API surface remarkably familiar. NMP was designed to provide a **Drop-in Replacement** Developer Experience (DX), abstracting away the immense complexity of Protobuf, WebAssembly, and Kademlia DHT under simple TypeScript classes.
 
@@ -13,13 +13,13 @@ The SDK is published to npm as a single unified package containing both Client a
 
 <CodeGroup>
 ```bash npm
-npm install @neural-mesh/sdk zod
+npm install @nekzus/neural-mesh zod
 ```
 ```bash pnpm
-pnpm add @neural-mesh/sdk zod
+pnpm add @nekzus/neural-mesh zod
 ```
 ```bash yarn
-yarn add @neural-mesh/sdk zod
+yarn add @nekzus/neural-mesh zod
 ```
 </CodeGroup>
 
@@ -31,7 +31,7 @@ yarn add @neural-mesh/sdk zod
 
 You might be wondering: *If NMP relies on injecting compiled WebAssembly (`.wasm`) logic, how can I build Agents purely in TypeScript?*
 
-The `@neural-mesh/sdk` includes a native compilation bridge (the **Component Builder**). When your TypeScript Agent invokes `.execute()`, the SDK transparently serializes the JavaScript payload, bundles it utilizing a Javy-like engine into a highly restrictive `.wasm` payload, strings it through the Protobuf `LogicRequest`, and injects it into the Mesh. 
+The `@nekzus/neural-mesh` includes a native compilation bridge (the **Component Builder**). When your TypeScript Agent invokes `.execute()`, the SDK transparently serializes the JavaScript payload, bundles it utilizing a Javy-like engine into a highly restrictive `.wasm` payload, strings it through the Protobuf `LogicRequest`, and injects it into the Mesh. 
 
 The developer never has to manually write or compile Rust/Wasm.
 

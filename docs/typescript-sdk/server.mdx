@@ -12,7 +12,7 @@ Instead of writing custom execution environments to manage WebAssembly, isolatio
 You create a Data Node by telling the Mesh who you are and providing transport properties.
 
 ```typescript
-import { NmpServer } from "@neural-mesh/sdk";
+import { NmpServer } from "@nekzus/neural-mesh";
 
 const server = new NmpServer({
   name: "EnterpriseDatabaseNode",
@@ -73,12 +73,12 @@ These resources are flawlessly bridged to LLMs via standard MCP `resources/list`
 
 NMP's primary goal is rapid industry adoption. If you have spent months building a standard Model Context Protocol (MCP) server, you do not need to rewrite it to join the Neural Mesh.
 
-The `@neural-mesh/sdk` ships with the `NmpMcpBridge`.
+The `@nekzus/neural-mesh` ships with the `NmpMcpBridge`.
 
 This powerful adapter intercepts incoming NMP binary mesh requests, translates them into standard JSON-RPC 2.0 locally, forwards them to your unmodified MCP Server via stdio or SSE, and repackages the standard MCP response back into the ultra-fast P2P network.
 
 ```typescript
-import { NmpMcpBridge } from "@neural-mesh/sdk/bridge";
+import { NmpMcpBridge } from "@nekzus/neural-mesh/bridge";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
 // Your standard legacy MCP implementation

@@ -161,7 +161,7 @@
     <rect x="250" y="80" width="710" height="320" class="bfl-zone" />
     <rect x="250" y="80" width="710" height="40" fill="#ffffff" style="border-radius: 12px 12px 0 0;" />
     <path d="M 250 120 L 960 120" stroke="#e4e4e7" stroke-width="2" />
-    <text x="270" y="105" class="bfl-title">TypeScript Server (@neural-mesh/sdk)</text>
+    <text x="270" y="105" class="bfl-title">TypeScript Server (@nekzus/neural-mesh)</text>
     <text x="940" y="105" class="bfl-subtitle" text-anchor="end">Local Environment Handler</text>
 
     <!-- Components -->

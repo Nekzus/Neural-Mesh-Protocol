@@ -1,4 +1,4 @@
-import { NmpServer } from "@neural-mesh/sdk";
+import { NmpServer } from "@nekzus/neural-mesh";
 import { z } from "zod";
 
 /**

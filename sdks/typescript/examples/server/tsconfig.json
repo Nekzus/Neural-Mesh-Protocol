@@ -10,7 +10,7 @@
 		"esModuleInterop": true,
 		"paths": {
 			"*": ["./*"],
-			"@neural-mesh/sdk": ["./node_modules/@neural-mesh/sdk/src/index.ts"]
+			"@nekzus/neural-mesh": ["./node_modules/@nekzus/neural-mesh/src/index.ts"]
 		}
 	}
 }
