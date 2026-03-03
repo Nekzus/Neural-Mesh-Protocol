@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import {
+import type {
 	CallToolRequest,
 	CallToolResult,
 	GetPromptRequest,
@@ -11,7 +11,7 @@ import {
 	ServerInfo,
 	Tool,
 } from "../types.js";
-import { PiiScanner, type PiiRule, PII_PATTERNS } from "./pii.js";
+import { PII_PATTERNS, type PiiRule, PiiScanner } from "./pii.js";
 
 export { PiiScanner, type PiiRule, PII_PATTERNS };
 
@@ -84,8 +84,10 @@ export class NmpServer {
 			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n---END_LOGIC---`;
 			finalDescription += `\n\nOptional: You can include an "__nmp_bypass_ast_cache" boolean parameter set to true to force AST re-evaluation.`;
 
-			// biome-ignore lint/suspicious/noExplicitAny: Generic handler wrapper intercepts erased arguments
-			finalHandler = async (args: any, extra: any) => {
+			finalHandler = async (
+				args: z.infer<z.ZodObject<T>>,
+				extra: { signal?: AbortSignal },
+			) => {
 				const clientId = "global_connection"; // Simplify for now, treating the instance as one connection
 				const now = Date.now();
 				const stats = this.connectionStats.get(clientId) || {
@@ -108,8 +110,10 @@ export class NmpServer {
 					};
 				}
 
-				const payloadValue = args.payload as string;
-				const bypassCache = args.__nmp_bypass_ast_cache === true;
+				const payloadValue = (args as Record<string, unknown>)
+					.payload as string;
+				const bypassCache =
+					(args as Record<string, unknown>).__nmp_bypass_ast_cache === true;
 
 				const payloadHash = crypto
 					.createHash("sha256")
@@ -130,7 +134,7 @@ export class NmpServer {
 						/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
 					);
 					if (logicMatch && logicMatch.length >= 2) {
-						args.payload = logicMatch[1].trim();
+						(args as Record<string, unknown>).payload = logicMatch[1].trim();
 						return await handler(args, extra);
 					}
 				}
@@ -156,7 +160,7 @@ export class NmpServer {
 
 				try {
 					// Extract pure logic and deliver it to the developer's function
-					args.payload = logicMatch[1].trim();
+					(args as Record<string, unknown>).payload = logicMatch[1].trim();
 					let result = await handler(args, extra);
 
 					// NMP Native Serialization: Ensure 'text' content is stringified if it's an object/array
@@ -230,10 +234,8 @@ export class NmpServer {
 
 		const inputSchema = {
 			type: "object",
-			// biome-ignore lint/suspicious/noExplicitAny: zodToJsonSchema returns a loose JSON schema
-			properties: (generatedSchema as any).properties || {},
-			// biome-ignore lint/suspicious/noExplicitAny: zodToJsonSchema returns a loose JSON schema
-			required: (generatedSchema as any).required,
+			properties: (generatedSchema as Record<string, unknown>).properties || {},
+			required: (generatedSchema as Record<string, unknown>).required,
 		};
 
 		this.tools.set(name, {
