@@ -2,12 +2,15 @@ import { describe, expect, it } from "vitest";
 import { PII_PATTERNS, PiiScanner } from "./pii.js";
 
 describe("PiiScanner (The Shield V2 - Military Grade)", () => {
-	const scanner = new PiiScanner([
-		PII_PATTERNS.EMAIL,
-		PII_PATTERNS.IP_ADDRESS,
-		PII_PATTERNS.CREDIT_CARD,
-		"forbidden-word",
-	]);
+	const scanner = new PiiScanner(
+		[
+			PII_PATTERNS.EMAIL,
+			PII_PATTERNS.IP_ADDRESS,
+			PII_PATTERNS.CREDIT_CARD,
+			"forbidden-word",
+		],
+		["id", "ssn", "name"],
+	);
 
 	it("should detect PII in plain strings", () => {
 		expect(scanner.scan("Contact me at user@realdomain.com")).toBe(
@@ -80,7 +83,7 @@ describe("PiiScanner (The Shield V2 - Military Grade)", () => {
 
 	it("should detect and block Double JSON Encoding bypass attempts (Zero-Day Regression)", () => {
 		// Custom scanner looking exactly for a JSON key-like string pattern
-		const strictScanner = new PiiScanner(['"id":', PII_PATTERNS.FORBIDDEN_KEYS]);
+		const strictScanner = new PiiScanner(['"id":'], ["id"]);
 
 		// The vulnerability: if the agent manually stringifies the output, the double quotes are escaped.
 		// A naïve scanner would look for exactly '"id":' and miss it.

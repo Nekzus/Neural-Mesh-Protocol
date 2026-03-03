@@ -99,3 +99,34 @@ This Server acts primarily as a backward-compatibility layer and local endpoint 
 5. **JSON-RPC Response**: The finding returns seamlessly down the pipeline formatted as a legacy `result` block.
 
 This guarantees that developers can immediately adopt `@nekzus/neural-mesh` and serve their existing Tools into the NMP ecosystem with **Zero-Code modifications**, slowly transitioning towards full *WASM Logic-on-Origin* payloads when required.
+
+## 6. Advanced Security & Data Dictionary
+
+To ensure the highest level of Zero-Shot Autonomy (where the AI makes its own plans), NMP Servers must provide metadata about their internal structures.
+
+### Data Dictionary (Anti-Hallucination)
+When an Agent executes foreign logic, it might "hallucinate" fields that don't exist (e.g., trying to access `gender` in a database that only has `age`). To prevent this, developers should use the `dataDictionary` method:
+
+```typescript
+server.dataDictionary({
+  id: "string (Anonymized PII)",
+  age: "number",
+  condition: "string (Healthy, Hypertension...)"
+});
+```
+
+The SDK's **Reactive Sync** engine will automatically inject this schema into the Agent's prompt and tool descriptions, enforcing a **Strict Schema Adherence** policy.
+
+### PII Forbidden Keys
+You can dynamically restrict specific fields from ever leaving the server, regardless of the logic's intent. Pass the `forbiddenKeys` array during server instantiation:
+
+```typescript
+const server = new NmpServer({
+  security: {
+    forbiddenKeys: ["id", "ssn", "password", "email"]
+  }
+});
+```
+
+The **O(1) Egress Filter** will use a high-performance memory `Set` to scan every return object and block any key matching these terms, even if they are nested deep within a JSON structure.
+

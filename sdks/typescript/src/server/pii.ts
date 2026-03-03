@@ -40,23 +40,6 @@ export type PiiRuleDefinition = {
 
 export type PiiRule = string | RegExp | PiiRuleDefinition;
 
-export const FORBIDDEN_KEYS_LIST = [
-	"id",
-	"ssn",
-	"social_security",
-	"password",
-	"token",
-	"secret",
-	"address",
-	"phone",
-	"email",
-	"name",
-	"nombre",
-	"apellido",
-	"birth",
-	"nacimiento",
-];
-
 export const PII_PATTERNS = {
 	EMAIL: {
 		name: "EMAIL",
@@ -93,15 +76,16 @@ export const PII_PATTERNS = {
 			return true;
 		},
 	} as PiiRuleDefinition,
-	// Keys that should never be exported in a JSON object
-	FORBIDDEN_KEYS: new RegExp(`^(${FORBIDDEN_KEYS_LIST.join("|")})$`, "i"),
 };
 
 export class PiiScanner {
 	private patterns: PiiRule[];
+	private forbiddenKeysSet: Set<string>;
 
-	constructor(patterns: PiiRule[] = []) {
+	constructor(patterns: PiiRule[] = [], forbiddenKeys: string[] = []) {
 		this.patterns = patterns;
+		// Optimizes large recursive evaluations using O(1) continuous key lookup
+		this.forbiddenKeysSet = new Set(forbiddenKeys.map((k) => k.toLowerCase()));
 	}
 
 	/**
@@ -149,8 +133,8 @@ export class PiiScanner {
 				for (const [key, value] of Object.entries(
 					input as Record<string, unknown>,
 				)) {
-					// Check Keys (Industrial Best Practice: Key Auditing)
-					if (PII_PATTERNS.FORBIDDEN_KEYS.test(key)) {
+					// Check Keys using O(1) Constant Time Memory Evaluation
+					if (this.forbiddenKeysSet.has(key.toLowerCase())) {
 						return `Forbidden Key: ${key}`;
 					}
 

@@ -22,15 +22,44 @@ export const theVaultServer = new NmpServer(
 				PII_PATTERNS.EMAIL,
 				PII_PATTERNS.IP_ADDRESS,
 				PII_PATTERNS.CREDIT_CARD,
-				'"ssn":',
-				'"password":',
-				'"id":',
+			],
+			// Dynamic O(1) Memory Layout Keys injection
+			forbiddenKeys: [
+				"id",
+				"ssn",
+				"social_security",
+				"password",
+				"token",
+				"secret",
+				"address",
+				"phone",
+				"email",
+				"name",
+				"nombre",
+				"apellido",
+				"birth",
+				"nacimiento",
 			],
 		},
 	},
 );
 
-// NMP Plug & Play: Injects Authority MCP Prompts into the Stdio Bridge
+// 1. Data Dictionary First (Establish the Schema for the SDK)
+theVaultServer.dataDictionary(
+	{
+		id: "string (Anonymized patient identifier, strictly PII)",
+		age: "number (Patient age in years)",
+		condition:
+			"string (Primary medical condition: Healthy, Hypertension, Asthma, Diabetes Type 1, Diabetes Type 2, Heart Disease)",
+		riskScore: "number (Float risk numeric score from 0.0 to 1.0)",
+		lastVisit: "string (ISO 8601 Date of the last medical appointment)",
+	},
+	"medical_records_schema",
+	"nmp://schema/medical_records",
+	"Strict JSON schema for the patient database (records). The sandbox injects 'env.records'.",
+);
+
+// 2. Enable Autonomy & Registered Tools (Now aware of the schema)
 theVaultServer.enableZeroShotAutonomy();
 
 theVaultServer.tool(
@@ -114,17 +143,5 @@ theVaultServer.tool(
 	},
 );
 
-// Register Discoverable Resources (Data Dictionary)
-theVaultServer.dataDictionary(
-	{
-		id: "string (Anonymized patient identifier, strictly PII)",
-		age: "number (Patient age in years)",
-		condition:
-			"string (Primary medical condition: Healthy, Hypertension, Asthma, Diabetes Type 1, Diabetes Type 2, Heart Disease)",
-		riskScore: "number (Float risk numeric score from 0.0 to 1.0)",
-		lastVisit: "string (ISO 8601 Date of the last medical appointment)",
-	},
-	"medical_records_schema",
-	"nmp://schema/medical_records",
-	"Strict JSON schema for the patient database (records). The sandbox injects 'env.records'.",
-);
+
+

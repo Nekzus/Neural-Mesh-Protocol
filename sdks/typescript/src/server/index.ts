@@ -11,7 +11,7 @@ import type {
 	ServerInfo,
 	Tool,
 } from "../types.js";
-import { PII_PATTERNS, type PiiRule, PiiScanner, FORBIDDEN_KEYS_LIST } from "./pii.js";
+import { PII_PATTERNS, type PiiRule, PiiScanner } from "./pii.js";
 
 export { PiiScanner, type PiiRule, PII_PATTERNS };
 
@@ -47,6 +47,7 @@ export class NmpServer {
 			) => GetPromptResult | Promise<GetPromptResult>;
 		}
 	> = new Map();
+	private activeSchema: Record<string, unknown> | null = null;
 
 	private piiScanner: PiiScanner;
 
@@ -54,10 +55,13 @@ export class NmpServer {
 		private serverInfo: ServerInfo,
 		private config?: {
 			capabilities?: Record<string, unknown>;
-			security?: { piiPatterns?: PiiRule[] };
+			security?: { piiPatterns?: PiiRule[]; forbiddenKeys?: string[] };
 		},
 	) {
-		this.piiScanner = new PiiScanner(this.config?.security?.piiPatterns || []);
+		this.piiScanner = new PiiScanner(
+			this.config?.security?.piiPatterns || [],
+			this.config?.security?.forbiddenKeys || [],
+		);
 	}
 
 	/**
@@ -81,8 +85,19 @@ export class NmpServer {
 
 		// NMP Zero-Shot Autonomy Middleware: Detect Logic-on-Origin tools
 		if (shape.payload && shape.payload instanceof z.ZodString) {
-			const blockedKeys = FORBIDDEN_KEYS_LIST.join(", ");
-			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.\n// SECURITY RESTRICTION: Do NOT include any of the following fields in your returned objects to prevent PII leaks: ${blockedKeys}\n---END_LOGIC---`;
+			const blockedKeys = this.config?.security?.forbiddenKeys || [];
+
+			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.`;
+
+			if (blockedKeys.length > 0) {
+				finalDescription += `\n// SECURITY RESTRICTION: Do NOT include any of the following fields in your returned objects to prevent PII leaks: ${blockedKeys.join(", ")}`;
+			}
+
+			if (this.activeSchema) {
+				finalDescription += `\n\nSTRICT SCHEMA ADHERENCE:\nThe 'env.records' array contains objects with the EXACT following structure. ONLY use these fields. Do NOT guess or use fallbacks (e.g. do not use 'gender' if not listed below):\n${JSON.stringify(this.activeSchema, null, 2)}`;
+			}
+
+			finalDescription += `\n---END_LOGIC---`;
 			finalDescription += `\n\nOptional: You can include an "__nmp_bypass_ast_cache" boolean parameter set to true to force AST re-evaluation.`;
 
 			finalHandler = async (
@@ -293,6 +308,10 @@ CRITICAL RULES:
 // your javascript here
 ---END_LOGIC---
 4. The runtime provides a global 'env.records' array with the target data. Ensure your logic iterates over this safely.
+5. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${this.activeSchema
+										? `\n\nCURRENT DATA SCHEMA:\n${JSON.stringify(this.activeSchema, null, 2)}`
+										: ""
+									}
 
 Failure to follow these rules will result in an immediate violation and the execution will be aborted.`,
 							},
@@ -328,6 +347,21 @@ Failure to follow these rules will result in an immediate violation and the exec
 		uri: string = "nmp://schema/global",
 		description: string = "Exposes the internal database schema for Zero-Shot Autonomy planning",
 	): void {
+		this.activeSchema = schema;
+
+		// Retroactively update tool descriptions for already registered tools
+		for (const [toolName, entry] of this.tools.entries()) {
+			if (
+				entry.schema.shape.payload &&
+				entry.schema.shape.payload instanceof z.ZodString &&
+				entry.tool.description &&
+				!entry.tool.description.includes("STRICT SCHEMA ADHERENCE")
+			) {
+				entry.tool.description += `\n\nSTRICT SCHEMA ADHERENCE:\nThe 'env.records' array contains objects with the EXACT following structure. ONLY use these fields. Do NOT guess or use fallbacks (e.g. do not use 'gender' if not listed below):\n${JSON.stringify(schema, null, 2)}`;
+				this.tools.set(toolName, entry);
+			}
+		}
+
 		this.resource(
 			name,
 			uri,

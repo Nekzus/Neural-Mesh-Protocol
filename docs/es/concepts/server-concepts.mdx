@@ -100,3 +100,34 @@ Este servidor actúa principalmente como una capa de compatibilidad hacia atrás
 5. **Respuesta JSON-RPC**: El resultado se devuelve formateado como un bloque `result` estándar de MCP.
 
 Esto garantiza que los desarrolladores puedan adoptar inmediatamente el SDK y servir sus herramientas existentes en el ecosistema NMP con **cero modificaciones de código**.
+
+## 6. Seguridad Avanzada y Diccionario de Datos
+
+Para asegurar el mayor nivel de Autonomía Zero-Shot (donde la IA diseña sus propios planes), los Servidores NMP deben proporcionar metadatos sobre sus estructuras internas.
+
+### Diccionario de Datos (Anti-Hallucination)
+Cuando un Agente ejecuta lógica foránea, podría "alucinar" campos que no existen (ej., intentar acceder a `gender` en una base de datos que solo tiene `age`). Para prevenir esto, los desarrolladores deben usar el método `dataDictionary`:
+
+```typescript
+server.dataDictionary({
+  id: "string (Anonymized PII)",
+  age: "number",
+  condition: "string (Healthy, Hypertension...)"
+});
+```
+
+El motor de **Sincronización Reactiva** del SDK inyectará automáticamente este esquema en el prompt del Agente y en las descripciones de las herramientas, forzando una política de **Adherencia Estricta al Esquema**.
+
+### Claves Prohibidas (PII Forbidden Keys)
+Es posible restringir dinámicamente campos específicos para que nunca abandonen el servidor, independientemente de la intención de la lógica. Pase el array `forbiddenKeys` durante la instanciación del servidor:
+
+```typescript
+const server = new NmpServer({
+  security: {
+    forbiddenKeys: ["id", "ssn", "password", "email"]
+  }
+});
+```
+
+El **Filtro de Egreso O(1)** utilizará un `Set` de memoria de alto rendimiento para escanear cada objeto devuelto y bloquear cualquier clave que coincida con estos términos, incluso si están anidados profundamente en una estructura JSON.
+
