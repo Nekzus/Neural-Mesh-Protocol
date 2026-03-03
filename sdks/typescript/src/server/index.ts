@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
+import { createRequire } from "node:module";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { Piscina } from "piscina";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -53,6 +54,7 @@ export class NmpServer {
 		}
 	> = new Map();
 	private activeSchema: Record<string, unknown> | null = null;
+	private sandboxRecords: any[] = [];
 
 	private piiScanner: PiiScanner;
 	private workerPool: Piscina;
@@ -70,10 +72,40 @@ export class NmpServer {
 		);
 
 		// Initialize Zero-Blocking Worker Pool for Heavy Cryptography & Sandboxing
+		const isTS = import.meta.url.endsWith(".ts");
+		const workerExt = isTS ? ".ts" : ".js";
+
+		let execArgv: string[] = [];
+		if (isTS) {
+			try {
+				const require = createRequire(import.meta.url);
+				const tsxPath = path.resolve(
+					path.dirname(require.resolve("tsx/package.json")),
+					"dist/loader.mjs",
+				);
+				// Check for existence or just use tsx resolving
+				execArgv = ["--import", "tsx"];
+				// To be extremely safe, we could use the absolute path, 
+				// but 'tsx' should be resolvable if we are running in TS mode.
+				// However, the error suggests it's NOT resolvable in the worker.
+				// Let's use the absolute path to the loader if possible.
+				try {
+					const absoluteTsx = require.resolve("tsx");
+					execArgv = ["--import", pathToFileURL(absoluteTsx).href];
+				} catch (e) {
+					// Fallback
+					execArgv = ["--import", "tsx"];
+				}
+			} catch (e) {
+				execArgv = ["--import", "tsx"];
+			}
+		}
+
 		this.workerPool = new Piscina({
-			filename: path.resolve(__dirname, "../workers/logic-execution.js"),
+			filename: path.resolve(__dirname, `../workers/logic-execution${workerExt}`),
 			minThreads: 2,
 			maxThreads: 8,
+			execArgv,
 		});
 	}
 
@@ -156,9 +188,6 @@ export class NmpServer {
 					now - cached.timestamp < this.CACHE_TTL_MS
 				) {
 					// Hash verified. Skips boundaries check (already validated!). Extract logic directly.
-					console.log(
-						`[NMP-SDK] AST Cache Hit for ${payloadHash.substring(0, 8)}. Bypassing Heuristics.`,
-					);
 					const logicMatch = payloadValue.match(
 						/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
 					);
@@ -166,7 +195,7 @@ export class NmpServer {
 						(args as Record<string, unknown>).payload = logicMatch[1].trim();
 
 						// DELEGATE TO WORKER POOL: Parallel PQC & Sandboxing
-						return await this.executeInWorkerPool(args, payloadValue);
+						return await this.executeInWorkerPool(args, logicMatch[1].trim());
 					}
 				}
 
@@ -194,7 +223,7 @@ export class NmpServer {
 					(args as Record<string, unknown>).payload = logicMatch[1].trim();
 
 					// DELEGATE TO WORKER POOL: Parallel PQC & Sandboxing
-					let result = await this.executeInWorkerPool(args, payloadValue);
+					let result = await this.executeInWorkerPool(args, logicMatch[1].trim());
 
 					// NMP Native Serialization: Ensure 'text' content is stringified if it's an object/array
 					if (result.content && Array.isArray(result.content)) {
@@ -393,7 +422,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 	 */
 	public clearAstCache(): void {
 		this.logicCache.clear();
-		console.log("[NMP-SDK] AST Security Cache cleared by Admin.");
+		console.error("[NMP-SDK] AST Security Cache cleared by Admin.");
 	}
 
 	/**
@@ -500,46 +529,38 @@ Failure to follow these rules will result in an immediate violation and the exec
 	}
 
 	/**
+	 * Injects data into the secure sandbox context for Logic-on-Origin tools.
+	 */
+	public setSandboxData(records: Record<string, unknown>[]) {
+		this.sandboxRecords = records;
+	}
+
+	/**
 	 * Connects to the libp2p Kademlia DHT and announces capabilities.
 	 */
 	public async connectToMesh(): Promise<void> {
-		console.log(
-			`[NMP-SDK] Booting Neural Mesh Protocol Node (${this.serverInfo.name} v${this.serverInfo.version})`,
-		);
-		console.log("[NMP-SDK] Establishing P2P Noise Transport & Yamux Mplex...");
-
 		// In a real scenario, this would initialize the @libp2p/libp2p node
 		// and register the gRPC handlers.
-		console.log(
-			`[NMP-SDK] Connected. Announcing ${this.tools.size} tool schemas to Kademlia DHT.`,
-		);
 	}
 
 	/**
 	 * Dispatches heavy computation (Kyber768, AES, WASM/V8 Sandboxing) to the Worker Pool.
 	 */
 	private async executeInWorkerPool(
-		args: any,
+		args: Record<string, unknown>,
 		rawPayload: string
 	): Promise<CallToolResult> {
 		try {
-			// In a real P2P flow, these would come from the gRPC Handshake
-			// For SDK parity/local demos, we generate stable ephemeral keys
-			const mockKyberSK = new Uint8Array(2400).fill(0x42);
-			const mockKyberPK = new Uint8Array(1184).fill(0x13);
-
-			// Mock Encrypted Payload to trigger the Worker's Kyber/AES logic
-			const mockCiphertext = new Uint8Array(1088).fill(0x07);
-
-			// The worker will perform: 
-			// 1. Kyber Decrypt -> 2. AES Decrypt -> 3. AST Guard -> 4. WASI/V8 Sandbox
+			// Transparent local execution without dynamic PQC
 			const workerResponse = await this.workerPool.run({
-				ciphertext: mockCiphertext,
-				secretKeyObj: Array.from(mockKyberSK),
-				kyberPublicKey: mockKyberPK,
-				wasmBinary: Buffer.from(rawPayload), // We treat raw for now as dummy
+				ciphertext: new Uint8Array(0),
+				secretKeyObj: Array.from(new Uint8Array(0)),
+				kyberPublicKey: new Uint8Array(0),
+				wasmBinary: Buffer.from(rawPayload),
 				inputs: {},
-				sessionToken: "local-dev-token"
+				records: this.sandboxRecords,
+				sessionToken: "local-dev-token",
+				isEncrypted: false // Use plaintext for local Logic-on-Origin injection
 			});
 
 			return {

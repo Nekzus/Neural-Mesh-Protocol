@@ -22,7 +22,7 @@ export class NmpServer {
 	constructor(
 		private serverInfo: { name: string; version: string },
 		_config?: { meshPort?: number; targetDid?: string },
-	) {}
+	) { }
 
 	/**
 	 * Defines a tool. Exactly the same DX as MCP v1.x.x.
@@ -38,27 +38,16 @@ export class NmpServer {
 		) => Promise<{ content: Array<{ type: string; text: string }> }>,
 	): void {
 		this.tools.set(name, { name, description, schema, handler });
-		console.log(
-			`[NMP-SDK] Tool registered: '${name}'. Awaiting JIT extraction...`,
-		);
 	}
 
 	/**
 	 * Connects to the libp2p Kademlia DHT and announces capabilities.
 	 */
 	public async connectToMesh(): Promise<void> {
-		console.log(
-			`[NMP-SDK] Booting Neural Mesh Protocol Node (${this.serverInfo.name} v${this.serverInfo.version})`,
-		);
-		console.log(`[NMP-SDK] Establishing P2P Noise Transport...`);
-
 		// Theoretical native Rust FFI binding or node-libp2p wrapper
 		// this.mesh = await createLibp2p({...});
 
 		this.meshReady = true;
-		console.log(
-			`[NMP-SDK] Connected. Announcing ${this.tools.size} tool schemas to Kademlia DHT.`,
-		);
 	}
 
 	public async compileAndPush(
@@ -68,14 +57,6 @@ export class NmpServer {
 		if (!this.meshReady) throw new Error("Must call connectToMesh() first.");
 		if (!this.tools.has(toolName))
 			throw new Error(`Tool ${toolName} not found.`);
-
-		console.log(`[NMP-SDK] Intercepting JS Handler for '${toolName}'...`);
-		console.log(
-			`[NMP-SDK] Transpiling handler to WASM (wasm32-wasi) via Component Model...`,
-		);
-		console.log(
-			`[NMP-SDK] Pushing 150KB WASM to Peer ${targetPeerId} over gRPC/QUIC stream...`,
-		);
 
 		// ... logic to send over the wire ...
 	}

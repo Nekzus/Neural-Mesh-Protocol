@@ -35,8 +35,6 @@ export const ZkVerifier = {
 	 * @returns true if the proof mathematically verifies the execution
 	 */
 	verify(receipt: ZkReceipt, expectedImageId: Buffer): boolean {
-		console.log("[ZK-Verifier] 🛡️ Analyzing Mathematical Execution Proof...");
-
 		// 1. Verify Image ID (Ensures the host executed the exact logic we sent, not a malicious one)
 		if (!receipt.imageId.equals(expectedImageId)) {
 			throw new ZkVerificationError(
@@ -63,9 +61,6 @@ export const ZkVerifier = {
 			throw new ZkVerificationError("Mathematical proof validation failed.");
 		}
 
-		console.log(
-			"[ZK-Verifier] ✅ ZK-Receipt mathematically verified. Trustless Execution Confirmed.",
-		);
 		return true;
 	},
 

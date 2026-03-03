@@ -8,7 +8,7 @@ import type { CallToolRequest, CallToolResult } from "../types.js";
  * NmpServer logic (or eventually packaging them to WASM).
  */
 export class NmpMcpBridge {
-	constructor(private internalServer: NmpServer) {}
+	constructor(private internalServer: NmpServer) { }
 
 	/**
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
@@ -145,7 +145,7 @@ export class NmpMcpBridge {
 						},
 						serverInfo: this.internalServer.getServerInfo(),
 					});
-					console.log(JSON.stringify(response));
+					process.stdout.write(`${JSON.stringify(response)}\n`);
 					return;
 				}
 
@@ -155,7 +155,7 @@ export class NmpMcpBridge {
 
 				const response = await this.handleJsonRpcRequest(payload);
 				if (response) {
-					console.log(JSON.stringify(response));
+					process.stdout.write(`${JSON.stringify(response)}\n`);
 				}
 			} catch (e: unknown) {
 				console.error(

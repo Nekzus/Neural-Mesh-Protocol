@@ -2,8 +2,11 @@
 
 import { NmpServer, PII_PATTERNS } from "@nekzus/neural-mesh/server";
 import { z } from "zod";
-import { GuardianAST } from "./lib/guardian-ast.js";
-import { WasiSandbox } from "./lib/wasi-sandbox.js";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 console.error("██████╗  █████╗ ███████╗███████╗");
 console.error("██╔══██╗██╔══██╗██╔════╝██╔════╝");
@@ -44,6 +47,16 @@ export const theVaultServer = new NmpServer(
 	},
 );
 
+// 0. Load and Inject Data Context into the SDK (Fase 45 Perfect Parity)
+try {
+	const dataPath = path.resolve(__dirname, "../data/medical_records.json");
+	const recordsRaw = await fs.readFile(dataPath, "utf-8");
+	const records = JSON.parse(recordsRaw);
+	theVaultServer.setSandboxData(records);
+} catch (e) {
+	console.error(`[The Vault] Error loading medical records: ${e}`);
+}
+
 // 1. Data Dictionary First (Establish the Schema for the SDK)
 theVaultServer.dataDictionary(
 	{
@@ -73,73 +86,18 @@ theVaultServer.tool(
 			),
 	},
 	async ({ payload }) => {
-		console.error(`\n======================================================`);
-		console.error(`📥 [The Vault] Dynamic Injection Request Received.`);
-		console.error(`======================================================`);
-
-		// 1. The SDK Zero-Shot Middleware has already unpacked and purified it
-		const logicCore = payload;
-		console.error(
-			`📥 [The Vault] Payload successfully passed Zero-Shot Format Check.`,
-		);
-
-		try {
-			// 2. THE SHIELD - Phase 1: Zero-Time AST Guardian
-			GuardianAST.inspect(logicCore);
-
-			// 3. THE SHIELD - Phase 2: WASI Sandbox Execution
-			const result = await WasiSandbox.execute(logicCore);
-
-			console.error(
-				`\n📤 [The Vault] Analysis completed. Final result being audited by NMP-SDK...`,
-			);
-
-			console.error(
-				`\n📤 [The Vault] Analysis completed. Returning ZK-Receipt to the issuer.`,
-			);
-			console.error(`======================================================\n`);
-
-			// 4. Return the results and the STARK cryptographic receipt
-			const responseData = {
-				success: true,
-				computation_result: result.output,
-				security_metrics: {
-					fuel_consumed: result.fuelConsumed,
-					guardian_ast: "PASSED",
+		// NOTE: In Fase 45, NmpServer's middleware automatically intercepts
+		// any payload containing ---BEGIN_LOGIC--- and executes it in 
+		// the Worker Pool using the injected data context (setSandboxData).
+		// This handler only executes if the middleware is bypassed or for non-Logic payloads.
+		return {
+			content: [
+				{
+					type: "text",
+					text: "The Vault received your request. Using Tier-0 Native Middleware (Worker Pool + SDK Isolation).",
 				},
-				zk_receipt: result.zkReceipt,
-			};
-
-			return {
-				content: [
-					{ type: "text", text: JSON.stringify(responseData, null, 2) },
-				],
-			};
-		} catch (error: unknown) {
-			const e = error as Error;
-			console.error(
-				`\n🚫 [The Vault] EXECUTION ABORTED BY SECURITY PROTOCOLS.`,
-			);
-			console.error(`🚫 Reason: ${e.message}\n`);
-
-			return {
-				content: [
-					{
-						type: "text",
-						text: JSON.stringify(
-							{
-								success: false,
-								error: "VIOLETION_DETECTED",
-								details: e.message,
-							},
-							null,
-							2,
-						),
-					},
-				],
-				isError: true,
-			};
-		}
+			],
+		};
 	},
 );
 

@@ -12,23 +12,15 @@ export interface SandboxConfig {
 }
 
 export class WasiSandbox {
-	private wasi: WASI;
+	private wasi!: WASI;
 	private sandboxId: string;
 	private workingDir: string;
+	private config: SandboxConfig;
 
 	constructor(config: SandboxConfig = {}) {
 		this.sandboxId = crypto.randomUUID();
 		this.workingDir = path.join(os.tmpdir(), "nmp_sandbox", this.sandboxId);
-
-		this.wasi = new WASI({
-			version: "preview1",
-			args: [],
-			env: config.allowEnv ? process.env : { NMP_SANDBOX: "true" },
-			preopens: {
-				"/sandbox": this.workingDir,
-				...config.allowedDirectories,
-			},
-		});
+		this.config = config;
 	}
 
 	/**
@@ -36,14 +28,26 @@ export class WasiSandbox {
 	 */
 	public async init(): Promise<void> {
 		await fs.mkdir(this.workingDir, { recursive: true });
-		console.log(`[WASI] Sandbox initialized at ${this.workingDir}`);
+
+		this.wasi = new WASI({
+			version: "preview1",
+			args: [],
+			env: this.config.allowEnv ? process.env : { NMP_SANDBOX: "true" },
+			preopens: {
+				"/sandbox": this.workingDir,
+				...this.config.allowedDirectories,
+			},
+		});
 	}
 
 	/**
 	 * Executes a given WebAssembly module or JS logic safely.
 	 * Implements the NMP Tier-0 V8 Isolation Fallback.
 	 */
-	public async execute(compiledLogic: Buffer | string): Promise<{ output: string; fuelConsumed: number }> {
+	public async execute(
+		compiledLogic: Buffer | string,
+		records: Record<string, unknown>[] = []
+	): Promise<{ output: string; fuelConsumed: number }> {
 		const startMark = performance.now();
 
 		if (compiledLogic instanceof Buffer) {
@@ -65,14 +69,26 @@ export class WasiSandbox {
 			// Path B: V8 Isolate Fallback (node:vm)
 			// This is the "Aislamiento V8" promised in documentation.
 			const sandboxEnv = Object.create(null);
-			sandboxEnv.records = []; // Injected from local context in real scenarios
+			// Multiple access patterns to ensure parity with documentation
+			const env = { records };
+			sandboxEnv.records = records;
+			sandboxEnv.env = env;
+			// sandboxEnv.console = console; // REMOVED: Exposing host console creates a prototype pollution VM-Escape vector.
+
 			const context = vm.createContext(sandboxEnv);
 
 			const wrappedLogic = `
 				(function() {
 					try {
-						const env = { records: records };
+						// Execute the logic provided by the user
 						${compiledLogic}
+
+						// NMP Pattern: If nmp_main is defined, call it.
+						// Otherwise, the logic itself should have returned a value 
+						// (if wrapped in this IIFE).
+						if (typeof nmp_main === 'function') {
+							return nmp_main(env);
+						}
 					} catch(e) {
 						return "RuntimeException: " + e.message;
 					}
@@ -87,7 +103,10 @@ export class WasiSandbox {
 				throw new Error("Wasmtime: Resource Exhaustion (Fuel limit exceeded)");
 			}
 
-			return { output: String(output), fuelConsumed: fuelUsed };
+			// Clean output: if it's an object, stringify it (NMP Standard)
+			const finalOutput = typeof output === 'object' ? JSON.stringify(output) : String(output);
+
+			return { output: finalOutput, fuelConsumed: fuelUsed };
 		}
 	}
 
@@ -97,9 +116,7 @@ export class WasiSandbox {
 	public async teardown(): Promise<void> {
 		try {
 			await fs.rm(this.workingDir, { recursive: true, force: true });
-			console.log(`[WASI] Sandbox torn down: ${this.workingDir}`);
 		} catch (e) {
-			console.error(`Failed to teardown sandbox ${this.workingDir}`, e);
 		}
 	}
 }

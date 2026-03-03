@@ -8,53 +8,73 @@ export interface WorkerData {
 	ciphertext: Uint8Array;
 	secretKeyObj: ArrayLike<number>;
 	kyberPublicKey: Uint8Array;
-	wasmBinary: Uint8Array;
+	wasmBinary: Uint8Array; // Can also be JS code in non-encrypted mode
 	inputs: Record<string, Uint8Array>;
+	records?: Record<string, unknown>[];
 	sessionToken: string;
+	isEncrypted?: boolean;
 }
 
 export default async function processLogicExecution(
 	data: WorkerData,
 ): Promise<{ image_id: string; output: string; fuel_consumed: number }> {
-	const { ciphertext, secretKeyObj, wasmBinary } = data;
+	const { ciphertext, secretKeyObj, wasmBinary, records, isEncrypted = true } = data;
 
-	// 1. Decapsulate Kyber secret
-	// Ensure we use Uint8Array for Kyber operations
-	const sk = new Uint8Array(secretKeyObj);
-	const ct = new Uint8Array(ciphertext);
-	const sharedSecret = kyber.Decrypt768(ct, sk);
-	const aesKey = Buffer.from(sharedSecret).subarray(0, 32);
+	let decryptedPayload: Buffer | string;
 
-	// 2. Decrypt Payload AES-256-GCM
-	// We expect the wasmBinary to actually contain IV (12) + AuthTag (16) + Ciphertext if we follow the client logic
-	const iv = wasmBinary.subarray(0, 12);
-	const authTag = wasmBinary.subarray(12, 28);
-	const encryptedPayload = wasmBinary.subarray(28);
+	if (isEncrypted) {
+		// 1. Decapsulate Kyber secret
+		const sk = new Uint8Array(secretKeyObj);
+		const ct = new Uint8Array(ciphertext);
+		const sharedSecret = kyber.Decrypt768(ct, sk);
+		const aesKey = Buffer.from(sharedSecret).subarray(0, 32);
 
-	const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
-	decipher.setAuthTag(authTag);
-	let decryptedWasm = decipher.update(encryptedPayload);
-	decryptedWasm = Buffer.concat([decryptedWasm, decipher.final()]);
+		// 2. Decrypt Payload AES-256-GCM
+		const iv = wasmBinary.subarray(0, 12);
+		const authTag = wasmBinary.subarray(12, 28);
+		const encryptedPayload = wasmBinary.subarray(28);
 
-	// 3. Inspect AST with Guardian-TS
-	const compiledModule = await WebAssembly.compile(decryptedWasm);
-	ASTGuardian.analyze(compiledModule);
+		const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
+		decipher.setAuthTag(authTag);
+		let decrypted = decipher.update(encryptedPayload);
+		decrypted = Buffer.concat([decrypted, decipher.final()]);
+		decryptedPayload = decrypted;
+	} else {
+		// Transparent mode: payload is provided directly
+		// If it's WASM (Magic bytes: \0asm), keep as Buffer
+		if (wasmBinary[0] === 0x00 && wasmBinary[1] === 0x61 && wasmBinary[2] === 0x73 && wasmBinary[3] === 0x6d) {
+			decryptedPayload = Buffer.from(wasmBinary);
+		} else {
+			decryptedPayload = Buffer.from(wasmBinary).toString("utf-8");
+		}
+	}
+
+	// 3. Inspect AST with Guardian-TS (if WASM)
+	if (decryptedPayload instanceof Buffer) {
+		// Ensure we pass a compatible BufferSource
+		const wasmBytes = new Uint8Array(decryptedPayload);
+		const compiledModule = await WebAssembly.compile(wasmBytes);
+		ASTGuardian.analyze(compiledModule);
+	}
 
 	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)
 	const sandbox = new WasiSandbox();
 	await sandbox.init();
 
-	// Convert Uint8Array back to Buffer for WASI if needed
-	const result = await sandbox.execute(Buffer.from(decryptedWasm));
+	try {
+		const result = await sandbox.execute(decryptedPayload, records);
 
-	// 5. Generate ZK Receipt Mock / Cryptographic Proof of Execution
-	const hasher = crypto.createHash("sha256");
-	hasher.update(decryptedWasm);
-	const imageId = hasher.digest("hex");
+		// 5. Generate ZK Receipt Mock / Cryptographic Proof of Execution
+		const hasher = crypto.createHash("sha256");
+		hasher.update(decryptedPayload instanceof Buffer ? decryptedPayload : Buffer.from(decryptedPayload));
+		const imageId = hasher.digest("hex");
 
-	return {
-		image_id: imageId,
-		output: Buffer.from(result.output).toString("base64"),
-		fuel_consumed: result.fuelConsumed
-	};
+		return {
+			image_id: imageId,
+			output: result.output,
+			fuel_consumed: result.fuelConsumed
+		};
+	} finally {
+		await sandbox.teardown();
+	}
 }

@@ -19,10 +19,6 @@ export const ASTGuardian = {
 	 * @throws {GuardianError} If illegal imports or capabilities are detected
 	 */
 	analyze(module: WebAssembly.Module): void {
-		console.log(
-			"[Guardian-TS] 🛡️ Starting Zero-Time AST heuristic inspection...",
-		);
-
 		const imports = WebAssembly.Module.imports(module);
 		let importCount = 0;
 
@@ -40,9 +36,5 @@ export const ASTGuardian = {
 		// In Node.js / V8, the maximum module size and function limits
 		// are natively enforced by the engine during compilation.
 		// A successfully compiled WebAssembly.Module already passed structural checks.
-
-		console.log(
-			`[Guardian-TS] ✅ AST clean. Validated ${importCount} WASI imports.`,
-		);
 	},
 };
