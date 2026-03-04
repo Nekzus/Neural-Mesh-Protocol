@@ -116,7 +116,19 @@ server.dataDictionary({
 });
 ```
 
-El motor de **Sincronización Reactiva** del SDK inyectará automáticamente este esquema en el prompt del Agente y en las descripciones de las herramientas, forzando una política de **Adherencia Estricta al Esquema**.
+El motor de **Sincronización Reactiva** del SDK inyectará automáticamente este esquema directamente en el **System Prompt** maestro (`nmp_blind_analyst`). Al detallar explícitamente los campos disponibles, NMP fuerza a la IA a adoptar una política de **Adherencia Estricta al Esquema**, reduciendo drásticamente los riesgos de alucinación durante la generación del código.
+
+### Inyección de Datos en el Sandbox
+Mientras que `dataDictionary` le enseña al *Agente* cómo se ven los datos, debes inyectar los datos reales dentro del *Sandbox de Ejecución* para que la lógica WASM/JS pueda procesarlos.
+
+Utiliza el método `setSandboxData` para cargar tu contexto (ej., desde una base de datos o archivo JSON) en la memoria del servidor:
+
+```typescript
+const records = await db.fetchPatients();
+server.setSandboxData(records); // Expuesto como 'env' dentro del Sandbox
+```
+
+Esto garantiza una estricta separación de responsabilidades: El Esquema se envía a la IA, pero los Datos Crudos permanecen atrapados criptográficamente dentro del Nodo de ejecución.
 
 ### Claves Prohibidas (PII Forbidden Keys)
 Es posible restringir dinámicamente campos específicos para que nunca abandonen el servidor, independientemente de la intención de la lógica. Pase el array `forbiddenKeys` durante la instanciación del servidor:

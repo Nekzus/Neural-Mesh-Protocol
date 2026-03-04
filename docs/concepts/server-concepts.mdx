@@ -115,7 +115,19 @@ server.dataDictionary({
 });
 ```
 
-The SDK's **Reactive Sync** engine will automatically inject this schema into the Agent's prompt and tool descriptions, enforcing a **Strict Schema Adherence** policy.
+The SDK's **Reactive Sync** engine will automatically inject this schema directly into the `nmp_blind_analyst` **System Prompt**. By explicitly detailing the available fields, NMP forces the LLM to adopt a **Strict Schema Adherence** policy, drastically reducing hallucination risks during logic generation.
+
+### Sandbox Data Injection
+While `dataDictionary` teaches the *Agent* what the data looks like, you must actually inject the real data into the *Execution Sandbox* for the WASM/JS logic to process.
+
+Use the `setSandboxData` method to load your context (e.g., from a database or JSON file) into the server's memory:
+
+```typescript
+const records = await db.fetchPatients();
+server.setSandboxData(records); // Exposed as 'env.records' inside the Sandbox
+```
+
+This guarantees a strict separation of concerns: The Schema goes to the AI, but the Raw Data stays cryptographically trapped inside the execution Node.
 
 ### PII Forbidden Keys
 You can dynamically restrict specific fields from ever leaving the server, regardless of the logic's intent. Pass the `forbiddenKeys` array during server instantiation:
