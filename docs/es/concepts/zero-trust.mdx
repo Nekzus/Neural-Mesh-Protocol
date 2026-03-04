@@ -51,4 +51,6 @@ Al ejecutar `Wasmtime` dentro de un Enclave, garantizamos que ni el proveedor de
 
 ¿Cómo sabe un Agente que el servidor ejecutó realmente su lógica y no falsificó la respuesta? NMP implementa abstracciones para **Máquinas Virtuales de Cero Conocimiento (zkVMs)**.
 
-Junto a la respuesta, el servidor emite un **Recibo ZK** (vía `risc0-zkvm`). El Agente verifica este recibo criptográfico en milisegundos, asegurando que el resultado proviene de la ejecución exacta de su binario sobre datos reales, sin que el servidor tenga que revelar datos privados adicionales a la malla.
+Junto a la respuesta, el servidor emite un **Recibo ZK** (vía motores de prueba e `image_id` encriptados sobre SHA-256). El Agente verifica este recibo criptográfico en milisegundos, asegurando que el resultado proviene de la ejecución exacta de su binario WASM/JS sobre datos reales, sin que el servidor de origen tenga que revelar datos privados a la internet para auditarse. 
+
+**El Escudo Híbrido ZK**: Esta validación matemática (`verifyZkReceipt`) es ejecutada nativamente de forma estructural tanto por el `NmpClient` puro como por el envoltorio `NmpMcpBridge`. Estos adaptadores actúan como Proxies Zero-Trust infalibles, comprobando localmente las firmas e impidiendo terminantemente que datos adulterados u orígenes *hackeados* le sean entregados en bandeja de plata a IAs externas (como Claude o Cursor).

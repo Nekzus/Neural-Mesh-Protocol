@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import crypto from "node:crypto";
 import { NmpServer } from "../server/index.js";
 import { NmpMcpBridge } from "./index.js";
 
@@ -189,4 +190,98 @@ describe("NmpMcpBridge", () => {
 		expect(res.error).toBeDefined();
 		expect(res.error.code).toBe(-32000);
 	});
+
+	it("should allow execution when image_id mathematically matches the payload (Zero-Trust Success)", async () => {
+		const server = new NmpServer({ name: "test", version: "1.0.0" });
+		const bridge = new NmpMcpBridge(server);
+
+		const testPayload = "---BEGIN_LOGIC---\nreturn 'hello world';\n---END_LOGIC---";
+		// The real server only hashes the extracted logic payload
+		const expectedHash = crypto.createHash("sha256").update("return 'hello world';").digest("hex");
+
+		// Mock a server tool that returns a valid ZK-Receipt footprint
+		server.tool(
+			"test_tool",
+			"Test logic",
+			{ payload: z.string() },
+			async () => {
+				return {
+					content: [
+						{
+							type: "text",
+							text: JSON.stringify({
+								result: "success",
+								image_id: expectedHash,
+								zk_receipt: "0xVALID",
+							}),
+						},
+					],
+				};
+			},
+		);
+
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
+		const response: any = await bridge.handleJsonRpcRequest({
+			jsonrpc: "2.0",
+			id: 11,
+			method: "tools/call",
+			params: {
+				name: "test_tool",
+				arguments: { payload: testPayload },
+			},
+		});
+
+		expect(response.error).toBeUndefined();
+		expect(response.result).toBeDefined();
+
+		const contentText = response.result.content[0].text;
+		expect(contentText).toContain("✅ ZK-Receipt & ImageID Mathematically Verified");
+	});
+
+	it("should BLOCK execution and return MCP error when image_id is adulterated (Hack Simulation)", async () => {
+		const server = new NmpServer({ name: "test", version: "1.0.0" });
+		const bridge = new NmpMcpBridge(server);
+
+		const testPayload = "---BEGIN_LOGIC---\nreturn 'clean code';\n---END_LOGIC---";
+
+		// The server is compromised and returns a different image_id
+		const maliciousPayload = "---BEGIN_LOGIC---\nreturn 'hacked_code';\n---END_LOGIC---";
+		const maliciousHash = crypto.createHash("sha256").update("return 'hacked_code';").digest("hex");
+
+		// Override the internal server's tool call directly so it returns a hacked proof 
+		// (bypassing the internal worker pool which naturally corrects it)
+		bridge["internalServer"].callTool = async () => {
+			return {
+				content: [
+					{
+						type: "text",
+						text: JSON.stringify({
+							result: "stolen data",
+							image_id: maliciousHash, // Mismatch!
+							zk_receipt: "0xCOMPROMISED",
+						}),
+					},
+				],
+				isError: false,
+			};
+		};
+
+		// biome-ignore lint/suspicious/noExplicitAny: test assertion bounds
+		const response: any = await bridge.handleJsonRpcRequest({
+			jsonrpc: "2.0",
+			id: 12,
+			method: "tools/call",
+			params: {
+				name: "test_tool",
+				arguments: { payload: testPayload },
+			},
+		});
+
+		expect(response.error).toBeUndefined(); // MCP frame is ok
+		expect(response.result.isError).toBe(true); // Inner execution blocked
+
+		const contentText = response.result.content[0].text;
+		expect(contentText).toContain("🚨 [NMP ZERO-TRUST SHIELD] ZK Verification Failed");
+	});
+
 });

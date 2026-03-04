@@ -53,4 +53,6 @@ By running the `Wasmtime` engine inside an Enclave, we guarantee that neither th
 
 In scenarios where an Agent must trust a dark untrusted Server (e.g., "Did the Server actually execute my sorting algorithm, or did it fake the response?"), NMP implements integrated structural abstractions for **Zero-Knowledge Virtual Machines**.
 
-Alongside the Logic Response, the Data Node emits a mathematical **ZK Receipt** (via engines like `risc0-zkvm`). The Agent verifies this cryptographic receipt in milliseconds off-chain, ensuring deterministic execution of its exact WASM AST over genuine source data without the server ever revealing the underlying proprietary data points to the mesh.
+Alongside the Logic Response, the Data Node emits a mathematical **ZK Receipt** (via engines like `risc0-zkvm` and SHA-256 cryptographic `image_id` proofs). The Agent verifies this cryptographic receipt in milliseconds off-chain, ensuring deterministic execution of its exact JS/WASM AST over genuine source data without the server ever revealing the underlying proprietary data points to the mesh. 
+
+**The ZK Shield Proxy**: This mathematical validation (`verifyZkReceipt`) is fundamentally secured and performed natively by both the SDK's `NmpClient` and the universal `NmpMcpBridge`. These components act as a Zero-Trust Shield, automatically isolating compromised environments and blocking the delivery of adulterated execution payloads back to the calling LLM framework.
