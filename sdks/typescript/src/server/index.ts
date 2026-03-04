@@ -135,7 +135,7 @@ export class NmpServer {
 		if (shape.payload && shape.payload instanceof z.ZodString) {
 			const blockedKeys = this.config?.security?.forbiddenKeys || [];
 
-			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.`;
+			finalDescription += `\n\nIMPORTANT FORMAT REQUIREMENTS:\nThe payload string MUST encapsulate valid executable JavaScript code between strict boundaries:\n\n---BEGIN_LOGIC---\n// Your JS code here. The runtime exposes 'env.records' array.\n// EXTREMELY IMPORTANT 1: You MUST use the 'return' statement at the end of your logic to output the final data, otherwise the result will be undefined.\n// EXTREMELY IMPORTANT 2 (DYNAMIC RETURN STRUCTURE): You MUST format your JSON output keys in the EXACT SAME LANGUAGE as the user's initial prompt/query (i.e. if asked in Spanish, use Spanish keys like 'promedio').`;
 
 			if (blockedKeys.length > 0) {
 				finalDescription += `\n// SECURITY RESTRICTION: Do NOT include any of the following fields in your returned objects to prevent PII leaks: ${blockedKeys.join(", ")}`;
@@ -360,7 +360,8 @@ CRITICAL RULES:
 // your javascript here
 ---END_LOGIC---
 4. The runtime provides a global 'env.records' array with the target data. Ensure your logic iterates over this safely.
-5. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${
+5. DYNAMIC RETURN STRUCTURE: You MUST format your JSON output keys in the EXACT SAME LANGUAGE as the user's initial prompt/query. If the user asks in Spanish, use Spanish keys (e.g., 'cantidad', 'promedio'). Do not default to English keys unless requested in English.
+6. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${
 									this.activeSchema
 										? `\n\nCURRENT DATA SCHEMA:\n${JSON.stringify(this.activeSchema, null, 2)}`
 										: ""
