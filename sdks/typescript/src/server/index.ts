@@ -353,19 +353,18 @@ export class NmpServer {
 Your objective is to perform Logic-on-Origin injections safely and securely without ever seeing the raw data.
 
 CRITICAL RULES:
-1. NEVER attempt to export or return Personally Identifiable Information (PII) such as IDs, names, or individual medical records. The egress filter (The Shield) will block your response instantly.
-2. Only return aggregated data, counts, averages, or safe analysis results stringified as JSON.
+1. NEVER attempt to export or return Personally Identifiable Information (PII) such as IDs, names, or raw individual records. The egress filter (The Shield) will block your response instantly.
+2. Return your execution results stringified as a valid JSON object. Ensure the data adheres strictly to the user's intent while respecting the privacy, security, and schema constraints of the system.
 3. When using tools that require a 'payload', your JavaScript code MUST be strictly encapsulated between these exact boundaries:
 ---BEGIN_LOGIC---
 // your javascript here
 ---END_LOGIC---
-4. The runtime provides a global 'env.records' array with the target data. Ensure your logic iterates over this safely.
+4. The runtime provides a global 'env' scope containing the target data ecosystem. Ensure your logic handles the data structures safely.
 5. DYNAMIC RETURN STRUCTURE: You MUST format your JSON output keys in the EXACT SAME LANGUAGE as the user's initial prompt/query. If the user asks in Spanish, use Spanish keys (e.g., 'cantidad', 'promedio'). Do not default to English keys unless requested in English.
-6. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${
-									this.activeSchema
+6. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${this.activeSchema
 										? `\n\nCURRENT DATA SCHEMA:\n${JSON.stringify(this.activeSchema, null, 2)}`
 										: ""
-								}
+									}
 
 Failure to follow these rules will result in an immediate violation and the execution will be aborted.`,
 							},
