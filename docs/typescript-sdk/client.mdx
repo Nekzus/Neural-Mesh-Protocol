@@ -7,9 +7,9 @@ The `NmpClient` class is the orchestrator for Agent Nodes. It connects your Node
 
 Unlike traditional REST clients that just `<fetch>` static JSON endpoints, an `NmpClient` literally pushes its logic functions across the internet to be executed natively at the server.
 
-## Initialization
+## Initialization and Configuration
 
-Connecting to the Mesh requires instantiating the client with identifying metadata. This metadata is announced to the DHT.
+Connecting to the Mesh requires instantiating the client with identification metadata and security properties.
 
 ```typescript
 import { NmpClient } from "@nekzus/neural-mesh";
@@ -20,7 +20,7 @@ const client = new NmpClient(
     version: "1.0.0",
   },
   {
-    // Enable features like Post-Quantum Handshakes
+    // Enable Post-Quantum Handshakes and core routing
     capabilities: {
       roots: { listChanged: true },
       quantumResistant: true 
@@ -28,6 +28,13 @@ const client = new NmpClient(
   }
 );
 ```
+
+### Configuration Options
+
+When creating an `NmpClient`, the second argument configures its network footprint:
+
+*   **`capabilities.roots`**: Declares if this agent supports specific protocol standards (like root hierarchy changes notifications).
+*   **`capabilities.quantumResistant`**: Forces the client to enforce Post-Quantum Handshakes (`Kyber768`) and symmetric encryption (`AES-256-GCM`) when dispatching WASM binaries to remote Data Nodes, guaranteeing maximum security against quantum decryption algorithms.
 
 ## Connecting to the Mesh
 

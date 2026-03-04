@@ -131,3 +131,10 @@ const server = new NmpServer({
 
 El **Filtro de Egreso O(1)** utilizará un `Set` de memoria de alto rendimiento para escanear cada objeto devuelto y bloquear cualquier clave que coincida con estos términos, incluso si están anidados profundamente en una estructura JSON.
 
+### Estructura Dinámica de Retorno (Auto-i18n Nativo)
+NMP introduce un patrón arquitectónico donde la fricción por traducción transfronteriza no existe.
+
+Cuando un Nodo de Datos registra sus capacidades, este incrusta intrínsecamente una directiva estructural dentro de la definición del payload (`DYNAMIC RETURN STRUCTURE`). Esto obliga al agente ejecutor a generar en su salida esquemas JSON que utilizan llaves mapeadas matemáticamente al **idioma exacto hablado por el usuario en el prompt inicial.**
+
+*   Si el usuario consulta *"¿Cuántos pacientes tienen hipertensión?"*, el Nodo recibe naturalmente una respuesta que coincide con una taxonomía nativa en Español (ej., `{"cantidad": 25, "edad_promedio": 45}`).
+*   Esto elimina por completo la necesidad de importar librerías pesadas de internacionalización (i18n) en arquitecturas web o frontend, dejando la responsabilidad de parseo y localización de datos directamente en el Origen de forma segura y libre de alucinaciones.

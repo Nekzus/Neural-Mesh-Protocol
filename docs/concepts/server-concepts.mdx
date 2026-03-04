@@ -130,3 +130,10 @@ const server = new NmpServer({
 
 The **O(1) Egress Filter** will use a high-performance memory `Set` to scan every return object and block any key matching these terms, even if they are nested deep within a JSON structure.
 
+### Dynamic Return Structure (Native Auto-i18n)
+NMP introduces an architectural pattern where cross-border language translation friction is non-existent.
+
+When a Data Node registers its capabilities, it intrinsically embeds a structural directive into the payload definition (`DYNAMIC RETURN STRUCTURE`). This forces the executing agent to output JSON schemas using keys mathematically mapped to the **exact language spoken by the user on the initial prompt.**
+
+*   If the user queries *"¿Cuántos pacientes tienen hipertensión?"*, the Node naturally receives a response matching native Spanish taxonomy (e.g., `{"cantidad": 25, "edad_promedio": 45}`).
+*   This entirely eliminates the need for heavyweight frontend internationalization (i18n) libraries, dropping the cognitive load of data parsing right at the Origin without hallucination risks.

@@ -7,20 +7,37 @@ The `NmpServer` class is the heart of the Data Node. It represents the host infr
 
 Instead of writing custom execution environments to manage WebAssembly, isolation, and networking, you define straightforward JavaScript/TypeScript functions. The SDK abstracts the complex sandboxing automatically.
 
-## Initialization
+## Initialization and Configuration
 
-You create a Data Node by telling the Mesh who you are and providing transport properties.
+You create a Data Node by telling the Mesh who you are and providing configuration properties, such as data security controls.
 
 ```typescript
-import { NmpServer } from "@nekzus/neural-mesh";
+import { NmpServer, PII_PATTERNS } from "@nekzus/neural-mesh";
 
-const server = new NmpServer({
-  name: "EnterpriseDatabaseNode",
-  version: "3.2.0",
-  // Scales decryption & WASI sandboxing across all CPU cores instantly
-  workerPool: { enabled: true, maxThreads: 16 }
-});
+const server = new NmpServer(
+  {
+    name: "EnterpriseDatabaseNode",
+    version: "3.2.0",
+  },
+  {
+    // Scales decryption & WASI sandboxing across all CPU cores instantly
+    workerPool: { enabled: true, maxThreads: 16 },
+    // Strict security configuration and data leak prevention
+    security: {
+      piiPatterns: [PII_PATTERNS.EMAIL, PII_PATTERNS.IP_ADDRESS],
+      forbiddenKeys: ["password", "ssn", "secret_token"]
+    }
+  }
+);
 ```
+
+### Configuration Options
+
+When instantiating an `NmpServer`, the second parameter allows you to define advanced characteristics of the node:
+
+*   **`security.forbiddenKeys` (Egress Filter):** An array of strings. If the model attempts to return a JSON containing any of these keys (e.g., `"password"`), the Egress Filter will destroy the response before it leaves the server.
+*   **`security.piiPatterns` (Sanitization):** Predefined (`PII_PATTERNS`) or custom Regular Expressions that scrutinize text substrings. If an agent attempts to exfiltrate an email in a free text block, the engine intercepts it.
+*   **Dynamic Return Structure (Auto-i18n):** No manual configuration required. The `NmpServer` automatically injects *Dynamic Return Structure* directives into payloads. This forces the AI to respect and return JSON keys exactly in the same native language the client used when making the request, eliminating the need for internationalization (i18n) libraries on your frontend.
 
 ## Creating Capabilities (Tools)
 

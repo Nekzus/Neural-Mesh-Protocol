@@ -7,9 +7,9 @@ La clase `NmpClient` es el orquestador para los Nodos Agentes. Conecta tu aplica
 
 A diferencia de los clientes REST tradicionales que solo hacen un `<fetch>` a endpoints JSON estáticos, un `NmpClient` literalmente empuja sus funciones de lógica a través de internet para ser ejecutadas de manera nativa en el servidor.
 
-## Inicialización
+## Inicialización y Configuración
 
-Conectarse a la Malla requiere instanciar el cliente con metadatos de identificación. Estos metadatos se anuncian a la DHT.
+Conectarse a la Malla requiere instanciar el cliente con metadatos de identificación y propiedades de seguridad.
 
 ```typescript
 import { NmpClient } from "@nekzus/neural-mesh";
@@ -20,7 +20,7 @@ const client = new NmpClient(
     version: "1.0.0",
   },
   {
-    // Habilitar características como Handshakes Post-Cuánticos
+    // Habilitar enrutamiento núcleo y Handshakes Post-Cuánticos
     capabilities: {
       roots: { listChanged: true },
       quantumResistant: true 
@@ -28,6 +28,13 @@ const client = new NmpClient(
   }
 );
 ```
+
+### Opciones de Configuración
+
+Al crear un `NmpClient`, el segundo argumento configura su presencia en la red:
+
+*   **`capabilities.roots`**: Declara si este agente soporta estándares del protocolo (como notificaciones de cambios en la jerarquía).
+*   **`capabilities.quantumResistant`**: Obliga al cliente a forzar Handshakes Post-Cuánticos (`Kyber768`) y encriptación simétrica (`AES-256-GCM`) al despachar binarios WASM hacia los Nodos de Datos remotos, garantizando máxima seguridad contra algoritmos de descifrado cuántico.
 
 ## Conexión a la Malla (Mesh)
 

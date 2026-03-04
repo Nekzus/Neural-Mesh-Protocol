@@ -7,20 +7,37 @@ La clase `NmpServer` es el corazón del Nodo de Datos. Representa la infraestruc
 
 En lugar de escribir entornos de ejecución personalizados para gestionar WebAssembly, aislamiento y redes, tú defines funciones sencillas en JavaScript/TypeScript. El SDK abstrae el complejo sandboxing automáticamente.
 
-## Inicialización
+## Inicialización y Configuración
 
-Creas un Nodo de Datos indicándole a la Malla quién eres y proporcionando las propiedades de transporte.
+Creas un Nodo de Datos indicándole a la Malla quién eres y proporcionando las propiedades de configuración, como controles de seguridad de datos.
 
 ```typescript
-import { NmpServer } from "@nekzus/neural-mesh";
+import { NmpServer, PII_PATTERNS } from "@nekzus/neural-mesh";
 
-const server = new NmpServer({
-  name: "EnterpriseDatabaseNode",
-  version: "3.2.0",
-  // Escala el descifrado y el sandboxing WASI a través de todos los núcleos de CPU al instante
-  workerPool: { enabled: true, maxThreads: 16 }
-});
+const server = new NmpServer(
+  {
+    name: "EnterpriseDatabaseNode",
+    version: "3.2.0",
+  },
+  {
+    // Escala el descifrado y el sandboxing WASI a través de todos los núcleos de CPU
+    workerPool: { enabled: true, maxThreads: 16 },
+    // Configuración estricta de seguridad y prevención de fugas de datos
+    security: {
+      piiPatterns: [PII_PATTERNS.EMAIL, PII_PATTERNS.IP_ADDRESS],
+      forbiddenKeys: ["password", "ssn", "secret_token"]
+    }
+  }
+);
 ```
+
+### Opciones de Configuración
+
+Al instanciar un `NmpServer`, el segundo parámetro permite definir características avanzadas del nodo:
+
+*   **`security.forbiddenKeys` (Egress Filter):** Un array de strings. Si el modelo intenta devolver un JSON que contiene cualquiera de estas llaves (ej., `"password"`), el Egress Filter destruirá la respuesta antes de que abandone el servidor.
+*   **`security.piiPatterns` (Sanitización):** Expresiones regulares predefinidas (`PII_PATTERNS`) o personalizadas que escudriñan sub-cadenas de texto. Si un agente intenta filtrar un email en un bloque de texto libre, el motor lo intercepta.
+*   **Estructura Dinámica de Retorno (Auto-i18n):** No requiere configuración manual. El `NmpServer` inyecta automáticamente directivas *Dynamic Return Structure* en los payloads. Esto obliga a la IA a respetar y devolver las llaves JSON exactamente en el mismo idioma nativo que utilizó el cliente al hacer la solicitud, eliminando la necesidad de librerías de internacionalización (i18n) en tu frontend.
 
 ## Creando Capacidades (Tools)
 
