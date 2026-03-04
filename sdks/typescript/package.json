@@ -16,7 +16,7 @@
 		"./bridge": "./src/bridge/index.ts"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.build.json",
 		"test": "vitest run",
 		"test:all": "vitest run",
 		"test:integration": "vitest run tests/integration",

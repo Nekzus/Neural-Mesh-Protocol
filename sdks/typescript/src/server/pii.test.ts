@@ -87,13 +87,13 @@ describe("PiiScanner (The Shield V2 - Military Grade)", () => {
 
 		// The vulnerability: if the agent manually stringifies the output, the double quotes are escaped.
 		// A naïve scanner would look for exactly '"id":' and miss it.
-		const maliciousPayload = "{\"total_records\": 12, \"data\": [{\"id\":\"P001\"}]}";
+		const maliciousPayload = '{"total_records": 12, "data": [{"id":"P001"}]}';
 
 		// With Deep-Parsing Recursion, it should successfully unescape the payload and find the forbidden key 'id'
 		expect(strictScanner.scan(maliciousPayload)).toBe("Forbidden Key: id");
 
 		// Also check that stringified arrays work
-		const maliciousArray = "[{\"id\":\"P002\"}]";
+		const maliciousArray = '[{"id":"P002"}]';
 		expect(strictScanner.scan(maliciousArray)).toBe("Forbidden Key: id");
 	});
 });

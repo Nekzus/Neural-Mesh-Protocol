@@ -22,7 +22,7 @@ export class NmpServer {
 	constructor(
 		private serverInfo: { name: string; version: string },
 		_config?: { meshPort?: number; targetDid?: string },
-	) { }
+	) {}
 
 	/**
 	 * Defines a tool. Exactly the same DX as MCP v1.x.x.

@@ -18,7 +18,13 @@ export interface WorkerData {
 export default async function processLogicExecution(
 	data: WorkerData,
 ): Promise<{ image_id: string; output: string; fuel_consumed: number }> {
-	const { ciphertext, secretKeyObj, wasmBinary, records, isEncrypted = true } = data;
+	const {
+		ciphertext,
+		secretKeyObj,
+		wasmBinary,
+		records,
+		isEncrypted = true,
+	} = data;
 
 	let decryptedPayload: Buffer | string;
 
@@ -42,7 +48,12 @@ export default async function processLogicExecution(
 	} else {
 		// Transparent mode: payload is provided directly
 		// If it's WASM (Magic bytes: \0asm), keep as Buffer
-		if (wasmBinary[0] === 0x00 && wasmBinary[1] === 0x61 && wasmBinary[2] === 0x73 && wasmBinary[3] === 0x6d) {
+		if (
+			wasmBinary[0] === 0x00 &&
+			wasmBinary[1] === 0x61 &&
+			wasmBinary[2] === 0x73 &&
+			wasmBinary[3] === 0x6d
+		) {
 			decryptedPayload = Buffer.from(wasmBinary);
 		} else {
 			decryptedPayload = Buffer.from(wasmBinary).toString("utf-8");
@@ -50,7 +61,11 @@ export default async function processLogicExecution(
 	}
 
 	// 3. Inspect AST with Guardian-TS (if WASM)
-	const isWasm = decryptedPayload[0] === 0x00 && decryptedPayload[1] === 0x61 && decryptedPayload[2] === 0x73 && decryptedPayload[3] === 0x6d;
+	const isWasm =
+		decryptedPayload[0] === 0x00 &&
+		decryptedPayload[1] === 0x61 &&
+		decryptedPayload[2] === 0x73 &&
+		decryptedPayload[3] === 0x6d;
 
 	if (decryptedPayload instanceof Buffer && isWasm) {
 		// Ensure we pass a compatible BufferSource
@@ -70,13 +85,17 @@ export default async function processLogicExecution(
 
 		// 5. Generate ZK Receipt Mock / Cryptographic Proof of Execution
 		const hasher = crypto.createHash("sha256");
-		hasher.update(decryptedPayload instanceof Buffer ? decryptedPayload : Buffer.from(decryptedPayload));
+		hasher.update(
+			decryptedPayload instanceof Buffer
+				? decryptedPayload
+				: Buffer.from(decryptedPayload),
+		);
 		const imageId = hasher.digest("hex");
 
 		return {
 			image_id: imageId,
 			output: result.output,
-			fuel_consumed: result.fuelConsumed
+			fuel_consumed: result.fuelConsumed,
 		};
 	} finally {
 		await sandbox.teardown();

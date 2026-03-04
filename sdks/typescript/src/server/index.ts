@@ -85,7 +85,7 @@ export class NmpServer {
 				);
 				// Check for existence or just use tsx resolving
 				execArgv = ["--import", "tsx"];
-				// To be extremely safe, we could use the absolute path, 
+				// To be extremely safe, we could use the absolute path,
 				// but 'tsx' should be resolvable if we are running in TS mode.
 				// However, the error suggests it's NOT resolvable in the worker.
 				// Let's use the absolute path to the loader if possible.
@@ -102,7 +102,10 @@ export class NmpServer {
 		}
 
 		this.workerPool = new Piscina({
-			filename: path.resolve(__dirname, `../workers/logic-execution${workerExt}`),
+			filename: path.resolve(
+				__dirname,
+				`../workers/logic-execution${workerExt}`,
+			),
 			minThreads: 2,
 			maxThreads: 8,
 			execArgv,
@@ -223,7 +226,10 @@ export class NmpServer {
 					(args as Record<string, unknown>).payload = logicMatch[1].trim();
 
 					// DELEGATE TO WORKER POOL: Parallel PQC & Sandboxing
-					let result = await this.executeInWorkerPool(args, logicMatch[1].trim());
+					let result = await this.executeInWorkerPool(
+						args,
+						logicMatch[1].trim(),
+					);
 
 					// NMP Native Serialization: Ensure 'text' content is stringified if it's an object/array
 					if (result.content && Array.isArray(result.content)) {
@@ -354,10 +360,11 @@ CRITICAL RULES:
 // your javascript here
 ---END_LOGIC---
 4. The runtime provides a global 'env.records' array with the target data. Ensure your logic iterates over this safely.
-5. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${this.activeSchema
+5. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${
+									this.activeSchema
 										? `\n\nCURRENT DATA SCHEMA:\n${JSON.stringify(this.activeSchema, null, 2)}`
 										: ""
-									}
+								}
 
 Failure to follow these rules will result in an immediate violation and the execution will be aborted.`,
 							},
@@ -548,7 +555,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 	 */
 	private async executeInWorkerPool(
 		args: Record<string, unknown>,
-		rawPayload: string
+		rawPayload: string,
 	): Promise<CallToolResult> {
 		try {
 			// Transparent local execution without dynamic PQC
@@ -560,23 +567,25 @@ Failure to follow these rules will result in an immediate violation and the exec
 				inputs: {},
 				records: this.sandboxRecords,
 				sessionToken: "local-dev-token",
-				isEncrypted: false // Use plaintext for local Logic-on-Origin injection
+				isEncrypted: false, // Use plaintext for local Logic-on-Origin injection
 			});
 
 			return {
-				content: [{
-					type: "text",
-					text: JSON.stringify({
-						computation_result: workerResponse.output,
-						image_id: workerResponse.image_id,
-						status: "Worker Pool Execution Success"
-					})
-				}]
+				content: [
+					{
+						type: "text",
+						text: JSON.stringify({
+							computation_result: workerResponse.output,
+							image_id: workerResponse.image_id,
+							status: "Worker Pool Execution Success",
+						}),
+					},
+				],
 			};
 		} catch (error: any) {
 			return {
 				content: [{ type: "text", text: `WorkerPoolError: ${error.message}` }],
-				isError: true
+				isError: true,
 			};
 		}
 	}

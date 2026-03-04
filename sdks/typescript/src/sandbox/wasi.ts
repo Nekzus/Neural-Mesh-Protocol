@@ -2,8 +2,8 @@ import crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { WASI } from "node:wasi";
 import vm from "node:vm";
+import { WASI } from "node:wasi";
 import { ASTGuardian } from "./guardian.js";
 
 export interface SandboxConfig {
@@ -46,7 +46,7 @@ export class WasiSandbox {
 	 */
 	public async execute(
 		compiledLogic: Buffer | string,
-		records: Record<string, unknown>[] = []
+		records: Record<string, unknown>[] = [],
 	): Promise<{ output: string; fuelConsumed: number }> {
 		const startMark = performance.now();
 
@@ -61,7 +61,10 @@ export class WasiSandbox {
 				);
 				this.wasi.start(instance);
 				const duration = performance.now() - startMark;
-				return { output: "WASM_SUCCESS", fuelConsumed: Math.floor(duration * 1000) };
+				return {
+					output: "WASM_SUCCESS",
+					fuelConsumed: Math.floor(duration * 1000),
+				};
 			} catch (error: any) {
 				throw new Error(`WASM Execution failed: ${error.message}`);
 			}
@@ -104,7 +107,8 @@ export class WasiSandbox {
 			}
 
 			// Clean output: if it's an object, stringify it (NMP Standard)
-			const finalOutput = typeof output === 'object' ? JSON.stringify(output) : String(output);
+			const finalOutput =
+				typeof output === "object" ? JSON.stringify(output) : String(output);
 
 			return { output: finalOutput, fuelConsumed: fuelUsed };
 		}
@@ -116,7 +120,6 @@ export class WasiSandbox {
 	public async teardown(): Promise<void> {
 		try {
 			await fs.rm(this.workingDir, { recursive: true, force: true });
-		} catch (e) {
-		}
+		} catch (e) {}
 	}
 }
