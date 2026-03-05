@@ -47,6 +47,11 @@ target/
 Cargo.lock
 
 # -----------------
+# E2E Tests (WIP)
+# -----------------
+tests/e2e-npm/
+
+# -----------------
 # OS / IDEs
 # -----------------
 .DS_Store
