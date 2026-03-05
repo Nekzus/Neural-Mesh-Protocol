@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.1.1...v1.1.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* **sdk:** enable npm provenance with id-token permissions and restore dynamic badge ([dfd6300](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/dfd630084b837e1f2d4ca742dced16e69453424c))
+* **sdk:** final biome linting and formatting fixes for provenance release ([6887614](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/68876149972d70807d6c7b06c7b4763240065c67))
+
 ## [1.1.1](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.1.0...v1.1.1) (2026-03-05)
 
 
