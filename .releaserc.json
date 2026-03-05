@@ -4,10 +4,6 @@
         {
             "name": "main",
             "prerelease": "alpha"
-        },
-        {
-            "name": "feat/*",
-            "prerelease": "alpha"
         }
     ],
     "plugins": [
