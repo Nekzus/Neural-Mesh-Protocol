@@ -9,11 +9,26 @@
 		"README.md"
 	],
 	"exports": {
-		".": "./src/index.ts",
-		"./client": "./src/client/index.ts",
-		"./server": "./src/server/index.ts",
-		"./types": "./src/types.ts",
-		"./bridge": "./src/bridge/index.ts"
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./client": {
+			"types": "./dist/client/index.d.ts",
+			"default": "./dist/client/index.js"
+		},
+		"./server": {
+			"types": "./dist/server/index.d.ts",
+			"default": "./dist/server/index.js"
+		},
+		"./types": {
+			"types": "./dist/types.d.ts",
+			"default": "./dist/types.js"
+		},
+		"./bridge": {
+			"types": "./dist/bridge/index.d.ts",
+			"default": "./dist/bridge/index.js"
+		}
 	},
 	"scripts": {
 		"build": "tsc -p tsconfig.build.json",
