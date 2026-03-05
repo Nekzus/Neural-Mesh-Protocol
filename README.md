@@ -4,8 +4,6 @@
     <img alt="Neural Mesh Protocol Logo" src="https://res.cloudinary.com/dsvsl0b0b/image/upload/v1772730741/Neural-Mesh-Protocol/koych4jotjoldgo4ydpk.svg" width="700">
   </picture>
 <p align="center">
-  <a href="https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml"><img src="https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml/badge.svg?event=push" alt="Github Workflow"></a>
-  <a href="https://www.npmjs.com/package/@nekzus/neural-mesh"><img src="https://img.shields.io/npm/v/@nekzus/neural-mesh.svg" alt="npm version"></a>
   <a href="https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Nekzus/Neural-Mesh-Protocol.svg" alt="License"></a>
   <a href="https://nekzus-32.mintlify.app/"><img src="https://img.shields.io/badge/docs-mintlify-0D9373?style=flat" alt="Docs"></a>
   <a href="https://deepwiki.com/Nekzus/Neural-Mesh-Protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
