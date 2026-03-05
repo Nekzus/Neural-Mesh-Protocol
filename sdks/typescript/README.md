@@ -1,8 +1,5 @@
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="../../docs/logo/dark.svg">
-    <img alt="Neural Mesh Protocol Logo" src="../../docs/logo/light.svg" width="700">
-  </picture>
+  <img alt="Neural Mesh Protocol Logo" src="https://raw.githubusercontent.com/Nekzus/Neural-Mesh-Protocol/main/docs/logo/light.svg" width="700">
 </div>
 
 # Neural Mesh Protocol (NMP) - TypeScript SDK
