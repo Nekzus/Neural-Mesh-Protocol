@@ -79,7 +79,7 @@ export class NmpServer {
 		if (isTS) {
 			try {
 				const require = createRequire(import.meta.url);
-				const tsxPath = path.resolve(
+				const _tsxPath = path.resolve(
 					path.dirname(require.resolve("tsx/package.json")),
 					"dist/loader.mjs",
 				);
@@ -586,9 +586,15 @@ Failure to follow these rules will result in an immediate violation and the exec
 					},
 				],
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const e = error as Error;
 			return {
-				content: [{ type: "text", text: `WorkerPoolError: ${error.message}` }],
+				content: [
+					{
+						type: "text",
+						text: `WorkerPoolError: ${e.message || String(error)}`,
+					},
+				],
 				isError: true,
 			};
 		}
