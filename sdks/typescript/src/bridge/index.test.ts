@@ -1,6 +1,6 @@
+import crypto from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import crypto from "node:crypto";
 import { NmpServer } from "../server/index.js";
 import { NmpMcpBridge } from "./index.js";
 
@@ -195,9 +195,13 @@ describe("NmpMcpBridge", () => {
 		const server = new NmpServer({ name: "test", version: "1.0.0" });
 		const bridge = new NmpMcpBridge(server);
 
-		const testPayload = "---BEGIN_LOGIC---\nreturn 'hello world';\n---END_LOGIC---";
+		const testPayload =
+			"---BEGIN_LOGIC---\nreturn 'hello world';\n---END_LOGIC---";
 		// The real server only hashes the extracted logic payload
-		const expectedHash = crypto.createHash("sha256").update("return 'hello world';").digest("hex");
+		const expectedHash = crypto
+			.createHash("sha256")
+			.update("return 'hello world';")
+			.digest("hex");
 
 		// Mock a server tool that returns a valid ZK-Receipt footprint
 		server.tool(
@@ -235,20 +239,27 @@ describe("NmpMcpBridge", () => {
 		expect(response.result).toBeDefined();
 
 		const contentText = response.result.content[0].text;
-		expect(contentText).toContain("✅ ZK-Receipt & ImageID Mathematically Verified");
+		expect(contentText).toContain(
+			"✅ ZK-Receipt & ImageID Mathematically Verified",
+		);
 	});
 
 	it("should BLOCK execution and return MCP error when image_id is adulterated (Hack Simulation)", async () => {
 		const server = new NmpServer({ name: "test", version: "1.0.0" });
 		const bridge = new NmpMcpBridge(server);
 
-		const testPayload = "---BEGIN_LOGIC---\nreturn 'clean code';\n---END_LOGIC---";
+		const testPayload =
+			"---BEGIN_LOGIC---\nreturn 'clean code';\n---END_LOGIC---";
 
 		// The server is compromised and returns a different image_id
-		const maliciousPayload = "---BEGIN_LOGIC---\nreturn 'hacked_code';\n---END_LOGIC---";
-		const maliciousHash = crypto.createHash("sha256").update("return 'hacked_code';").digest("hex");
+		const maliciousPayload =
+			"---BEGIN_LOGIC---\nreturn 'hacked_code';\n---END_LOGIC---";
+		const maliciousHash = crypto
+			.createHash("sha256")
+			.update("return 'hacked_code';")
+			.digest("hex");
 
-		// Override the internal server's tool call directly so it returns a hacked proof 
+		// Override the internal server's tool call directly so it returns a hacked proof
 		// (bypassing the internal worker pool which naturally corrects it)
 		bridge["internalServer"].callTool = async () => {
 			return {
@@ -281,7 +292,8 @@ describe("NmpMcpBridge", () => {
 		expect(response.result.isError).toBe(true); // Inner execution blocked
 
 		const contentText = response.result.content[0].text;
-		expect(contentText).toContain("🚨 [NMP ZERO-TRUST SHIELD] ZK Verification Failed");
+		expect(contentText).toContain(
+			"🚨 [NMP ZERO-TRUST SHIELD] ZK Verification Failed",
+		);
 	});
-
 });

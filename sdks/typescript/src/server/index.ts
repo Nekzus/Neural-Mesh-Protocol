@@ -361,10 +361,11 @@ CRITICAL RULES:
 ---END_LOGIC---
 4. The runtime provides a global 'env' scope containing the target data ecosystem. Ensure your logic handles the data structures safely.
 5. DYNAMIC RETURN STRUCTURE: You MUST format your JSON output keys in the EXACT SAME LANGUAGE as the user's initial prompt/query. If the user asks in Spanish, use Spanish keys (e.g., 'cantidad', 'promedio'). Do not default to English keys unless requested in English.
-6. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${this.activeSchema
+6. STRICT SCHEMA ADHERENCE: Only use the fields explicitly defined in the provided 'Data Dictionary' or schema. Do NOT attempt to guess, fallback, or use fields not present in the schema (e.g., do not use 'gender' if it is not in the schema).${
+									this.activeSchema
 										? `\n\nCURRENT DATA SCHEMA:\n${JSON.stringify(this.activeSchema, null, 2)}`
 										: ""
-									}
+								}
 
 Failure to follow these rules will result in an immediate violation and the execution will be aborted.`,
 							},

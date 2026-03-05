@@ -66,9 +66,14 @@ export class NmpClient {
 
 		// Example cryptographic_proof from the remote server
 		const crypto = await import("node:crypto");
-		const expectedProofHash = crypto.createHash("sha256").update(wasmPayload).digest("hex");
+		const expectedProofHash = crypto
+			.createHash("sha256")
+			.update(wasmPayload)
+			.digest("hex");
 
-		console.log(`[NmpClient] ✅ Native ZK-Receipt Verification passed for ImageID: ${expectedProofHash}`);
+		console.log(
+			`[NmpClient] ✅ Native ZK-Receipt Verification passed for ImageID: ${expectedProofHash}`,
+		);
 
 		return {
 			content: [
