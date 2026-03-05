@@ -109,7 +109,7 @@ export class PiiScanner {
 					// Successfully parsed JSON string. Recursively scan the unescaped object.
 					const violation = this.scan(parsed, seen);
 					if (violation) return violation;
-				} catch (e) {
+				} catch (_e) {
 					// Silent fallback: It looked like JSON but wasn't valid. Proceed with raw string check.
 				}
 			}

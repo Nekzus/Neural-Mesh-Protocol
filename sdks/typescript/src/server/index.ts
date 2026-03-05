@@ -153,7 +153,7 @@ export class NmpServer {
 
 			finalHandler = async (
 				args: z.infer<z.ZodObject<T>>,
-				extra: { signal?: AbortSignal },
+				_extra: { signal?: AbortSignal },
 			) => {
 				const clientId = "global_connection"; // Simplify for now, treating the instance as one connection
 				const now = Date.now();
@@ -558,7 +558,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 	 * Dispatches heavy computation (Kyber768, AES, WASM/V8 Sandboxing) to the Worker Pool.
 	 */
 	private async executeInWorkerPool(
-		args: Record<string, unknown>,
+		_args: Record<string, unknown>,
 		rawPayload: string,
 	): Promise<CallToolResult> {
 		try {
