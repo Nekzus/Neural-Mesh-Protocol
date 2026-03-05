@@ -11,16 +11,6 @@
   "navbar": {
     "links": [
       {
-        "label": "Changelog",
-        "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CHANGELOG.md",
-        "icon": "clock-rotate-left"
-      },
-      {
-        "label": "Contributing",
-        "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CONTRIBUTING.md",
-        "icon": "hands-helping"
-      },
-      {
         "label": "GitHub",
         "href": "https://github.com/Nekzus/Neural-Mesh-Protocol",
         "icon": "github"
@@ -81,6 +71,14 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Changelog",
+            "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CHANGELOG.md"
+          },
+          {
+            "tab": "Contributing",
+            "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CONTRIBUTING.md"
           }
         ]
       },
@@ -136,6 +134,14 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Registro de cambios",
+            "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CHANGELOG.md"
+          },
+          {
+            "tab": "Contribuir",
+            "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CONTRIBUTING.md"
           }
         ]
       }
