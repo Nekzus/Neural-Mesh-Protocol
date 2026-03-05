@@ -54,7 +54,7 @@ export class NmpServer {
 		}
 	> = new Map();
 	private activeSchema: Record<string, unknown> | null = null;
-	private sandboxRecords: any[] = [];
+	private sandboxRecords: Record<string, unknown>[] = [];
 
 	private piiScanner: PiiScanner;
 	private workerPool: Piscina;
@@ -92,7 +92,7 @@ export class NmpServer {
 				try {
 					const absoluteTsx = require.resolve("tsx");
 					execArgv = ["--import", pathToFileURL(absoluteTsx).href];
-				} catch (e) {
+				} catch (_e) {
 					// Fallback
 					execArgv = ["--import", "tsx"];
 				}
