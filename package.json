@@ -2,7 +2,7 @@
     "name": "nmp",
     "version": "1.0.0-alpha.2",
     "private": true,
-    "description": "Neural Mesh Protocol (NMP) - Official High-Performance WebAssembly Logic-on-Origin Execution Sandbox",
+    "description": "Neural Mesh Protocol (NMP) - Official High-Performance WebAssembly Logic-on-Origin Execution Sandbox ",
     "author": "Nekzus",
     "license": "MIT",
     "type": "module",
