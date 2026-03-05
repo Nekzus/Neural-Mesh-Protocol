@@ -10,7 +10,7 @@
 [![npm version](https://img.shields.io/npm/v/@nekzus/neural-mesh.svg)](https://www.npmjs.com/package/@nekzus/neural-mesh)
 [![npm-month](https://img.shields.io/npm/dm/@nekzus/neural-mesh.svg)](https://www.npmjs.com/package/@nekzus/neural-mesh)
 [![npm-total](https://img.shields.io/npm/dt/@nekzus/neural-mesh.svg?style=flat)](https://www.npmjs.com/package/@nekzus/neural-mesh)
-[![License](https://img.shields.io/github/license/Nekzus/Neural-Mesh-Protocol.svg)](https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-mintlify-0D9373?style=flat)](https://nekzus-32.mintlify.app/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Nekzus/Neural-Mesh-Protocol)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/maseortega)
