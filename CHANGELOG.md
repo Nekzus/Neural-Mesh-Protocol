@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* patch NPM semantic release deployment bypassing provenance ([b65fc16](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/b65fc16bb0d275d9cee2425d5432cb32939de211))
+
 # 1.0.0-alpha.1 (2026-03-05)
 
 
