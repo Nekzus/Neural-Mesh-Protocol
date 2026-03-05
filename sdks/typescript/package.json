@@ -47,13 +47,20 @@
 		"demo:client": "pnpm --filter @neural-mesh/example-client start"
 	},
 	"keywords": [
+		"neural-mesh-protocol",
 		"nmp",
+		"model-context-protocol",
 		"mcp",
-		"wasm",
-		"ai",
-		"agent",
-		"grpc",
-		"p2p"
+		"logic-on-origin",
+		"wasi",
+		"sandbox",
+		"p2p",
+		"libp2p",
+		"zero-trust",
+		"kyber",
+		"post-quantum",
+		"ai-agent",
+		"llm"
 	],
 	"author": "Nekzus",
 	"license": "MIT",
