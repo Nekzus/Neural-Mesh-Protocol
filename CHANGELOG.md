@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.1.0...v1.1.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* **sdk:** apply biome formatting and linting fixes to server module ([73a4ec6](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/73a4ec6baf653f6bcfa1f64205e3b816149243b2))
+* **sdk:** include LICENSE file in NPM and Cargo distribution packages ([923e6ee](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/923e6ee2a05d28d30583a7b2822278f60dcc67fc))
+* **sdk:** resolve biome linting and formatting issues ([3c9542d](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/3c9542de8d54b9071e7838a7524cc0b9a86a9bb3))
+* **sdk:** update documentation, keywords, and add code of conduct ([4e58ea0](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/4e58ea0b0f5807fb118cbddd5cc5a81a70d3a0c0))
+* trigger patch release for sdk enhancements ([ad07262](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/ad07262fa756ba56ac53801c5a42ce6dafd88872))
+
 # [1.1.0](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.0.0...v1.1.0) (2026-03-05)
 
 
