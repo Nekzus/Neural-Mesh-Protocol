@@ -89,6 +89,25 @@ await client.deployWatchdog(
 );
 ```
 
+## Cryptographic Validation (The ZK Shield)
+
+While the network layer is encrypted using symmetric AES-256-GCM, the `NmpClient` fundamentally doubts the execution origin. 
+
+When `callTool` returns from the remote Data Node, the payload might contain an `image_id` hash or a `zk_receipt` (if the server is running inside a TEE). To mathematically prove the server executed the exact WASM binary you originally sent (and not a tampered one), you must invoke the cryptographic verifier:
+
+```typescript
+const isAuthentic = await client.verifyZkReceipt(
+  wasmPayload, 
+  remoteResult.image_id, 
+  remoteResult.zk_receipt
+);
+
+if (!isAuthentic) {
+  throw new Error("🚨 FATAL: Mathematical Proof Mismatch (Hack Detected)");
+}
+```
+*Note: The `NmpMcpBridge` automatically runs this capability natively on behalf of legacy MCP clients, intercepting any hallucinated JSONs automatically.*
+
 ## Error Handling & Zero-Trust Rejections
 
 Because the Server enforces a strict `WASI` sandbox and uses the *Zero-Time Guardian* to inspect your `.wasm` payload BEFORE execution, your client must be prepared to handle sandbox rejections.

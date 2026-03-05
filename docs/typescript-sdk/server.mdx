@@ -86,6 +86,45 @@ server.resource(
 
 These resources are flawlessly bridged to LLMs via standard MCP `resources/list` and `resources/read` methods.
 
+## Advanced AI Planning (Prompts & Autonomy)
+
+Just like MCP, Neural Mesh Protocol natively supports **Prompts**—templated conversational instructions that help Agents structure their tasks before executing Logic-on-Origin.
+
+```typescript
+server.prompt(
+  "analyze_codebase",
+  "Instructs the agent on how to traverse the codebase securely.",
+  [
+    { name: "language", description: "Target language (e.g., rust, ts)", required: true }
+  ],
+  (request) => ({
+    description: "Codebase Analysis Prompts",
+    messages: [
+      { role: "user", content: { type: "text", text: `Analyze the ${request.arguments?.language} codebase securely.`} }
+    ]
+  })
+);
+```
+
+### Zero-Shot Autonomy (The Blind Analyst)
+NMP ships with an industrial Master System Prompt designed to instruct standard LLMs (like Claude or GPT-4) on how to generate `.wasm` or JavaScript logic dynamically without hallucinating or breaking the Data Node Sandbox. 
+
+You can activate this structural instruction explicitly:
+```typescript
+server.enableZeroShotAutonomy();
+```
+This automatically registers the `nmp_blind_analyst` intelligent prompt into the Mesh, dynamically injecting your Data Dictionary into it as well.
+
+## Security & Memory Management
+
+When a Data Node receives a `.wasm` or `.js` payload, the Guardian Sentinel parses its Abstract Syntax Tree (AST) to ensure absolute security. This rigorous AST evaluation is aggressively cached in memory `O(1)` for blazing-fast subsequent executions of the exact same logic payload.
+
+If you are hot-deploying Zero-Day security patches on the host or need to forcefully invalidate the execution memory, you can purge the AST cache manually:
+
+```typescript
+server.clearAstCache();
+```
+
 ## Bridging Legacy MCP Servers
 
 NMP's primary goal is rapid industry adoption. If you have spent months building a standard Model Context Protocol (MCP) server, you do not need to rewrite it to join the Neural Mesh.

@@ -86,6 +86,45 @@ server.resource(
 
 Estos recursos son puenteados impecablemente a los LLMs genéricos mediante los métodos estándar de MCP `resources/list` y `resources/read`.
 
+## Planificación de IA Avanzada (Prompts y Autonomía)
+
+Al igual que MCP, Neural Mesh Protocol soporta nativamente **Prompts**—instrucciones conversacionales con plantillas que ayudan a los Agentes a estructurar sus tareas antes de inyectar su Lógica-en-Origen.
+
+```typescript
+server.prompt(
+  "analyze_codebase",
+  "Instruye al agente sobre cómo recorrer el código de forma segura.",
+  [
+    { name: "language", description: "Lenguaje objetivo (ej., rust, ts)", required: true }
+  ],
+  (request) => ({
+    description: "Codebase Analysis Prompts",
+    messages: [
+      { role: "user", content: { type: "text", text: `Analiza el código en ${request.arguments?.language} de forma segura.`} }
+    ]
+  })
+);
+```
+
+### Autonomía Zero-Shot (El Analista Ciego)
+NMP incluye de fábrica un System Prompt Maestro de grado industrial diseñado para enseñar y adiestrar a LLMs genéricos (como Claude o GPT-4) sobre cómo generar lógica `.wasm` o JavaScript dinámicamente sin alucinar y respetando estrictamente los límites del Sandbox del Nodo.
+
+Puedes activar este adiestramiento estructural explícitamente:
+```typescript
+server.enableZeroShotAutonomy();
+```
+Esto registrará automáticamente el prompt inteligente `nmp_blind_analyst` en la Malla, inyectando tu *Data Dictionary* directamente en el contexto del modelo.
+
+## Seguridad y Gestión de Memoria
+
+Cuando un Nodo de Datos recibe un payload `.wasm` o `.js`, el Centinela (Guardian AST) somete su Árbol de Sintaxis Abstracta a una rigurosa validación de seguridad. Esta pesada evaluación de AST se cachea agresivamente en memoria `O(1)` para permitir ejecuciones subsiguientes veloces a la luz de la exactamente misma lógica.
+
+Si te encuentras desplegando parches de seguridad *Zero-Day* en el host de ejecución o necesitas invalidar forzosamente la memoria del Nodo, puedes purgar el almacenamiento en caché del AST de forma manual y síncrona:
+
+```typescript
+server.clearAstCache();
+```
+
 ## Conectando Servidores MCP Heredados (Legacy)
 
 El objetivo principal de NMP es una rápida adopción por parte de la industria. Si has pasado meses construyendo un servidor estándar del Protocolo de Contexto de Modelos (MCP), no necesitas reescribirlo para unirte a la Neural Mesh.
