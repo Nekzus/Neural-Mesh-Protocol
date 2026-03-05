@@ -77,7 +77,7 @@
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org/",
-		"provenance": false
+		"provenance": true
 	},
 	"engines": {
 		"node": ">=20.0"
