@@ -65,7 +65,7 @@
 	"bugs": {
 		"url": "https://github.com/Nekzus/Neural-Mesh-Protocol/issues"
 	},
-	"homepage": "https://github.com/Nekzus/Neural-Mesh-Protocol#readme",
+	"homepage": "https://nekzus-32.mintlify.app/",
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org/",

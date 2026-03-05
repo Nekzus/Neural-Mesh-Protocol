@@ -6,6 +6,7 @@
     "author": "Nekzus",
     "license": "MIT",
     "type": "module",
+    "homepage": "https://nekzus-32.mintlify.app/",
     "scripts": {
         "build": "pnpm --filter @nekzus/neural-mesh build",
         "test": "pnpm --filter @nekzus/neural-mesh test",
