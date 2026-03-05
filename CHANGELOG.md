@@ -13,6 +13,53 @@ All notable changes to this project will be documented in this file. See
 * **docs:** repair broken dark svg rendering and align text layers symmetrically across both logic-on-origin diagrams ([059e744](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/059e7440e9de564cf19f877b8503ecedc665f2a5))
 * **docs:** replace animateMotion with SMIL animate transforms for better image tag compatibility in Mintlify ([106ef5f](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/106ef5fd83c97a90adfd348a722ba2462146b78a))
 * **docs:** replace SMIL animate with CSS keyframes for 100% Mintlify img compatibility ([8fdea51](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/8fdea5188b083c2d80e670e5558335bdf62e1c96))
+* final trigger commit after synchronized tag reconstruction ([051a394](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/051a3946c20e33370809bd3bc117e85e1a7efc55))
+* logic output serialization returns proper json rather than object string primitive in wasi sandbox ([770dce7](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/770dce7eb1298eca3c0f4a379bd951d30eb99f9c))
+* resolve EPRERELEASEBRANCHES semantic-release config conflict ([7e87496](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/7e87496710d8c85dbc0ec1800f95c97661d9b7b2))
+* resolve linting and formatting errors in TS SDK ([046b09b](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/046b09be973e67576075df4ef7cfbaaddb380b1c))
+* **sdk:** resolve TypeScript compilation errors in demos and bridge tests ([58cc2d7](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/58cc2d7e13a24c143f9ac0f9f513f60e3692c0e9))
+* **sdk:** updated z.record strictness to match latest zod schema version parity ([e981fd4](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/e981fd4bbe1fd253f2913d80f9a0a787700cce3b))
+
+
+### Features
+
+* **docs:** implement multi-language support (i18n) for Mintlify documentation [English/Spanish] ([1e1c188](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/1e1c1888192d5086e89bbfd0e9f2a93c36c62b80))
+* implement Military Grade PII Shield (Luhn, Safe Words, NIST boundaries) (Phase 34) ([a610538](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/a610538a96551c5f67e788bdab4582a24fd12638))
+* implement native sdk defensive serialization for logic-on-origin tool returns ([dbe764a](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/dbe764a288713256c91e7b2a45fc8d7962a3ab03))
+* implement native sdk pii protection (the shield core) and refactor demo ([1c055b2](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/1c055b2de336a3acc264bdc7a130f2ffe1bf7c72))
+* implement professional multi-layer PII engine (Phase 33) ([62f8257](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/62f825744d08216eb443de37042c18bd9c6a81a6))
+* **nmp-core:** Init Cargo workspace and nmp_core.proto definition ([c2bf566](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/c2bf5663caafd23366e125d949e03d396a521140))
+* **nmp:** complete Logic-on-Origin WebAssembly Push paradigm implementation ([71a2aef](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/71a2aef0dd4b7055460a5d0f863ce3d723cf23ab))
+* **nmp:** implemented phase 2 sdk bridge and phase 3 streaming push watchdogs ([95eb77e](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/95eb77e9047d3f3ddfce9ab6a39895561925eda7))
+* phase 45 - perfect parity audit remediation (integrated workers, kyber, node:vm) ([9711cb5](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/9711cb56df56db975134ea1264eb7c76c9400069))
+* **rust-app:** empower nmp-server with ZK-SNARKs and TEE physical enclaves architecture ([25052fa](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/25052faf75c5dba664278efc572222d5109ebbd5))
+* **sdk:** Cleanup console logs and dummy PQC mocks for Tier-0 rc ([f4d53d5](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/f4d53d530bccf192e81ea96df64ce23538a92ae5))
+* **sdk:** Enforce Dynamic Return Structure (i18n) for LLM prompts ([9448827](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/94488274ab7448118c3bf60e00ca07877fb98174))
+* **sdk:** Implement full MCP parity with NmpServer, Client, Bridge and 100% test coverage ([7e97db1](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/7e97db138c4069f89e426130341772c24a53a367))
+* **sdk:** implement native zk-receipt verification in bridge and client ([ec5f53d](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/ec5f53d35578c0577a8ded2261ce7a5cbfffbb9e))
+* **sdk:** Implement Phase 3 native P2P, gRPC, and WASI execution in Node.js ([c61ae58](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/c61ae587887b5b58cf12429388b2322099f4fa49))
+* **sdk:** Implement Zero-Shot Autonomy for NMP Server Logic-on-Origin. Add system prompt 'nmp_blind_analyst' and Educative Shield middleware to tool registration. Update bridge for prompt handling. Fix wasi-sandbox env variable exposure. ([455a755](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/455a755a61f6e61bbc8a6dfbfc700b0f876c98ca))
+* **sdk:** inject dynamic PII forbidden keys into Zero-Shot Payload instruction ([dd75e1b](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/dd75e1be05d3bea0ad98c501baa4c68483533fb6))
+* **sdk:** inject explicit 'return' statement warning in Zero-Shot middleware ([07b9394](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/07b93947dc135042b5fa802f6eb7b26c8dc01c89))
+* **sdk:** migrate examples to fully containerized sub-packages utilizing pnpm workspaces for true modularity mimicking MCP ecosystem ([6ca41d6](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/6ca41d69442e8c754f6e968773cf6789bc165f9d))
+* **sdk:** NMP Phase 19 - Universal MCP Bridge, Egress Filter & Zero-Shot Schema Discovery ([fd5b811](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/fd5b811abcc507e62e5508d9b389ccfd4d26b5e1))
+* **sdk:** relax blind analyst return constraints to allow flexible generic logic payloads ([b87d92a](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/b87d92a97c94e50578c0cef63da7305ff34e1d4d))
+* **sdk:** Restore native logging and implement zero-trust logic-execution tests ([2497228](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/249722860ef1621814d294bbb5717e2a802ed8d5))
+* **sdk:** Tier-0 Crypto Parity with Kyber768 & AES-256-GCM ([829eccf](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/829eccf621ab75844008d23a8f446ed5ab6d0ee5))
+* **sdk:** Vanguard Enterprise Architecture (PQC, TCP, ZK, Guardian-TS & Piscina Worker Pool) ([125cb94](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/125cb943d475363fcbb90c0cdca21c67e7b1c9ed))
+* **security:** Implement Hybrid PQC (Kyber768), AES-GCM, and TEE Stubs for Phase 4 Zero-Trust Architecture ([dd06fb5](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/dd06fb53a2a7ae66f2fde4420f1de5198e9945ff))
+* **security:** integrate zero-time ast guardian and libp2p kademlia dht caching ([2135346](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/21353463e6e0942ab30efbeb94a8e88a79dced2b))
+
+# 1.0.0-alpha.1 (2026-03-05)
+
+
+### Bug Fixes
+
+* align package version with v1.0.0-alpha.2 and synchronize tags ([2bab264](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/2bab264194470a04cd5e17def9fb469cf3809042))
+* **docs:** refine text positioning, verify spelling, and confirm mobile rendering optimizations in logic-on-origin svgs ([41db052](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/41db05278bf3a56a17dd20c2964ad7917ef503f2))
+* **docs:** repair broken dark svg rendering and align text layers symmetrically across both logic-on-origin diagrams ([059e744](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/059e7440e9de564cf19f877b8503ecedc665f2a5))
+* **docs:** replace animateMotion with SMIL animate transforms for better image tag compatibility in Mintlify ([106ef5f](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/106ef5fd83c97a90adfd348a722ba2462146b78a))
+* **docs:** replace SMIL animate with CSS keyframes for 100% Mintlify img compatibility ([8fdea51](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/8fdea5188b083c2d80e670e5558335bdf62e1c96))
 * logic output serialization returns proper json rather than object string primitive in wasi sandbox ([770dce7](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/770dce7eb1298eca3c0f4a379bd951d30eb99f9c))
 * resolve EPRERELEASEBRANCHES semantic-release config conflict ([7e87496](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/7e87496710d8c85dbc0ec1800f95c97661d9b7b2))
 * resolve linting and formatting errors in TS SDK ([046b09b](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/046b09be973e67576075df4ef7cfbaaddb380b1c))
