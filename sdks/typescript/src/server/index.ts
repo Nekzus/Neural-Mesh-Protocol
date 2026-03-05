@@ -96,7 +96,7 @@ export class NmpServer {
 					// Fallback
 					execArgv = ["--import", "tsx"];
 				}
-			} catch (e) {
+			} catch (_e) {
 				execArgv = ["--import", "tsx"];
 			}
 		}
