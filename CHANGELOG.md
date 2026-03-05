@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1-alpha.1](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.0.0...v1.0.1-alpha.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* trim trailing whitespace in package description ([c659a83](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/c659a83bfc5a90dc08d9329bda52d55e942af0fc))
+
 # 1.0.0 (2026-03-05)
 
 
