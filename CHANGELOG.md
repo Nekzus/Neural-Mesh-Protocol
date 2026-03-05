@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1-alpha.2](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.0.1-alpha.1...v1.0.1-alpha.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* **sdk:** use absolute URL for logo in README for NPM compatibility ([b5fd847](https://github.com/Nekzus/Neural-Mesh-Protocol/commit/b5fd847aa2196e6acc8006f418e6414aeb5b2062))
+
 ## [1.0.1-alpha.1](https://github.com/Nekzus/Neural-Mesh-Protocol/compare/v1.0.0...v1.0.1-alpha.1) (2026-03-05)
 
 
