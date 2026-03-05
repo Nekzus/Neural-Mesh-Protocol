@@ -8,6 +8,25 @@
     "dark": "#09090b"
   },
   "favicon": "/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Changelog",
+        "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CHANGELOG.md",
+        "icon": "clock-rotate-left"
+      },
+      {
+        "label": "Contributing",
+        "href": "https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/CONTRIBUTING.md",
+        "icon": "hands-helping"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Nekzus/Neural-Mesh-Protocol",
+        "icon": "github"
+      }
+    ]
+  },
   "navigation": {
     "languages": [
       {
