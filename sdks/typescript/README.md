@@ -5,16 +5,16 @@
   </picture>
 
   <h1>Neural Mesh Protocol (NMP) — TypeScript SDK</h1>
-
-[![Github Workflow](https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@nekzus/neural-mesh.svg)](https://www.npmjs.com/package/@nekzus/neural-mesh)
-[![npm-month](https://img.shields.io/npm/dm/@nekzus/neural-mesh.svg)](https://www.npmjs.com/package/@nekzus/neural-mesh)
-[![npm-total](https://img.shields.io/npm/dt/@nekzus/neural-mesh.svg?style=flat)](https://www.npmjs.com/package/@nekzus/neural-mesh)
-[![License](https://img.shields.io/github/license/Nekzus/Neural-Mesh-Protocol.svg)](https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/LICENSE)
-[![Docs](https://img.shields.io/badge/docs-mintlify-0D9373?style=flat)](https://nekzus-32.mintlify.app/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Nekzus/Neural-Mesh-Protocol)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://paypal.me/maseortega)
-
+<p align="center">
+  <a href="https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml"><img src="https://github.com/Nekzus/Neural-Mesh-Protocol/actions/workflows/ci.yml/badge.svg?event=push" alt="Github Workflow"></a>
+  <a href="https://www.npmjs.com/package/@nekzus/neural-mesh"><img src="https://img.shields.io/npm/v/@nekzus/neural-mesh.svg" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@nekzus/neural-mesh"><img src="https://img.shields.io/npm/dm/@nekzus/neural-mesh.svg" alt="npm-month"></a>
+  <a href="https://www.npmjs.com/package/@nekzus/neural-mesh"><img src="https://img.shields.io/npm/dt/@nekzus/neural-mesh.svg?style=flat" alt="npm-total"></a>
+  <a href="https://github.com/Nekzus/Neural-Mesh-Protocol/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Nekzus/Neural-Mesh-Protocol.svg" alt="License"></a>
+  <a href="https://nekzus-32.mintlify.app/"><img src="https://img.shields.io/badge/docs-mintlify-0D9373?style=flat" alt="Docs"></a>
+  <a href="https://deepwiki.com/Nekzus/Neural-Mesh-Protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+  <a href="https://paypal.me/maseortega"><img src="https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square" alt="Donate"></a>
+</p>
 
   <p><strong>The official TypeScript SDK for the Neural Mesh Protocol.</strong></p>
   <p>Deploy Logic-on-Origin with WebAssembly sandboxing, gRPC-speed execution, and full MCP backward compatibility.</p>
@@ -200,7 +200,7 @@ await bridge.connect();
 ┌─────────────────────────────────────────────────────┐
 │  Layer 1: Guardian AST (Zero-Time Static Analysis)  │
 │  Blocks: require, import(), fs, eval, fetch,        │
-│  process, global, __proto__, XMLHttpRequest          │
+│  process, global, __proto__, XMLHttpRequest         │
 ├─────────────────────────────────────────────────────┤
 │  Layer 2: WASI Sandbox (V8 Isolate)                 │
 │  No Node.js globals • CPU Fuel limits • 3s timeout  │
