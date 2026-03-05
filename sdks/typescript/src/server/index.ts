@@ -101,13 +101,16 @@ export class NmpServer {
 			}
 		}
 
+		const isTest = process.env.NODE_ENV === "test" || process.env.VITEST;
+
 		this.workerPool = new Piscina({
 			filename: path.resolve(
 				__dirname,
 				`../workers/logic-execution${workerExt}`,
 			),
-			minThreads: 2,
-			maxThreads: 8,
+			minThreads: isTest ? 0 : 2,
+			maxThreads: isTest ? 1 : 8,
+			idleTimeout: 1000,
 			execArgv,
 		});
 	}
@@ -588,6 +591,16 @@ Failure to follow these rules will result in an immediate violation and the exec
 				content: [{ type: "text", text: `WorkerPoolError: ${error.message}` }],
 				isError: true,
 			};
+		}
+	}
+
+	/**
+	 * Safely destroys the worker pool and releases thread resources.
+	 * Recommended to be called during graceful shutdowns or test teardowns.
+	 */
+	public async close(): Promise<void> {
+		if (this.workerPool) {
+			await this.workerPool.destroy();
 		}
 	}
 }
