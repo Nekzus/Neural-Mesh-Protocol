@@ -192,6 +192,16 @@ export class NmpMcpBridge {
 			terminal: false,
 		});
 
+		const shutdown = async () => {
+			console.error("[NMP-Bridge] Disconnecting MCP session and releasing ports...");
+			await this.internalServer.close();
+			process.exit(0);
+		};
+
+		rl.on("close", shutdown);
+		process.on("SIGINT", shutdown);
+		process.on("SIGTERM", shutdown);
+
 		rl.on("line", async (line) => {
 			if (!line.trim()) return;
 			try {

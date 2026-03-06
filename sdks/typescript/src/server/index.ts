@@ -705,12 +705,18 @@ Failure to follow these rules will result in an immediate violation and the exec
 	}
 
 	/**
-	 * Safely destroys the worker pool and releases thread resources.
+	 * Safely destroys the worker pool, gRPC server, and Mesh node.
 	 * Recommended to be called during graceful shutdowns or test teardowns.
 	 */
 	public async close(): Promise<void> {
 		if (this.workerPool) {
 			await this.workerPool.destroy();
+		}
+		if (this.rpcServer) {
+			await this.rpcServer.stop();
+		}
+		if (this.meshNode) {
+			await this.meshNode.stop();
 		}
 	}
 }
