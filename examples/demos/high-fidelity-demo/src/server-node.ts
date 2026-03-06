@@ -101,5 +101,20 @@ theVaultServer.tool(
 	},
 );
 
+// 3. Start Secure Mesh & gRPC Server (Enables P2P discovery & PQC Handshakes)
+await theVaultServer.connectToMesh({
+	port: 50051,
+	meshConfig: {
+		listenAddresses: ["/ip4/0.0.0.0/tcp/4001", "/ip4/0.0.0.0/tcp/4002/ws"]
+	}
+}).catch(err => {
+	console.error(`[The Vault] Mesh Connection Failed: ${err.message}`);
+	process.exit(1);
+});
+
+// Keep process alive
+console.log("[The Vault] gRPC server is ready and listening.");
+setInterval(() => { }, 1000 * 60 * 60); // Keep alive for 1 hour or until manual termination
+
 
 

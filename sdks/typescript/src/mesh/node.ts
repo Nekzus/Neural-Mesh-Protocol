@@ -37,12 +37,12 @@ export class MeshNode {
 			connectionEncrypters: [noise()],
 			streamMuxers: [yamux(), mplex()],
 			services: {
-				dht: kadDHT({
-					kBucketSize: 20,
-					clientMode: false,
-					// biome-ignore lint/suspicious/noExplicitAny: <Bypassing strict type confilct in DHT factory>
-				}) as any,
 				identify: identify(),
+				dht: kadDHT({
+					protocol: "/nmp/kad/1.0.0",
+					clientMode: false,
+				}),
+				// @ts-ignore: Conflict between @libp2p/peer-collections versions
 				ping: ping(),
 			},
 		});

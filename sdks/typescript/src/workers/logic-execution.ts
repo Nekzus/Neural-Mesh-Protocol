@@ -95,15 +95,17 @@ export default async function processLogicExecution(
 		decryptedPayload = decryptedPayload.toString("utf-8");
 	}
 
-	// Sanitization: Remove NMP Logic Block markers if present (Common in documentation/The Vault prompts)
+	// Sanitization: Remove NMP Metadata, Manifests and Logic Block markers
 	if (typeof decryptedPayload === "string") {
 		decryptedPayload = decryptedPayload
+			.replace(/^NMP_MAGIC:.*?\n/g, "")
+			.replace(/^MANIFEST:.*?\n/g, "")
 			.replace(/---BEGIN_LOGIC---\n?/g, "")
 			.replace(/\n?---END_LOGIC---/g, "")
 			.trim();
 	}
 
-	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)
+	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)	
 	const sandbox = new WasiSandbox();
 	await sandbox.init();
 

@@ -61,16 +61,25 @@ export class NmpClient {
 			agent_did: "nmp-client-alpha", // In production, this would be a Noise PeerID or SPIFFE ID
 			capability_hash: request.name,
 			proof_of_intent: Buffer.from("alpha-intent-proof"),
-		});
+		}) as any;
 
 		if (!intentResponse.accepted) {
 			throw new Error(`Intent denied by host: ${intentResponse.error_message}`);
 		}
 
+		// NMP Robust Field Extraction (Supports both snake_case and camelCase via gRPC-JS)
+		const publicKey = intentResponse.kyber_public_key || intentResponse.kyberPublicKey;
+		const sessionToken = intentResponse.session_token || intentResponse.sessionToken;
+
+		if (!publicKey) {
+			console.error("[NmpClient] 🚨 Critical Error: Kyber Public Key not found in IntentResponse.", intentResponse);
+			throw new Error("Handshake failed: Remote host did not provide a valid Kyber Public Key.");
+		}
+
 		// 2. Post-Quantum Encapsulation (ML-KEM-768)
-		console.log(`[NmpClient] 🔒 Encapsulating Post-Quantum Shared Secret...`);
+		console.log(`[NmpClient] 🔒 Encapsulating Post-Quantum Shared Secret for ${request.name}...`);
 		const { ciphertext: kyberCiphertext, sharedSecret } =
-			Kyber768Wrapper.encapsulateAsymmetric(intentResponse.kyber_public_key);
+			Kyber768Wrapper.encapsulateAsymmetric(publicKey);
 
 		// 3. Symmetric Sealing (AES-256-GCM)
 		console.log(`[NmpClient] 🛡️ Sealing WASM Payload and Inputs...`);
@@ -93,7 +102,7 @@ export class NmpClient {
 
 		// 4. Assemble and Execute gRPC LogicRequest
 		const logicRequest: LogicRequest = {
-			session_token: intentResponse.session_token,
+			session_token: sessionToken,
 			wasm_binary: encryptedWasm,
 			inputs: encryptedInputs,
 			pqc_ciphertext: kyberCiphertext,
@@ -171,6 +180,8 @@ export class NmpClient {
 			if (!isWasm) {
 				processedPayload = logicPayload
 					.toString("utf-8")
+					.replace(/^NMP_MAGIC:.*?\n/g, "")
+					.replace(/^MANIFEST:.*?\n/g, "")
 					.replace(/---BEGIN_LOGIC---\n?/g, "")
 					.replace(/\n?---END_LOGIC---/g, "")
 					.trim();

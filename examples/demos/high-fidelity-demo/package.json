@@ -7,6 +7,7 @@
 	"scripts": {
 		"start:server": "npx tsx src/server-node.ts",
 		"start:client": "npx tsx src/agent.ts",
+		"start:agent-network": "npx tsx src/agent-network.ts",
 		"test": "vitest run"
 	},
 	"dependencies": {
