@@ -585,7 +585,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 		this.rpcServer.addService({
 			negotiateIntent: (call, callback) => {
 				const request = call.request;
-				console.log(`[NMP-RPC] 🤝 Negotiating intent for capability: ${request.capability_hash}`);
+				console.error(`[NMP-RPC] 🤝 Negotiating intent for capability: ${request.capability_hash}`);
 
 				// Standard dynamic import to avoid potential circularity
 				import("../rpc/crypto/kyber.js").then(({ Kyber768Wrapper }) => {
@@ -607,7 +607,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 			},
 			executeLogic: async (call: grpc.ServerWritableStream<LogicRequest, LogicResponse>) => {
 				const request = call.request;
-				console.log(`[NMP-RPC] 🚀 Executing Logic-on-Origin for session: ${request.session_token}`);
+				console.error(`[NMP-RPC] 🚀 Executing Logic-on-Origin for session: ${request.session_token}`);
 
 				const session = this.sessions.get(request.session_token);
 				if (!session) {
@@ -648,7 +648,7 @@ Failure to follow these rules will result in an immediate violation and the exec
 		});
 
 		await this.rpcServer.listen(port);
-		console.log(`[NMP-SDK] 🌍 Node successfully announced to Mesh. PeerID: ${this.meshNode.getPeerId()}`);
+		console.error(`[NMP-SDK] 🌍 Node successfully announced to Mesh. PeerID: ${this.meshNode.getPeerId()}`);
 
 		// Announce existing tools registered before connection
 		for (const toolName of this.tools.keys()) {

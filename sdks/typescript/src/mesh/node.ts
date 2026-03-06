@@ -48,19 +48,19 @@ export class MeshNode {
 		});
 
 		await this.node.start();
-		console.log(
+		console.error(
 			`NMP Mesh Node started with id: ${this.node.peerId.toString()}`,
 		);
 
 		this.node.getMultiaddrs().forEach((addr) => {
-			console.log(`Listening on: ${addr.toString()}`);
+			console.error(`Listening on: ${addr.toString()}`);
 		});
 	}
 
 	async stop(): Promise<void> {
 		if (this.node) {
 			await this.node.stop();
-			console.log("NMP Mesh Node stopped");
+			console.error("NMP Mesh Node stopped");
 		}
 	}
 
@@ -82,7 +82,7 @@ export class MeshNode {
 			// biome-ignore lint/suspicious/noExplicitAny: <Accessing dht service potentially different between versions>
 			const dht = (this.node.services as any).dht;
 			await dht.provide(new TextEncoder().encode(hash));
-			console.log(`[NMP-Mesh] Announced capability: ${hash}`);
+			console.error(`[NMP-Mesh] Announced capability: ${hash}`);
 		} catch (error) {
 			console.error(`[NMP-Mesh] Failed to announce capability: ${error}`);
 		}

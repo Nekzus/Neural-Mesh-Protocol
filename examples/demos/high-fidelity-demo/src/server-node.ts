@@ -113,7 +113,7 @@ await theVaultServer.connectToMesh({
 });
 
 // Keep process alive
-console.log("[The Vault] gRPC server is ready and listening.");
+console.error("[The Vault] gRPC server is ready and listening.");
 setInterval(() => { }, 1000 * 60 * 60); // Keep alive for 1 hour or until manual termination
 
 

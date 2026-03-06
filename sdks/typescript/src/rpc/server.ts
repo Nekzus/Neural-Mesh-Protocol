@@ -34,7 +34,7 @@ export class NmpRpcServer {
 						return;
 					}
 					this.server.start();
-					console.log(`[NMP-RPC] Server listening on port ${assignedPort}`);
+					console.error(`[NMP-RPC] Server listening on port ${assignedPort}`);
 					resolve();
 				}
 			);
@@ -44,7 +44,7 @@ export class NmpRpcServer {
 	public async stop(): Promise<void> {
 		return new Promise((resolve) => {
 			this.server.tryShutdown(() => {
-				console.log("[NMP-RPC] Server shut down");
+				console.error("[NMP-RPC] Server shut down");
 				resolve();
 			});
 		});
