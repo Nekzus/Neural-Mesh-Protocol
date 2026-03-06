@@ -23,9 +23,15 @@ function(records) {
 async function main() {
     // Super Robust Argument Parsing for Windows/NPM/TSX environments
     const rawArgs = process.argv.join(" ");
-    let scenarioArg = "average-age";
-    if (rawArgs.includes("--scenario=hypertension")) scenarioArg = "hypertension";
-    if (rawArgs.includes("--scenario=average-age")) scenarioArg = "average-age";
+    let scenarioArg = "average-age"; // default
+
+    // Support both native arguments and npm-intercepted configs
+    const npmScenario = process.env.npm_config_scenario;
+    if (npmScenario === "hypertension" || rawArgs.includes("--scenario=hypertension")) {
+        scenarioArg = "hypertension";
+    } else if (npmScenario === "average-age" || rawArgs.includes("--scenario=average-age")) {
+        scenarioArg = "average-age";
+    }
 
     const addressMatch = rawArgs.match(/--address=([^\s]+)/);
     const address = addressMatch ? addressMatch[1] : "localhost:50051";
