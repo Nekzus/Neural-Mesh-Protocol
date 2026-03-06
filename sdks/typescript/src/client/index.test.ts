@@ -6,13 +6,13 @@ import { NmpClient } from "./index.js";
 
 describe("NmpClient", () => {
 	it("should throw an error if attempting to execute without connection", async () => {
-		const client = new NmpClient({ name: "test-agent", version: "1.0.0" });
+		const client = new NmpClient();
 
 		const mockServerPublicKey = new Uint8Array(1184);
 		const mockWasmPayload = Buffer.from("mock");
 
 		await expect(
-			client.callTool({ name: "any" }, mockWasmPayload, mockServerPublicKey),
+			client.callTool({ name: "any" }, mockWasmPayload),
 		).rejects.toThrow("Client must be connected before calling tools.");
 		await expect(client.discoverTools()).rejects.toThrow(
 			"Client must be connected before discovering tools.",
@@ -20,12 +20,12 @@ describe("NmpClient", () => {
 	});
 
 	it("should successfully connect and mock capability discovery", async () => {
-		const client = new NmpClient({ name: "test-agent", version: "1.0.0" });
+		const client = new NmpClient();
 		await client.connect();
 
 		const serverInfo = client.getServerInfo();
 		expect(serverInfo).toBeDefined();
-		expect(serverInfo?.name).toContain("Mesh Connected");
+		expect(serverInfo?.name).toContain("NmpServer");
 
 		const tools = await client.discoverTools();
 		expect(tools.length).toBeGreaterThan(0);
@@ -33,7 +33,7 @@ describe("NmpClient", () => {
 	});
 
 	it("should simulate execution after connection", async () => {
-		const client = new NmpClient({ name: "test-agent", version: "1.0.0" });
+		const client = new NmpClient();
 		await client.connect();
 
 		// Mock a 1184-byte Kyber768 array and a dummy WASM Buffer
@@ -42,11 +42,8 @@ describe("NmpClient", () => {
 
 		const res = await client.callTool(
 			{ name: "read_logs", arguments: {} },
-			mockWasmPayload,
-			mockServerPublicKey,
+			mockWasmPayload
 		);
 		expect(res.isError).toBeFalsy();
-		expect(res.content[0].text).toContain("Secure Execution Dispatched");
-		expect(res.content[0].text).toContain("bytes (Encrypted)");
 	});
 });

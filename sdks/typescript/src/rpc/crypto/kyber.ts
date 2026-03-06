@@ -52,4 +52,26 @@ export const Kyber768Wrapper = {
 			);
 		}
 	},
+
+	/**
+	 * Generates a Kyber768 KeyPair for the server to accept intents.
+	 */
+	generateKeyPair(): { publicKey: Uint8Array; secretKey: Uint8Array } {
+		const keys = kyber.KeyGen768();
+		return {
+			publicKey: new Uint8Array(keys[0]),
+			secretKey: new Uint8Array(keys[1]),
+		};
+	},
+
+	/**
+	 * Decapsulates the shared secret using the server's secret key.
+	 */
+	decapsulateSymmetric(
+		ciphertext: Uint8Array,
+		secretKey: Uint8Array,
+	): Uint8Array {
+		const sharedSecret = kyber.Decrypt768(ciphertext, secretKey);
+		return new Uint8Array(sharedSecret);
+	},
 };

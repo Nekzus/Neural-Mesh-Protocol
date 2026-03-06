@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import kyber from "crystals-kyber";
 import { describe, expect, it } from "vitest";
+import { AesGcmWrapper } from "../rpc/crypto/aes.js";
 import processLogicExecution from "./logic-execution.js";
 
 describe("WorkerPool: logic-execution PQC & Sandbox", () => {
@@ -44,20 +45,16 @@ describe("WorkerPool: logic-execution PQC & Sandbox", () => {
 		const sharedSecret = c_ss[1]; // Client's symmetric shared secret
 
 		// 2. Client AES Encrypts the payload with the PQC shared secret
-		const aesKey = Buffer.from(sharedSecret).subarray(0, 32);
 		const payloadContent = Buffer.from(`
 			function nmp_main() {
 				return JSON.stringify({ msg: "Secure payload decrypted successfully!" });
 			}
 		`);
 
-		const iv = crypto.randomBytes(12);
-		const cipher = crypto.createCipheriv("aes-256-gcm", aesKey, iv);
-		let encryptedPayload = cipher.update(payloadContent);
-		encryptedPayload = Buffer.concat([encryptedPayload, cipher.final()]);
-		const authTag = cipher.getAuthTag();
+		const { ciphertext: finalCiphertext, nonce: aesNonce } =
+			AesGcmWrapper.encryptPayload(payloadContent, sharedSecret);
 
-		const payloadArray = Buffer.concat([iv, authTag, encryptedPayload]);
+		const payloadArray = finalCiphertext; // Payload + 16-byte AuthTag
 
 		// 3. Dispatch to Logic Execution Worker
 		const response = await processLogicExecution({
@@ -65,6 +62,7 @@ describe("WorkerPool: logic-execution PQC & Sandbox", () => {
 			secretKeyObj: Array.from(new Uint8Array(sk)),
 			kyberPublicKey: new Uint8Array(pk),
 			wasmBinary: payloadArray,
+			aesNonce,
 			inputs: {},
 			records: [],
 			sessionToken: "secure-token",
@@ -86,27 +84,19 @@ describe("WorkerPool: logic-execution PQC & Sandbox", () => {
 				return "I will not run";
 			}
 		`);
-		const iv = crypto.randomBytes(12);
-		const cipher = crypto.createCipheriv("aes-256-gcm", aesKey, iv);
-		let encryptedPayload = cipher.update(payloadContent);
-		encryptedPayload = Buffer.concat([encryptedPayload, cipher.final()]);
+		const { ciphertext: finalCiphertext, nonce: aesNonce } =
+			AesGcmWrapper.encryptPayload(payloadContent, c_ss[1]);
 
-		// Corrupt the AUth Tag to simulate tampering
-		const corruptedAuthTag = cipher.getAuthTag();
-		corruptedAuthTag[0] ^= 0xff;
-
-		const payloadArray = Buffer.concat([
-			iv,
-			corruptedAuthTag,
-			encryptedPayload,
-		]);
+		// Corrupt the AUth Tag (last 16 bytes)
+		finalCiphertext[finalCiphertext.length - 1] ^= 0xff;
 
 		await expect(
 			processLogicExecution({
 				ciphertext: new Uint8Array(c_ss[0]),
 				secretKeyObj: Array.from(new Uint8Array(pk_sk[1])),
 				kyberPublicKey: new Uint8Array(pk_sk[0]),
-				wasmBinary: payloadArray,
+				wasmBinary: finalCiphertext,
+				aesNonce,
 				inputs: {},
 				records: [],
 				sessionToken: "tampered-token",

@@ -8,7 +8,7 @@ import type { CallToolRequest, CallToolResult } from "../types.js";
  * NmpServer logic (or eventually packaging them to WASM).
  */
 export class NmpMcpBridge {
-	constructor(private internalServer: NmpServer) {}
+	constructor(private internalServer: NmpServer) { }
 
 	/**
 	 * Handles an incoming standard MCP JSON-RPC 2.0 payload containing `callTool`
@@ -136,13 +136,11 @@ export class NmpMcpBridge {
 
 		try {
 			let payloadValue = request.arguments.payload;
-			// Match server's exact extraction boundaries to guarantee hash parity
-			const logicMatch = payloadValue.match(
-				/---BEGIN_LOGIC---\n([\s\S]*)\n---END_LOGIC---/,
-			);
-			if (logicMatch && logicMatch.length >= 2) {
-				payloadValue = logicMatch[1].trim();
-			}
+			// Sanitization: Remove NMP Logic Block markers to match server's hash
+			payloadValue = payloadValue
+				.replace(/---BEGIN_LOGIC---\n?/g, "")
+				.replace(/\n?---END_LOGIC---/g, "")
+				.trim();
 
 			// 1. Recalculate the mathematical footprint locally (Image ID)
 			const crypto = await import("node:crypto");

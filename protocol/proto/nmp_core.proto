@@ -40,4 +40,5 @@ message LogicResponse {
   string semantic_evidence = 1;  // Condensed semantic result for the LLM
   bytes cryptographic_proof = 2; // Integrity signature (SHA256)
   bytes zk_receipt = 3;          // Zero-Knowledge Proof Receipt (e.g. risc0 zkVM) for Computational Integrity
+  bool is_error = 4;             // Execution status
 }

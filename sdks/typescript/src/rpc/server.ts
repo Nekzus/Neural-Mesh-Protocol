@@ -1,176 +1,52 @@
-import crypto from "node:crypto";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import * as grpc from "@grpc/grpc-js";
-import * as protoLoader from "@grpc/proto-loader";
-import kyber from "crystals-kyber";
-import { Piscina } from "piscina";
+import { nmpV1 } from "./proto.js";
+import type { IntentRequest, IntentResponse, LogicRequest, LogicResponse } from "./types.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Carregamos as definições del proto NMP V1
-const PROTO_PATH = path.resolve(
-	__dirname,
-	"../../../../protocol/proto/nmp_core.proto",
-);
-
-export interface RpcServerConfig {
-	host: string;
-	port: number;
-}
-
-export class MeshRpcServer {
+/**
+ * NMP gRPC Service Implementation
+ * Handles intent negotiation and secure logic execution.
+ */
+export class NmpRpcServer {
 	private server: grpc.Server;
-	private config: RpcServerConfig;
-	private sessions: Map<string, Buffer> = new Map();
-	private workerPool: Piscina;
 
-	constructor(config: RpcServerConfig) {
-		this.config = config;
+	constructor() {
 		this.server = new grpc.Server();
+	}
 
-		this.workerPool = new Piscina({
-			filename: path.resolve(__dirname, "../workers/logic-execution.ts"),
-			minThreads: 2,
-			maxThreads: Math.max(2, os.cpus().length - 1),
-		});
-
-		const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-			keepCase: true,
-			longs: String,
-			enums: String,
-			defaults: true,
-			oneofs: true,
-		});
-
-		const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-		// biome-ignore lint/suspicious/noExplicitAny: Dynamic gRPC protocol mapping
-		const nmp = (protoDescriptor as any).nmp.v1;
-
-		this.server.addService(nmp.NeuralMesh.service, {
-			NegotiateIntent: this.negotiateIntent.bind(this),
-			ExecuteLogic: this.executeLogic.bind(this),
+	public addService(handlers: {
+		negotiateIntent: (call: grpc.ServerUnaryCall<IntentRequest, IntentResponse>, callback: grpc.sendUnaryData<IntentResponse>) => void;
+		executeLogic: (call: grpc.ServerWritableStream<LogicRequest, LogicResponse>) => void;
+	}): void {
+		this.server.addService(nmpV1.NeuralMesh.service, {
+			NegotiateIntent: handlers.negotiateIntent,
+			ExecuteLogic: handlers.executeLogic,
 		});
 	}
 
-	private negotiateIntent(
-		call: grpc.ServerUnaryCall<
-			Record<string, unknown>,
-			Record<string, unknown>
-		>,
-		callback: grpc.sendUnaryData<Record<string, unknown>>,
-	) {
-		const request = call.request;
-		console.log(`[gRPC] Negotiating intent with Did: ${request.agent_did}`);
-
-		// Generate Post-Quantum Keypair (ML-KEM-768)
-		const pk_sk = kyber.KeyGen768();
-		const pk = Buffer.from(pk_sk[0]);
-		const sk = Buffer.from(pk_sk[1]);
-
-		const sessionToken = `nmp_session_${crypto.randomUUID()}`;
-		this.sessions.set(sessionToken, sk);
-
-		callback(null, {
-			accepted: true,
-			session_token: sessionToken,
-			error_message: "",
-			kyber_public_key: pk,
-		});
-	}
-
-	private async executeLogic(
-		call: grpc.ServerWritableStream<
-			Record<string, unknown>,
-			Record<string, unknown>
-		>,
-	) {
-		const request = call.request;
-		const sessionToken = request.session_token as string;
-		console.log(`[gRPC] Executing Logic with token: ${sessionToken}`);
-
-		const sk = this.sessions.get(sessionToken);
-		if (!sk) {
-			console.error(`[gRPC] Invalid or expired session token: ${sessionToken}`);
-			call.end();
-			return;
-		}
-		this.sessions.delete(sessionToken);
-
-		try {
-			console.log("[-] Offloading Execution to Multi-Core Worker Pool...");
-
-			const workerResult = await this.workerPool.run({
-				ciphertext: request.pqc_ciphertext,
-				secretKeyObj: sk,
-				kyberPublicKey: Buffer.alloc(0),
-				wasmBinary: request.wasm_binary,
-				inputs: {},
-				sessionToken: request.session_token,
-			});
-
-			console.log(
-				`[gRPC] Worker computational pipeline finished successfully.`,
-			);
-
-			call.write({
-				semantic_evidence: workerResult.output,
-				cryptographic_proof: Buffer.from(workerResult.image_id, "hex"),
-				zk_receipt: crypto
-					.createHash("sha256")
-					.update(Buffer.from(workerResult.image_id, "hex"))
-					.update("ZK_SNARK_STUB_SEAL")
-					.digest(),
-			});
-		} catch (error: unknown) {
-			console.error(
-				`[gRPC] Capability Violation / Worker Error:`,
-				(error as Error).message,
-			);
-			call.write({
-				semantic_evidence: `Capability Violation: ${(error as Error).message}`,
-				cryptographic_proof: Buffer.alloc(0),
-				zk_receipt: Buffer.alloc(0),
-			});
-		}
-
-		call.end();
-	}
-
-	public async start(): Promise<void> {
+	public async listen(port: number = 50051): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const bindAddr = `${this.config.host}:${this.config.port}`;
+			this.server.bindAsync(
+				`0.0.0.0:${port}`,
+				grpc.ServerCredentials.createInsecure(), // Alpha: Insecure by default, PQC handled in payload
+				(error, assignedPort) => {
+					if (error) {
+						reject(error);
+						return;
+					}
+					this.server.start();
+					console.log(`[NMP-RPC] Server listening on port ${assignedPort}`);
+					resolve();
+				}
+			);
+		});
+	}
 
-			// Hardening: Structural Readiness for mTLS / TLS Mux over Yamux
-			let credentials = grpc.ServerCredentials.createInsecure();
-			const certPath = path.resolve(__dirname, "../../certs/server.crt");
-			const keyPath = path.resolve(__dirname, "../../certs/server.key");
-
-			if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
-				console.log("[🔒] NMP gRPC: Mounting Secure TLS/mTLS Credentials...");
-				const cert = fs.readFileSync(certPath);
-				const key = fs.readFileSync(keyPath);
-				credentials = grpc.ServerCredentials.createSsl(null, [
-					{ cert_chain: cert, private_key: key },
-				]);
-			} else {
-				console.warn(
-					"[!] NMP gRPC: Missing TLS Certs. Falling back to Insecure localhost binding (Dev Mode only).",
-				);
-			}
-
-			this.server.bindAsync(bindAddr, credentials, (err, _port) => {
-				if (err) return reject(err);
-				console.log(`NMP gRPC Server listening intensely on ${bindAddr}`);
+	public async stop(): Promise<void> {
+		return new Promise((resolve) => {
+			this.server.tryShutdown(() => {
+				console.log("[NMP-RPC] Server shut down");
 				resolve();
 			});
 		});
-	}
-
-	public stop(): void {
-		this.server.forceShutdown();
 	}
 }

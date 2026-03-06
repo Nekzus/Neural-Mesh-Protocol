@@ -47,11 +47,13 @@ export class WasiSandbox {
 	public async execute(
 		compiledLogic: Buffer | string,
 		records: Record<string, unknown>[] = [],
+		inputs: Record<string, unknown> = {},
 	): Promise<{ output: string; fuelConsumed: number }> {
 		const startMark = performance.now();
 
 		if (compiledLogic instanceof Buffer) {
 			// Path A: WASM Native Execution
+			// In alpha, we might pass inputs via WASI env or specific exports
 			try {
 				const module = await WebAssembly.compile(new Uint8Array(compiledLogic));
 				ASTGuardian.analyze(module);
@@ -73,9 +75,13 @@ export class WasiSandbox {
 			// This is the "Aislamiento V8" promised in documentation.
 			const sandboxEnv = Object.create(null);
 			// Multiple access patterns to ensure parity with documentation
-			const env = { records };
+			const env = { records, ...inputs };
 			sandboxEnv.records = records;
 			sandboxEnv.env = env;
+			// Pass each input as a global as well for convenience
+			for (const [key, value] of Object.entries(inputs)) {
+				sandboxEnv[key] = value;
+			}
 			// sandboxEnv.console = console; // REMOVED: Exposing host console creates a prototype pollution VM-Escape vector.
 
 			const context = vm.createContext(sandboxEnv);
@@ -120,6 +126,6 @@ export class WasiSandbox {
 	public async teardown(): Promise<void> {
 		try {
 			await fs.rm(this.workingDir, { recursive: true, force: true });
-		} catch (e) {}
+		} catch (e) { }
 	}
 }

@@ -13,6 +13,7 @@ export interface WorkerData {
 	records?: Record<string, unknown>[];
 	sessionToken: string;
 	isEncrypted?: boolean;
+	aesNonce?: Uint8Array;
 }
 
 export default async function processLogicExecution(
@@ -22,29 +23,47 @@ export default async function processLogicExecution(
 		ciphertext,
 		secretKeyObj,
 		wasmBinary,
+		inputs,
+		aesNonce,
 		records,
 		isEncrypted = true,
 	} = data;
 
 	let decryptedPayload: Buffer | string;
+	const decryptedInputs: Record<string, unknown> = {};
 
 	if (isEncrypted) {
 		// 1. Decapsulate Kyber secret
 		const sk = new Uint8Array(secretKeyObj);
 		const ct = new Uint8Array(ciphertext);
 		const sharedSecret = kyber.Decrypt768(ct, sk);
-		const aesKey = Buffer.from(sharedSecret).subarray(0, 32);
+		// ML-KEM-768 produces a 32-byte shared secret directly compatible with AES-256
+		const aesKey = Buffer.from(sharedSecret);
 
-		// 2. Decrypt Payload AES-256-GCM
-		const iv = wasmBinary.subarray(0, 12);
-		const authTag = wasmBinary.subarray(12, 28);
-		const encryptedPayload = wasmBinary.subarray(28);
+		// 2. Decrypt Main Payload (WASM/JS Code)
+		// NMP Serialization: Ciphertext = EncryptedData + 16-byte AuthTag
+		const wasmBuffer = Buffer.from(wasmBinary);
+		const authTag = wasmBuffer.subarray(-16);
+		const encryptedData = wasmBuffer.subarray(0, -16);
 
-		const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
+		const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, Buffer.from(aesNonce || new Uint8Array(12)));
 		decipher.setAuthTag(authTag);
-		let decrypted = decipher.update(encryptedPayload);
+		let decrypted = decipher.update(encryptedData);
 		decrypted = Buffer.concat([decrypted, decipher.final()]);
 		decryptedPayload = decrypted;
+
+		// 3. Decrypt Inputs
+		for (const [key, encValue] of Object.entries(inputs || {})) {
+			const valBuffer = Buffer.from(encValue);
+			const valTag = valBuffer.subarray(-16);
+			const valData = valBuffer.subarray(0, -16);
+
+			const valDecipher = crypto.createDecipheriv("aes-256-gcm", aesKey, Buffer.from(aesNonce || new Uint8Array(12)));
+			valDecipher.setAuthTag(valTag);
+			let valDecrypted = valDecipher.update(valData);
+			valDecrypted = Buffer.concat([valDecrypted, valDecipher.final()]);
+			decryptedInputs[key] = JSON.parse(valDecrypted.toString("utf-8"));
+		}
 	} else {
 		// Transparent mode: payload is provided directly
 		// If it's WASM (Magic bytes: \0asm), keep as Buffer
@@ -76,12 +95,20 @@ export default async function processLogicExecution(
 		decryptedPayload = decryptedPayload.toString("utf-8");
 	}
 
+	// Sanitization: Remove NMP Logic Block markers if present (Common in documentation/The Vault prompts)
+	if (typeof decryptedPayload === "string") {
+		decryptedPayload = decryptedPayload
+			.replace(/---BEGIN_LOGIC---\n?/g, "")
+			.replace(/\n?---END_LOGIC---/g, "")
+			.trim();
+	}
+
 	// 4. Instantiate and Execute WASI Sandbox (or V8 Fallback)
 	const sandbox = new WasiSandbox();
 	await sandbox.init();
 
 	try {
-		const result = await sandbox.execute(decryptedPayload, records);
+		const result = await sandbox.execute(decryptedPayload, records, decryptedInputs);
 
 		// 5. Generate ZK Receipt Mock / Cryptographic Proof of Execution
 		const hasher = crypto.createHash("sha256");
