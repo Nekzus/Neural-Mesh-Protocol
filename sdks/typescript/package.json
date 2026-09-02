@@ -71,7 +71,10 @@
     "demo:playground-web-build": "pnpm --filter playground-web build",
     "demo:playground": "tsx tests/infra/cli/demo-playground.ts",
     "demo:playground:rebuild": "tsx tests/infra/cli/demo-playground-rebuild.ts",
-    "demo:client-sdk": "tsx tests/infra/cli/demo-client.ts"
+    "demo:client-sdk": "tsx tests/infra/cli/demo-client.ts",
+    "audit:prod:start": "tsx tests/infra/production-audit/cli/audit-start.ts",
+    "audit:prod:run": "tsx tests/infra/production-audit/cli/audit-run.ts",
+    "audit:prod:clean": "tsx tests/infra/production-audit/cli/audit-clean.ts"
   },
   "keywords": [
     "liop",

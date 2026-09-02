@@ -1,0 +1,55 @@
+# syntax=docker/dockerfile:1.7
+
+# ==============================================================================
+# LIOP Production Readiness Audit — Dockerfile
+# Installs the published @nekzus/liop@2.5.0 package directly from the public registry.
+# Simulates WAN environments with Traffic Control (tc/netem) and kernel network shaping.
+# ==============================================================================
+
+FROM node:22-slim AS builder
+LABEL org.nekzus.liop.audit="production-v2.5.0"
+WORKDIR /app
+
+# Install the exact production package published on NPM along with required peer/runtime tools
+RUN npm init -y \
+    && npm pkg set type="module" \
+    && npm install --save --no-audit --no-fund \
+       @nekzus/liop@2.5.0 \
+       zod@4.4.3 \
+       hono@4.13.5 \
+       @hono/node-server@2.1.1
+
+# Copy production audit assets
+COPY entrypoints/ ./entrypoints/
+COPY utils/ ./utils/
+COPY hft/ ./hft/
+COPY network-profiles/ ./network-profiles/
+COPY tests/ ./tests/
+
+# Runtime stage: lean image with iproute2 for tc/netem and curl for healthchecks
+FROM node:22-slim AS runtime
+LABEL org.nekzus.liop.audit="production-v2.5.0"
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends iproute2 curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install tsx and vitest globally for running entrypoints and test runner in container
+RUN npm install -g tsx vitest
+
+# Copy application artifacts from builder
+COPY --from=builder /app ./
+
+# Ensure network scripts have execution permissions
+RUN chmod +x /app/network-profiles/*.sh
+
+ENV LIOP_LOG_LEVEL=info
+ENV LIOP_GRPC_PORT=50051
+
+EXPOSE 3000 4000 4001 50051
+
+HEALTHCHECK --interval=5s --timeout=3s --start-period=15s --retries=5 \
+  CMD curl -sf http://localhost:3000/health || exit 1
+
+ENTRYPOINT ["/app/network-profiles/entrypoint-wrapper.sh"]

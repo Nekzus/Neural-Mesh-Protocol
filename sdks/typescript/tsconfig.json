@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"rootDir": ".",
 		"target": "ESNext",
 		"lib": ["ESNext", "DOM"],
 		"module": "NodeNext",
