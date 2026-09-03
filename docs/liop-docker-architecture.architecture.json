@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "LIOP Sovereign Mesh — Global Tri-Tier Network Architecture",
+    "subtitle": "Planetary Machine-to-Machine (M2M) Topology: AI Desktop Agents, Anycast Discovery & Zero-Trust Enclaves",
+    "output": "docs/liop-docker-architecture.html",
+    "visual_preset": "blueprint",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "mcp-ai-flow",
+        "label": "1. AI Desktop Agent (Claude/Cursor MCP)",
+        "focus": ["mcp_client", "blg"],
+        "note": "AI Agent calls BLG via MCP JSON-RPC (tools/call) to execute logic over origin datasets without pulling raw rows."
+      },
+      {
+        "id": "m2m-runner-flow",
+        "label": "2. Autonomous M2M Agent Discovery",
+        "focus": ["playground_client", "nexus_seed", "nexus_auth", "blg"],
+        "note": "Autonomous Agent queries Global Anycast DHT for capability CIDs and negotiates OAuth 2.1 RFC 8707 M2M token with IdP."
+      },
+      {
+        "id": "perimeter-admission",
+        "label": "3. Perimeter Gateway & AST Audit",
+        "focus": ["blg", "nexus_auth"],
+        "note": "BLG validates JWT signatures against Nexus JWKS, runs Guardian AST (14-fn allowlist) and tracks IFC Taint flows."
+      },
+      {
+        "id": "pnet-transit",
+        "label": "4. Sovereign Enclave pnet In-situ Execution",
+        "focus": ["blg", "bank", "vault"],
+        "note": "Logic crosses to Tier 1 via 95-byte Swarm Key (pnet PSK). Direct external access is blocked at network transport layer."
+      },
+      {
+        "id": "zk-egress",
+        "label": "5. Dual ZK-Receipt Egress",
+        "focus": ["bank", "vault", "blg", "mcp_client", "playground_client"],
+        "note": "Outputs sealed with HMAC-SHA256 ZK-Receipts return through BLG to both AI Desktop and M2M clients with zero leakage."
+      }
+    ]
+  },
+  "components": [
+    { "id": "playground_client", "type": "external", "label": "Autonomous AI Agent", "sublabel": "@nekzus/liop SDK Runner", "pos": [60, 130], "size": [170, 64], "tag": "REST / gRPC Consumer", "brand": "typescript" },
+    { "id": "mcp_client", "type": "external", "label": "Claude Desktop", "sublabel": "AI Desktop Agent (MCP)", "pos": [380, 130], "size": [170, 64], "tag": "MCP JSON-RPC Client", "brand": "claude" },
+    { "id": "nexus_seed", "type": "cloud", "label": "Anycast Supernode", "sublabel": "US · EU · AP Discovery", "pos": [700, 130], "size": [160, 64], "tag": "Global Kademlia DHT", "brand": "docker" },
+    { "id": "relay", "type": "cloud", "label": "Circuit Relay v2", "sublabel": "Global NAT Traversal", "pos": [960, 130], "size": [150, 64], "tag": "AutoNAT Hole-Punch", "brand": "docker" },
+
+    { "id": "nexus_auth", "type": "security", "label": "Consortium IdP & CA", "sublabel": "OAuth 2.1 RFC 8707", "pos": [60, 334], "size": [170, 64], "tag": "ML-DSA-65 Root CA", "brand": "docker" },
+    { "id": "blg", "type": "security", "label": "Border LIO Gateway", "sublabel": "Dual-NIC Perimeter Gate", "pos": [375, 330], "size": [180, 72], "tag": "Rust / Wasmtime Core", "brand": "rust" },
+    { "id": "oracle", "type": "backend", "label": "Global Market Oracle", "sublabel": "HFT Cross-Border Feed", "pos": [700, 334], "size": [160, 64], "tag": "150ms Tokyo WAN Link", "brand": "docker" },
+    { "id": "edge", "type": "backend", "label": "Edge Telemetry Node", "sublabel": "Smart Grid & IoT Mesh", "pos": [960, 334], "size": [150, 64], "tag": "3G Loss-Resilient Link", "brand": "docker" },
+
+    { "id": "bank", "type": "database", "label": "The Bank (Ledger)", "sublabel": "Interbank Settlement", "pos": [250, 560], "size": [180, 64], "tag": "PostgreSQL · Sovereign Core", "brand": "postgresql" },
+    { "id": "vault", "type": "database", "label": "The Vault (Health)", "sublabel": "Clinical EHR Sanctuary", "pos": [500, 560], "size": [180, 64], "tag": "ClickHouse · HIPAA Enclave", "brand": "clickhouse" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "TIER 3: GLOBAL PUBLIC DISCOVERY BACKBONE (Planetary Anycast & AI Agents)", "wraps": ["playground_client", "mcp_client", "nexus_seed", "relay"], "pad": 22 },
+    { "kind": "region", "label": "TIER 2: SECTORIAL FEDERATED CONSORTIUM MESH (mTLS / ML-DSA-65 / OAuth 2.1)", "wraps": ["nexus_auth", "blg", "oracle", "edge"], "pad": 22 },
+    { "kind": "security-group", "label": "TIER 1: INTRA-ORGANIZATION SOVEREIGN ENCLAVES [pnet PSK Isolated]", "wraps": ["bank", "vault"], "pad": 22 }
+  ],
+  "connections": [
+    { "from": "playground_client", "to": "nexus_seed", "label": "1. Global DHT Query", "variant": "dashed", "fromSide": "top", "toSide": "top", "via": [[145, 60], [780, 60]], "labelAt": [465, 50] },
+    { "from": "playground_client", "to": "nexus_auth", "label": "2. OAuth 2.1 Token Req", "variant": "emphasis", "labelAt": [145, 250], "route": "straight" },
+    { "from": "playground_client", "to": "blg", "label": "3. Direct LIO Ingress", "variant": "emphasis", "route": "orthogonal-h", "labelAt": [310, 275] },
+    { "from": "mcp_client", "to": "blg", "label": "A. MCP Call (tools/call)", "variant": "emphasis", "route": "straight", "labelAt": [465, 245] },
+    { "from": "blg", "to": "nexus_auth", "label": "JWKS Verify", "variant": "security", "labelAt": [300, 390], "route": "straight" },
+    { "from": "blg", "to": "bank", "label": "4. WASI In-situ & ZK Egress", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [375, 480] },
+    { "from": "blg", "to": "vault", "label": "4. WASI In-situ & ZK Egress", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [555, 480] },
+    { "from": "blg", "to": "oracle", "label": "Global WAN (150ms)", "variant": "dashed", "labelAt": [628, 366], "route": "straight" },
+    { "from": "oracle", "to": "edge", "label": "Consortium P2P Sync", "variant": "dashed", "route": "straight" },
+    { "from": "nexus_seed", "to": "relay", "label": "Relay Coordination", "variant": "dashed", "route": "straight" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Global Multi-Client Federation",
+      "items": [
+        "Claude Desktop and Cursor IDE interact natively via MCP JSON-RPC protocol",
+        "Autonomous AI Agents resolve capabilities across Global Anycast DHT Supernodes",
+        "All compute requests converge on authenticated Border LIO Gateways"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Perimeter & Cryptographic Boundary",
+      "items": [
+        "Border LIO Gateway bridges semi-trusted WAN with sovereign data sanctuaries",
+        "WASI Sandboxes enforce zero-trust fuel limits and prototype immutability",
+        "libp2p pnet Swarm Key drops unauthorized network traffic fail-closed"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Post-Quantum Security & ZK Proofs",
+      "items": [
+        "Consortium identity certificates anchored in ML-DSA-65 Dilithium (FIPS 204)",
+        "KEM session secrets negotiated with ML-KEM-768 Kyber (FIPS 203)",
+        "Zero raw records egress: outputs sealed with dataset-bound HMAC-SHA256 ZK-Receipts"
+      ]
+    }
+  ]
+}

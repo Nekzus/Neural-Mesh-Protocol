@@ -146,6 +146,8 @@ export class JwtValidator {
 			"localhost:13000",
 			"127.0.0.1:13001",
 			"localhost:13001",
+			"127.0.0.1:15000",
+			"localhost:15000",
 		];
 
 		// Extract just the authority (host:port) from the issuer URL

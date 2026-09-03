@@ -8,7 +8,11 @@ import * as grpc from "@grpc/grpc-js";
 import { createMlKem768 } from "mlkem";
 import { FixedQueue, Piscina } from "piscina";
 import { z } from "zod";
-import { type LiopManifest, MeshNode } from "../mesh/node.js";
+import {
+	type LiopManifest,
+	MeshNode,
+	type MeshNodeConfig,
+} from "../mesh/node.js";
 import {
 	egressBlocksTotal,
 	fuelConsumed,
@@ -990,14 +994,7 @@ export class LiopServer {
 	 * Convenience alias for connectToMesh(), matching official documentation.
 	 */
 	public async connect(
-		options: {
-			port?: number;
-			meshConfig?: {
-				listenAddresses?: string[];
-				bootstrapNodes?: string[];
-				identityPath?: string;
-			};
-		} = {},
+		options: { port?: number; meshConfig?: MeshNodeConfig } = {},
 	): Promise<void> {
 		return this.connectToMesh(options);
 	}
@@ -1627,14 +1624,7 @@ Protocol Adherence is mandatory for successful execution.`,
 	 * Boots the gRPC server for secure Logic-on-Origin.
 	 */
 	public async connectToMesh(
-		options: {
-			port?: number;
-			meshConfig?: {
-				listenAddresses?: string[];
-				bootstrapNodes?: string[];
-				identityPath?: string;
-			};
-		} = {},
+		options: { port?: number; meshConfig?: MeshNodeConfig } = {},
 	): Promise<void> {
 		const envPort = process.env.LIOP_GRPC_PORT
 			? Number.parseInt(process.env.LIOP_GRPC_PORT, 10)

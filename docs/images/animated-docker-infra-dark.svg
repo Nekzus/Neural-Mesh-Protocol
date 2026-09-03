@@ -1,0 +1,651 @@
+<svg width="1440" height="900" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Master Background Radial -->
+    <radialGradient id="master-bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0%" stop-color="#080e1d" />
+      <stop offset="60%" stop-color="#03060e" />
+      <stop offset="100%" stop-color="#010205" />
+    </radialGradient>
+
+    <!-- Tier Glass Backdrops (Full Width) -->
+    <linearGradient id="t3-backdrop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.10" />
+      <stop offset="50%" stop-color="#6d28d9" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#4c1d95" stop-opacity="0.08" />
+    </linearGradient>
+
+    <linearGradient id="t2-backdrop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.10" />
+      <stop offset="50%" stop-color="#0369a1" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#075985" stop-opacity="0.08" />
+    </linearGradient>
+
+    <linearGradient id="t1-backdrop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e11d48" stop-opacity="0.12" />
+      <stop offset="50%" stop-color="#be123c" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#881337" stop-opacity="0.10" />
+    </linearGradient>
+
+    <!-- Node Surface Gradients -->
+    <linearGradient id="node-surface" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141e2e" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0b1320" stop-opacity="0.98" />
+    </linearGradient>
+
+    <linearGradient id="blg-monumental" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#022c22" stop-opacity="0.98" />
+    </linearGradient>
+
+    <!-- Flow Particle Comet Tails -->
+    <linearGradient id="tail-cyan" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0" />
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="1" />
+    </linearGradient>
+
+    <linearGradient id="tail-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0" />
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="1" />
+    </linearGradient>
+
+    <linearGradient id="tail-green" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0" />
+      <stop offset="100%" stop-color="#34d399" stop-opacity="1" />
+    </linearGradient>
+
+    <linearGradient id="tail-purple" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="1" />
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="glow-cyan-p" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b" /><feComposite in="SourceGraphic" in2="b" operator="over" />
+    </filter>
+    <filter id="glow-gold-p" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b" /><feComposite in="SourceGraphic" in2="b" operator="over" />
+    </filter>
+    <filter id="glow-green-p" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b" /><feComposite in="SourceGraphic" in2="b" operator="over" />
+    </filter>
+    <filter id="glow-red-p" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b" /><feComposite in="SourceGraphic" in2="b" operator="over" />
+    </filter>
+    <filter id="glow-purple-p" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b" /><feComposite in="SourceGraphic" in2="b" operator="over" />
+    </filter>
+
+    <!-- Precise Marker Arrows -->
+    <marker id="arrow-c" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1 L 6 4 L 0 7 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-g" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1 L 6 4 L 0 7 z" fill="#fbbf24" />
+    </marker>
+    <marker id="arrow-e" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1 L 6 4 L 0 7 z" fill="#34d399" />
+    </marker>
+    <marker id="arrow-p" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1 L 6 4 L 0 7 z" fill="#c084fc" />
+    </marker>
+  </defs>
+
+  <style>
+    <![CDATA[
+    .brand-title { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 19px; font-weight: 800; fill: #f8fafc; letter-spacing: 0.5px; }
+    .brand-desc { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 500; fill: #94a3b8; }
+    
+    .tier-header-txt { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+    .tier-meta-txt { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10.5px; font-weight: 500; }
+
+    .node-h { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+    .node-sub { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+    .node-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+    .node-port { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; fill: #64748b; }
+    .node-tag { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.3px; }
+
+    /* Static Circuit Bus */
+    .bus-wire { fill: none; stroke: #1e293b; stroke-width: 2.2; stroke-linecap: round; }
+    .pnet-wire { fill: none; stroke: #064e3b; stroke-width: 3.5; stroke-dasharray: 6, 6; stroke-linecap: round; }
+
+    /* Guided Wave Pathways */
+    .wave-p1 { fill: none; stroke: #38bdf8; stroke-width: 2.4; stroke-dasharray: 8, 8; animation: move-fwd 1.2s linear infinite; }
+    .wave-p2 { fill: none; stroke: #fbbf24; stroke-width: 2.4; stroke-dasharray: 8, 8; animation: move-fwd 1.2s linear infinite; }
+    .wave-p3 { fill: none; stroke: #34d399; stroke-width: 3.0; stroke-dasharray: 8, 8; animation: move-fwd 1.2s linear infinite; }
+    .wave-p5 { fill: none; stroke: #c084fc; stroke-width: 2.4; stroke-dasharray: 8, 8; animation: move-rev 1.2s linear infinite; }
+
+    @keyframes move-fwd { to { stroke-dashoffset: -32; } }
+    @keyframes move-rev { to { stroke-dashoffset: 32; } }
+
+    /* Border Gateway Radar Pulse */
+    @keyframes blg-radar {
+      0% { r: 50; opacity: 0.8; stroke-width: 2; }
+      100% { r: 100; opacity: 0; stroke-width: 0.5; }
+    }
+    .radar-sweep { animation: blg-radar 2.6s cubic-bezier(0.1, 0.8, 0.3, 1) infinite; }
+
+    /* Padlock Breathing */
+    @keyframes padlock-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px #f43f5e); opacity: 0.85; }
+      50% { filter: drop-shadow(0 0 10px #fb7185); opacity: 1; }
+    }
+    .padlock-anim { animation: padlock-glow 3s ease-in-out infinite; }
+
+    /* =================================================================== */
+    /* MASTER 10-SECOND SYNCHRONIZED ARCHITECTURAL FLOW                    */
+    /* Step 1: 0.0s - 2.0s -> Client queries Nexus IdP (OAuth 2.1 Req)     */
+    /* Step 2: 2.0s - 4.0s -> Nexus grants JWT to Border LIO Gateway       */
+    /* Step 3: 4.0s - 6.0s -> BLG injects WASI through pnet Swarm Key      */
+    /* Step 4: 6.0s - 8.0s -> In-situ Execution inside Enclave Isolates     */
+    /* Step 5: 8.0s - 10.0s -> ZK-Receipt Egress returns to Client         */
+    /* =================================================================== */
+
+    /* Active Node Illuminations */
+    @keyframes hl-n1 {
+      0%, 20% { stroke: #38bdf8; stroke-width: 2; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4)); }
+      23%, 100% { stroke: #334155; stroke-width: 1; filter: none; }
+    }
+    .hl-act-1 { animation: hl-n1 10s infinite; }
+
+    @keyframes hl-n2 {
+      0%, 18% { stroke: #0284c7; stroke-width: 1; filter: none; }
+      20%, 40% { stroke: #fbbf24; stroke-width: 2; filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.45)); }
+      43%, 100% { stroke: #0284c7; stroke-width: 1; filter: none; }
+    }
+    .hl-act-2 { animation: hl-n2 10s infinite; }
+
+    @keyframes hl-n3 {
+      0%, 38% { stroke: #10b981; stroke-width: 2; filter: none; }
+      40%, 60% { stroke: #34d399; stroke-width: 3; filter: drop-shadow(0 0 16px rgba(52, 211, 153, 0.6)); }
+      63%, 100% { stroke: #10b981; stroke-width: 2; filter: none; }
+    }
+    .hl-act-3 { animation: hl-n3 10s infinite; }
+
+    @keyframes hl-n4 {
+      0%, 58% { stroke: #e11d48; stroke-width: 1.5; filter: none; }
+      60%, 80% { stroke: #fb7185; stroke-width: 2.5; filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.6)); }
+      83%, 100% { stroke: #e11d48; stroke-width: 1.5; filter: none; }
+    }
+    .hl-act-4 { animation: hl-n4 10s infinite; }
+
+    /* Flow Step 1: Client -> Nexus IdP (Descends from Tier 3 to Tier 2) */
+    @keyframes pkt-s1 {
+      0% { opacity: 0; transform: translate(0px, 0px); }
+      3% { opacity: 1; transform: translate(0px, 0px); }
+      17% { opacity: 1; transform: translate(0px, 150px); }
+      20% { opacity: 0; transform: translate(0px, 150px); }
+      100% { opacity: 0; }
+    }
+    .fly-step1 { animation: pkt-s1 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+
+    /* Flow Step 2: Nexus IdP -> Border Gateway (Horizontal Tier 2 Transit) */
+    @keyframes pkt-s2 {
+      0%, 20% { opacity: 0; transform: translate(0px, 0px); }
+      23% { opacity: 1; transform: translate(0px, 0px); }
+      37% { opacity: 1; transform: translate(250px, 0px); }
+      40% { opacity: 0; transform: translate(250px, 0px); }
+      100% { opacity: 0; }
+    }
+    .fly-step2 { animation: pkt-s2 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+
+    /* Flow Step 3: BLG -> Bank & Vault Enclaves (Descends through pnet Swarm Key) */
+    @keyframes pkt-s3-bank {
+      0%, 40% { opacity: 0; transform: translate(0px, 0px); }
+      43% { opacity: 1; transform: translate(0px, 0px); }
+      57% { opacity: 1; transform: translate(-140px, 160px); }
+      60% { opacity: 0; transform: translate(-140px, 160px); }
+      100% { opacity: 0; }
+    }
+    .fly-step3-bank { animation: pkt-s3-bank 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+
+    @keyframes pkt-s3-vault {
+      0%, 40% { opacity: 0; transform: translate(0px, 0px); }
+      43% { opacity: 1; transform: translate(0px, 0px); }
+      57% { opacity: 1; transform: translate(200px, 160px); }
+      60% { opacity: 0; transform: translate(200px, 160px); }
+      100% { opacity: 0; }
+    }
+    .fly-step3-vault { animation: pkt-s3-vault 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+
+    /* Flow Step 4: In-situ Compute Radial Halo */
+    @keyframes compute-halo {
+      0%, 58% { opacity: 0; transform: scale(0.9); }
+      62%, 76% { opacity: 1; transform: scale(1.06); }
+      80% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 0; }
+    }
+    .halo-exec { animation: compute-halo 10s ease-in-out infinite; transform-origin: center; opacity: 0; }
+
+    /* Flow Step 5: Enclaves -> BLG -> Client (Ascending Loop to Tier 3) */
+    @keyframes pkt-s5-return {
+      0%, 78% { opacity: 0; transform: translate(0px, 0px); }
+      81% { opacity: 1; transform: translate(0px, 0px); }
+      88% { opacity: 1; transform: translate(-200px, -160px); }
+      93% { opacity: 1; transform: translate(-450px, -160px); }
+      98% { opacity: 1; transform: translate(-450px, -310px); }
+      100% { opacity: 0; transform: translate(-450px, -310px); }
+    }
+    .fly-step5 { animation: pkt-s5-return 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 0; }
+    ]]>
+  </style>
+
+  <!-- Deep Canvas Dark Surface -->
+  <rect width="1440" height="900" fill="url(#master-bg)" />
+
+  <!-- ==================================================================== -->
+  <!-- TOP BANNER & BRAND IDENTITY                                          -->
+  <!-- ==================================================================== -->
+  <g transform="translate(50, 32)">
+    <rect width="36" height="36" rx="8" fill="#0284c7" opacity="0.2" />
+    <path d="M 12 18 L 24 10 L 24 26 Z" fill="#38bdf8" />
+    <circle cx="26" cy="18" r="4" fill="#34d399" />
+    <text x="50" y="21" class="brand-title">LIOP PROTOCOL — FULL-SPECTRUM ARCHITECTURE &amp; DATA FLOW</text>
+    <text x="50" y="36" class="brand-desc">Symmetric 3-Tier Physical Topology • Central Border LIO Gateway • pnet Swarm Key Fail-Closed Isolation • In-situ Verification</text>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- TIER 3: PUBLIC BACKBONE (Y: 82 to 248) [FULL WIDTH: X: 50 to 1390]    -->
+  <!-- ==================================================================== -->
+  <g transform="translate(50, 82)" id="layer-tier3">
+    <!-- Tier 3 Full Width Enclosure -->
+    <rect width="1340" height="166" rx="14" fill="url(#t3-backdrop)" stroke="#8b5cf6" stroke-width="1.2" stroke-dasharray="6,4" />
+    
+    <!-- Tier Badge -->
+    <rect x="18" y="12" width="220" height="22" rx="5" fill="#4c1d95" opacity="0.85" />
+    <circle cx="28" cy="23" r="4" fill="#c084fc" />
+    <text x="38" y="27" class="tier-header-txt" fill="#f3e8ff">TIER 3: PUBLIC BACKBONE</text>
+    <text x="250" y="27" class="tier-meta-txt" fill="#c084fc">Subnet: liop-tier3-backbone (172.21.0.0/24) • Public Kademlia DHT Discovery • Zero Confidential Data</text>
+
+    <!-- Node 1: Playground Client (Consumer Agent) -->
+    <g transform="translate(24, 44)" id="n-playground">
+      <rect width="290" height="106" rx="10" fill="url(#node-surface)" class="hl-act-1" />
+      <circle cx="18" cy="18" r="4.5" fill="#38bdf8" />
+      <text x="30" y="22" class="node-h">Playground Client</text>
+      <text x="30" y="35" class="node-sub">AI Agent / Autonomous SDK Consumer</text>
+
+      <rect x="14" y="44" width="262" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#38bdf8">172.21.0.200</text>
+      <text x="180" y="57" class="node-port">Host: :16000</text>
+
+      <text x="14" y="76" class="node-port">Role: Initiates Distributed Tasks</text>
+      <text x="14" y="90" class="node-port">Protocol: HTTP/2 JSON-RPC Gateway</text>
+      <rect x="14" y="98" width="262" height="2" rx="1" fill="#0284c7" />
+    </g>
+
+    <!-- Node 2: Nexus Seed Node (Public DHT Anchor) -->
+    <g transform="translate(340, 44)" id="n-nexus-seed">
+      <rect width="310" height="106" rx="10" fill="url(#node-surface)" stroke="#8b5cf6" stroke-width="1.2" />
+      <circle cx="18" cy="18" r="4.5" fill="#c084fc" />
+      <text x="30" y="22" class="node-h">Nexus Seed (Public Anchor)</text>
+      <text x="30" y="35" class="node-sub">libp2p Kademlia DHT Bootstrap</text>
+
+      <rect x="14" y="44" width="282" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#c084fc">172.21.0.10:4000</text>
+      <text x="200" y="57" class="node-port">Host: :15000</text>
+
+      <text x="14" y="76" class="node-port">Protocol: /liop/kad/1.0.0 Content Routing</text>
+      <text x="14" y="90" class="node-port">DHT Providers &amp; Multiaddr Resolution</text>
+      <rect x="14" y="98" width="282" height="2" rx="1" fill="#8b5cf6" />
+    </g>
+
+    <!-- Node 3: Circuit Relay v2 (NAT Traversal) -->
+    <g transform="translate(676, 44)" id="n-relay">
+      <rect width="310" height="106" rx="10" fill="url(#node-surface)" stroke="#475569" stroke-width="1" />
+      <circle cx="18" cy="18" r="4.5" fill="#a855f7" />
+      <text x="30" y="22" class="node-h">Circuit Relay v2 &amp; AutoNAT</text>
+      <text x="30" y="35" class="node-sub">Firewall &amp; NAT Traversal Router</text>
+
+      <rect x="14" y="44" width="282" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#c084fc">172.21.0.15:4000</text>
+      <text x="200" y="57" class="node-port">Host: :15017</text>
+
+      <text x="14" y="76" class="node-port">Hole-Punching &amp; Stateful NAT Keepalive</text>
+      <text x="14" y="90" class="node-port">Global P2P Mesh Connectivity Bridge</text>
+      <rect x="14" y="98" width="282" height="2" rx="1" fill="#a855f7" />
+    </g>
+
+    <!-- Node 4: Audit Runner (Tester) -->
+    <g transform="translate(1012, 44)" id="n-audit">
+      <rect width="304" height="106" rx="10" fill="url(#node-surface)" stroke="#22c55e" stroke-width="1" />
+      <circle cx="18" cy="18" r="4.5" fill="#22c55e" />
+      <text x="30" y="22" class="node-h">Audit Runner Agent</text>
+      <text x="30" y="35" class="node-sub">Automated Vitest Verification Engine</text>
+
+      <rect x="14" y="44" width="276" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#4ade80">172.21.0.100</text>
+      <text x="180" y="57" class="node-port">11 Production Suites</text>
+
+      <text x="14" y="76" class="node-port">Validates Zero-Trust Egress &amp; PII Shield</text>
+      <text x="14" y="90" class="node-port">Status: 100% PASS (59/59 Tests)</text>
+      <rect x="14" y="98" width="276" height="2" rx="1" fill="#22c55e" />
+    </g>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- TIER 2: FEDERATED CONSORTIUM (Y: 275 to 505) [FULL WIDTH: 50 to 1390] -->
+  <!-- ==================================================================== -->
+  <g transform="translate(50, 275)" id="layer-tier2">
+    <!-- Tier 2 Full Width Enclosure -->
+    <rect width="1340" height="230" rx="14" fill="url(#t2-backdrop)" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="6,4" />
+
+    <!-- Tier Badge -->
+    <rect x="18" y="12" width="250" height="22" rx="5" fill="#082f49" opacity="0.85" />
+    <circle cx="28" cy="23" r="4" fill="#38bdf8" />
+    <text x="38" y="27" class="tier-header-txt" fill="#e0f2fe">TIER 2: FEDERATED CONSORTIUM</text>
+    <text x="280" y="27" class="tier-meta-txt" fill="#38bdf8">Subnet: liop-tier2-consortium (172.23.0.0/24) • M2M Tokens • Border Security Checkpoint</text>
+
+    <!-- Node 1: Nexus Auth Server (OAuth 2.1 RFC 8707 / RFC 9068) -->
+    <g transform="translate(24, 44)" id="n-nexus-auth">
+      <rect width="290" height="170" rx="10" fill="url(#node-surface)" class="hl-act-2" />
+      <circle cx="18" cy="18" r="4.5" fill="#38bdf8" />
+      <text x="30" y="22" class="node-h">Nexus Auth Server</text>
+      <text x="30" y="35" class="node-sub">OAuth 2.1 / OIDC M2M IdP</text>
+
+      <rect x="14" y="44" width="262" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#38bdf8">172.23.0.10:3000</text>
+      <text x="180" y="57" class="node-port">Token Issuer</text>
+
+      <rect x="14" y="66" width="262" height="20" rx="4" fill="#172554" />
+      <text x="18" y="80" class="node-tag" fill="#60a5fa">RFC 8707 / RFC 9068 M2M Standard</text>
+
+      <text x="14" y="102" class="node-port">Audience: urn:liop:mesh:api</text>
+      <text x="14" y="116" class="node-port">Signer: Dilithium65 (FIPS 204 PQC)</text>
+      <text x="14" y="130" class="node-port">JWKS: /.well-known/jwks.json</text>
+      <text x="14" y="144" class="node-port">Role: Verifies Agent Credentials</text>
+      <rect x="14" y="152" width="262" height="2" rx="1" fill="#0284c7" />
+    </g>
+
+    <!-- Node 2: THE CENTRAL BORDER LIO GATEWAY (BLG) [THE PROTAGONIST] -->
+    <g transform="translate(340, 36)" id="n-blg-center">
+      <!-- Pulsing Radar Shield -->
+      <circle cx="210" cy="90" r="60" fill="none" stroke="#10b981" class="radar-sweep" />
+
+      <!-- Master Monumental Card -->
+      <rect width="420" height="178" rx="12" fill="url(#blg-monumental)" class="hl-act-3" />
+      <circle cx="22" cy="20" r="5.5" fill="#34d399" />
+      <text x="36" y="24" class="node-h" fill="#a7f3d0">BORDER LIO GATEWAY (BLG)</text>
+      <text x="36" y="38" class="node-sub" fill="#6ee7b7">Multi-Homed Perimeter DMZ Bridge &amp; Zero-Trust Customs</text>
+
+      <!-- Dual Network Interfaces (T2 North & T1 South) -->
+      <g transform="translate(14, 48)">
+        <!-- NIC North (Tier 2) -->
+        <rect width="392" height="24" rx="4" fill="#022c22" stroke="#059669" stroke-width="1" />
+        <text x="10" y="16" class="node-tag" fill="#38bdf8">&#9650; NIC NORTH (Tier 2 Consortium):</text>
+        <text x="240" y="16" class="node-mono" fill="#38bdf8">172.23.0.20:3000</text>
+
+        <!-- NIC South (Tier 1) -->
+        <rect y="30" width="392" height="24" rx="4" fill="#180509" stroke="#dc2626" stroke-width="1" />
+        <text x="10" y="46" class="node-tag" fill="#fca5a5">&#9660; NIC SOUTH (Tier 1 Enclave PSK):</text>
+        <text x="240" y="46" class="node-mono" fill="#fca5a5">172.22.0.10:4000</text>
+      </g>
+
+      <!-- Security Checklist Inspection Box -->
+      <g transform="translate(14, 114)">
+        <rect width="392" height="48" rx="4" fill="#021a14" stroke="#064e3b" stroke-width="1" />
+        <text x="10" y="16" class="node-tag" fill="#34d399">ZERO-TRUST SECURITY ENFORCEMENT ENGINE:</text>
+        <text x="10" y="30" class="node-port" fill="#a7f3d0">&#10003; Layer 1: Guardian AST Allowlist (14 funcs) &amp; Layer 3: Acorn IFC Taint Tracker</text>
+        <text x="10" y="42" class="node-port" fill="#a7f3d0">&#10003; Layer 4: Egress PII Shield &amp; Layer 6: ZK-Receipt (HMAC-SHA256 Dataset-Bound)</text>
+      </g>
+    </g>
+
+    <!-- Node 3: Oracle Node (HFT Financials - 172.23.0.13) -->
+    <g transform="translate(784, 44)" id="n-oracle">
+      <rect width="260" height="170" rx="10" fill="url(#node-surface)" stroke="#0369a1" stroke-width="1" />
+      <circle cx="18" cy="18" r="4.5" fill="#fbbf24" />
+      <text x="30" y="22" class="node-h">Oracle Node (HFT)</text>
+      <text x="30" y="35" class="node-sub">Financial Market Feeds</text>
+
+      <rect x="14" y="44" width="232" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#fbbf24">172.23.0.13:3000</text>
+      <text x="150" y="57" class="node-port">Host: :15015</text>
+
+      <rect x="14" y="66" width="232" height="20" rx="4" fill="#291b05" />
+      <text x="18" y="80" class="node-tag" fill="#fde047">tc/netem: 150ms Tokyo WAN</text>
+
+      <text x="14" y="102" class="node-port">Tool: Analyze_HFT_Market</text>
+      <text x="14" y="116" class="node-port">PQC: ML-KEM-768 Session</text>
+      <text x="14" y="130" class="node-port">Orderbook Microsecond Sync</text>
+      <rect x="14" y="152" width="232" height="2" rx="1" fill="#f59e0b" />
+    </g>
+
+    <!-- Node 4: Edge IoT Node (3G Cellular - 172.23.0.14) -->
+    <g transform="translate(1068, 44)" id="n-edge">
+      <rect width="248" height="170" rx="10" fill="url(#node-surface)" stroke="#0369a1" stroke-width="1" />
+      <circle cx="18" cy="18" r="4.5" fill="#ec4899" />
+      <text x="30" y="22" class="node-h">Edge IoT Node (3G)</text>
+      <text x="30" y="35" class="node-sub">Sensor Telemetry Ingestion</text>
+
+      <rect x="14" y="44" width="220" height="18" rx="4" fill="#090f1d" />
+      <text x="20" y="57" class="node-mono" fill="#f472b6">172.23.0.14:3000</text>
+      <text x="140" y="57" class="node-port">Host: :15016</text>
+
+      <rect x="14" y="66" width="220" height="20" rx="4" fill="#3b0724" />
+      <text x="18" y="80" class="node-tag" fill="#f472b6">tc: 300ms + 3% Packet Loss</text>
+
+      <text x="14" y="102" class="node-port">Tool: Analyze_IoT_Sensor</text>
+      <text x="14" y="116" class="node-port">1,500 Sensor Telemetry Readings</text>
+      <text x="14" y="130" class="node-port">Burst: 15 Parallel Conns Survived</text>
+      <rect x="14" y="152" width="220" height="2" rx="1" fill="#ec4899" />
+    </g>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- TIER 1: SOVEREIGN ENCLAVE (Y: 532 to 780) [FULL WIDTH: 50 to 1390]    -->
+  <!-- ==================================================================== -->
+  <g transform="translate(50, 532)" id="layer-tier1">
+    <!-- Tier 1 Heavy Red Enclosure -->
+    <rect width="1340" height="248" rx="14" fill="url(#t1-backdrop)" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4" />
+
+    <!-- Tier Badge with Breathing Padlock -->
+    <rect x="18" y="12" width="370" height="24" rx="5" fill="#450a0a" opacity="0.95" stroke="#ef4444" stroke-width="1" />
+    <path class="padlock-anim" d="M 28 25 L 28 22 C 28 20 29.5 18.5 31.5 18.5 C 33.5 18.5 35 20 35 22 L 35 25 L 37 25 C 37.6 25 38 25.4 38 26 L 38 33 C 38 33.6 37.6 34 37 34 L 26 34 C 25.4 34 25 33.6 25 33 L 25 26 C 25 25.4 25.4 25 26 25 Z M 30 25 L 33 25 L 33 22 C 33 21.2 32.3 20.5 31.5 20.5 C 30.7 20.5 30 21.2 30 22 Z" fill="#ef4444" />
+    <text x="46" y="29" class="tier-header-txt" fill="#ffe4e6">TIER 1: SOVEREIGN ENCLAVE (pnet PSK)</text>
+    <text x="396" y="29" class="tier-meta-txt" fill="#fca5a5">Subnet: liop-tier1-enclave (172.22.0.0/24) • ZERO WAN • Fail-Closed Transport Security</text>
+
+    <!-- Node 1: psk-init Service (/app/data/tier1.psk) -->
+    <g transform="translate(24, 46)" id="n-psk-init">
+      <rect width="290" height="184" rx="10" fill="#14070a" stroke="#b91c1c" stroke-width="1.2" />
+      <circle cx="18" cy="18" r="4.5" fill="#f87171" />
+      <text x="30" y="22" class="node-h" fill="#fca5a5">psk-init Provisioner</text>
+      <text x="30" y="35" class="node-sub" fill="#f87171">Deterministic Swarm Key Setup</text>
+
+      <rect x="14" y="44" width="262" height="36" rx="4" fill="#2d060e" />
+      <text x="18" y="58" class="node-tag" fill="#fecdd3">DOCKER VOLUME: psk-share</text>
+      <text x="18" y="72" class="node-mono" fill="#fca5a5">/app/data/tier1.psk (95B)</text>
+
+      <text x="14" y="98" class="node-port" fill="#f87171">Header: /key/swarm/psk/1.0.0/</text>
+      <text x="14" y="112" class="node-port" fill="#f87171">Encoding: /base16/ (64 hex characters)</text>
+      <text x="14" y="126" class="node-port" fill="#f87171">Strict LF line breaks (95 bytes exact)</text>
+      <text x="14" y="140" class="node-port" fill="#f87171">Auto-exits (Exit code 0)</text>
+      <rect x="14" y="162" width="262" height="2" rx="1" fill="#ef4444" />
+    </g>
+
+    <!-- Node 2: The Bank (Financial Ledger Enclave - 172.22.0.12) -->
+    <g transform="translate(340, 46)" id="n-bank">
+      <rect width="325" height="184" rx="10" fill="url(#node-surface)" class="hl-act-4" />
+      <circle cx="18" cy="18" r="4.5" fill="#ef4444" />
+      <text x="30" y="22" class="node-h" fill="#fca5a5">The Bank (Ledger Enclave)</text>
+      <text x="30" y="35" class="node-sub">Financial Custody &amp; Accounting Node</text>
+
+      <rect x="14" y="44" width="297" height="18" rx="4" fill="#180509" />
+      <text x="20" y="57" class="node-mono" fill="#fca5a5">172.22.0.12:3000</text>
+      <text x="200" y="57" class="node-port">Host: :15014</text>
+
+      <!-- Database Graphic & Stats -->
+      <g transform="translate(14, 66)">
+        <ellipse cx="10" cy="5" rx="9" ry="3.5" fill="#e11d48" />
+        <rect x="1" y="5" width="18" height="10" fill="#9f1239" />
+        <ellipse cx="10" cy="15" rx="9" ry="3.5" fill="#881337" />
+        <text x="26" y="14" class="node-tag" fill="#fecdd3">1,500 ACCOUNTS ($153M+ AUDITED BALANCE)</text>
+      </g>
+
+      <text x="14" y="100" class="node-port">Tool: BLG_Execute_Banking_Analytics</text>
+      <text x="14" y="114" class="node-port">Security: preSharedKey({ psk }) Libp2p Framing</text>
+      <text x="14" y="128" class="node-port">Isolate: V8 WasiSandbox (Zero Network Sockets)</text>
+      <text x="14" y="142" class="node-port">ZK-Receipt: HMAC-SHA256 Bound to Ledger Hash</text>
+      <rect x="14" y="162" width="297" height="2" rx="1" fill="#ef4444" />
+    </g>
+
+    <!-- Node 3: The Vault (Healthcare Records Enclave - 172.22.0.11) -->
+    <g transform="translate(689, 46)" id="n-vault">
+      <rect width="325" height="184" rx="10" fill="url(#node-surface)" class="hl-act-4" />
+      <circle cx="18" cy="18" r="4.5" fill="#ef4444" />
+      <text x="30" y="22" class="node-h" fill="#fca5a5">The Vault (Healthcare Enclave)</text>
+      <text x="30" y="35" class="node-sub">Clinical Sovereignty &amp; Genomic Node</text>
+
+      <rect x="14" y="44" width="297" height="18" rx="4" fill="#180509" />
+      <text x="20" y="57" class="node-mono" fill="#fca5a5">172.22.0.11:3000</text>
+      <text x="200" y="57" class="node-port">Host: :15013</text>
+
+      <!-- Database Graphic & Stats -->
+      <g transform="translate(14, 66)">
+        <ellipse cx="10" cy="5" rx="9" ry="3.5" fill="#e11d48" />
+        <rect x="1" y="5" width="18" height="10" fill="#9f1239" />
+        <ellipse cx="10" cy="15" rx="9" ry="3.5" fill="#881337" />
+        <text x="26" y="14" class="node-tag" fill="#fecdd3">2,500 PATIENTS (HIPAA EXPERT DETERMINATION)</text>
+      </g>
+
+      <text x="14" y="100" class="node-port">Tool: BLG_Execute_Healthcare_Analytics</text>
+      <text x="14" y="114" class="node-port">Egress PII Shield: 4-Stage Regex &amp; Fuzzy Filter</text>
+      <text x="14" y="128" class="node-port">Policy: Aggregation-First (Zero Raw Row Leaks)</text>
+      <text x="14" y="142" class="node-port">ZK-Receipt: HMAC-SHA256 Sealed Output</text>
+      <rect x="14" y="162" width="297" height="2" rx="1" fill="#ef4444" />
+    </g>
+
+    <!-- Node 4: BLG Enclave Seed (Private DHT Anchor - 172.22.0.10) -->
+    <g transform="translate(1038, 46)" id="n-blg-seed">
+      <rect width="278" height="184" rx="10" fill="#14070a" stroke="#ef4444" stroke-width="1.2" />
+      <circle cx="18" cy="18" r="4.5" fill="#f87171" />
+      <text x="30" y="22" class="node-h" fill="#fca5a5">BLG Enclave Seed</text>
+      <text x="30" y="35" class="node-sub" fill="#f87171">Tier 1 Private Bootstrap Node</text>
+
+      <rect x="14" y="44" width="250" height="18" rx="4" fill="#2d060e" />
+      <text x="20" y="57" class="node-mono" fill="#fca5a5">172.22.0.10:4000</text>
+      <text x="160" y="57" class="node-port" fill="#f87171">Enclave Seed</text>
+
+      <rect x="14" y="66" width="250" height="20" rx="4" fill="#450a0a" />
+      <text x="18" y="80" class="node-tag" fill="#fca5a5">pnet PSK Protected Framing</text>
+
+      <text x="14" y="100" class="node-port" fill="#f87171">• Listens strictly on Enclave Bus</text>
+      <text x="14" y="114" class="node-port" fill="#f87171">• Drops non-PSK packets in frame 1</text>
+      <text x="14" y="128" class="node-port" fill="#f87171">• Facilitates in-situ node rendezvous</text>
+      <text x="14" y="142" class="node-port" fill="#f87171">• Bridges verified logic into Sandbox</text>
+      <rect x="14" y="162" width="250" height="2" rx="1" fill="#ef4444" />
+    </g>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- HIGHWAY PATHWAYS & BÉZIER CURVES CONNECTING ALL 3 LAYERS             -->
+  <!-- ==================================================================== -->
+  <g id="master-cables">
+    <!-- Path 1: Client -> Nexus Auth (Descends vertically from Tier 3 to Tier 2) -->
+    <path d="M 219 232 L 219 319" class="bus-wire" />
+    <path d="M 219 232 L 219 319" class="wave-p1" marker-end="url(#arrow-c)" />
+
+    <!-- Path 2: Nexus Auth -> BLG Center (Horizontal Highway in Tier 2) -->
+    <path d="M 364 405 L 390 405" class="bus-wire" />
+    <path d="M 364 405 L 390 405" class="wave-p2" marker-end="url(#arrow-g)" />
+
+    <!-- Path 3: BLG Center -> Bank Enclave (Descends through pnet Swarm Key) -->
+    <path d="M 550 492 C 550 540, 502 540, 502 578" class="pnet-wire" />
+    <path d="M 550 492 C 550 540, 502 540, 502 578" class="wave-p3" marker-end="url(#arrow-e)" />
+
+    <!-- Path 3: BLG Center -> Vault Enclave (Descends through pnet Swarm Key) -->
+    <path d="M 650 492 C 650 540, 851 540, 851 578" class="pnet-wire" />
+    <path d="M 650 492 C 650 540, 851 540, 851 578" class="wave-p3" marker-end="url(#arrow-e)" />
+
+    <!-- Path 5: Return Highway (Vault/Bank -> BLG -> Client) -->
+    <path d="M 851 578 C 851 510, 650 510, 650 492 C 650 405, 219 405, 219 232" class="wave-p5" marker-end="url(#arrow-p)" opacity="0.85" />
+
+    <!-- Numbered Badges along the Circuit Highway -->
+    <g transform="translate(205, 265)">
+      <rect width="28" height="20" rx="5" fill="#08182b" stroke="#38bdf8" stroke-width="1.2" />
+      <text x="14" y="14" text-anchor="middle" class="node-tag" fill="#38bdf8">[1]</text>
+    </g>
+
+    <g transform="translate(366, 395)">
+      <rect width="28" height="20" rx="5" fill="#201806" stroke="#fbbf24" stroke-width="1.2" />
+      <text x="14" y="14" text-anchor="middle" class="node-tag" fill="#fbbf24">[2]</text>
+    </g>
+
+    <g transform="translate(510, 525)">
+      <rect width="28" height="20" rx="5" fill="#042118" stroke="#34d399" stroke-width="1.2" />
+      <text x="14" y="14" text-anchor="middle" class="node-tag" fill="#34d399">[3]</text>
+    </g>
+
+    <g transform="translate(420, 265)">
+      <rect width="28" height="20" rx="5" fill="#1e0933" stroke="#c084fc" stroke-width="1.2" />
+      <text x="14" y="14" text-anchor="middle" class="node-tag" fill="#c084fc">[5]</text>
+    </g>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- ANIMATED FLYING DATA COMETS                                          -->
+  <!-- ==================================================================== -->
+  <g id="animated-data-comets">
+    <!-- Comet 1: Client -> Nexus Auth (Descends) -->
+    <g transform="translate(219, 210)">
+      <g class="fly-step1">
+        <rect x="-65" y="-11" width="130" height="22" rx="11" fill="#082f49" stroke="#38bdf8" stroke-width="1.2" filter="url(#glow-cyan-p)" />
+        <circle cx="-51" cy="0" r="3.5" fill="#38bdf8" />
+        <text x="-40" y="4" class="node-tag" fill="#38bdf8">1. OAuth 2.1 Req</text>
+      </g>
+    </g>
+
+    <!-- Comet 2: Nexus Auth -> Border Gateway (Horizontal) -->
+    <g transform="translate(219, 405)">
+      <g class="fly-step2">
+        <rect x="0" y="-11" width="145" height="22" rx="11" fill="#291b05" stroke="#fbbf24" stroke-width="1.2" filter="url(#glow-gold-p)" />
+        <circle cx="14" cy="0" r="3.5" fill="#fbbf24" />
+        <text x="24" y="4" class="node-tag" fill="#fbbf24">2. JWT RFC 8707</text>
+      </g>
+    </g>
+
+    <!-- Comet 3: BLG -> Bank & Vault (Crosses into Tier 1) -->
+    <g transform="translate(550, 492)">
+      <g class="fly-step3-bank">
+        <rect x="-140" y="-11" width="140" height="22" rx="11" fill="#042118" stroke="#34d399" stroke-width="1.2" filter="url(#glow-green-p)" />
+        <circle cx="-126" cy="0" r="3.5" fill="#34d399" />
+        <text x="-116" y="4" class="node-tag" fill="#34d399">3. WASI @LIOP{Bank}</text>
+      </g>
+      <g class="fly-step3-vault">
+        <rect x="-10" y="-11" width="140" height="22" rx="11" fill="#042118" stroke="#34d399" stroke-width="1.2" filter="url(#glow-green-p)" />
+        <circle cx="4" cy="0" r="3.5" fill="#34d399" />
+        <text x="14" y="4" class="node-tag" fill="#34d399">3. WASI @LIOP{Vault}</text>
+      </g>
+    </g>
+
+    <!-- Step 4 Radial Execution Halos inside Enclaves -->
+    <g transform="translate(502, 680)">
+      <circle class="halo-exec" cx="0" cy="0" r="42" fill="#f43f5e" opacity="0.35" filter="url(#glow-red-p)" />
+      <text class="halo-exec node-tag" x="-58" y="55" fill="#fca5a5">[4. IN-SITU COMPUTE]</text>
+    </g>
+
+    <g transform="translate(851, 680)">
+      <circle class="halo-exec" cx="0" cy="0" r="42" fill="#f43f5e" opacity="0.35" filter="url(#glow-red-p)" />
+      <text class="halo-exec node-tag" x="-58" y="55" fill="#fca5a5">[4. IN-SITU COMPUTE]</text>
+    </g>
+
+    <!-- Comet 5: Vault -> BLG -> Client (Ascends to Tier 3) -->
+    <g transform="translate(851, 578)">
+      <g class="fly-step5">
+        <rect x="-10" y="-11" width="180" height="22" rx="11" fill="#1e0933" stroke="#c084fc" stroke-width="1.2" filter="url(#glow-purple-p)" />
+        <circle cx="4" cy="0" r="3.5" fill="#c084fc" />
+        <text x="14" y="4" class="node-tag" fill="#c084fc">5. ZK-Receipt + Stats</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================================================================== -->
+  <!-- BOTTOM TELEMETRY FOOTER                                              -->
+  <!-- ==================================================================== -->
+  <g transform="translate(50, 842)" id="telemetry-bar">
+    <rect width="1340" height="38" rx="8" fill="#060b14" stroke="#1e293b" stroke-width="1" />
+    <circle cx="20" cy="19" r="4.5" fill="#34d399" />
+    <text x="34" y="23" class="node-tag" fill="#f8fafc">SYSTEM STATUS: FULL-SPECTRUM CLUSTER OPERATIONAL</text>
+    <text x="440" y="23" class="node-port" fill="#94a3b8">• pnet Swarm Key: <tspan fill="#34d399" font-weight="700">ENFORCED (tier1.psk 95B)</tspan></text>
+    <text x="690" y="23" class="node-port" fill="#94a3b8">• M2M Authorization: <tspan fill="#38bdf8" font-weight="700">RFC 8707 / Dilithium65</tspan></text>
+    <text x="960" y="23" class="node-port" fill="#94a3b8">• Production Audit: <tspan fill="#4ade80" font-weight="700">100% PASS (59/59 TESTS)</tspan></text>
+    <text x="1230" y="23" class="node-tag" fill="#c084fc">LIOP PROTOCOL v2.5.0</text>
+  </g>
+</svg>

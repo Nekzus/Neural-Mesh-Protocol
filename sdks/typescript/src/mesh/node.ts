@@ -74,6 +74,14 @@ export interface MeshNodeConfig {
 	enableDcutr?: boolean;
 	/** Enable mDNS peer discovery for local networks (default: false in WAN, true in LAN) */
 	enableMdns?: boolean;
+	/**
+	 * Pre-Shared Key for libp2p Private Network isolation (Tier 1 Enclave Hardening).
+	 * When provided, the node will reject ALL connections from peers that do not
+	 * possess the identical 95-byte PSK at the transport framing layer,
+	 * BEFORE the Noise XX handshake is attempted.
+	 * @see https://github.com/libp2p/specs/blob/master/pnet/Private-Networks-PSK-V1.md
+	 */
+	swarmKey?: Uint8Array;
 }
 
 const DEFAULT_BOOTSTRAP_NODES = [
@@ -135,6 +143,7 @@ export class MeshNode {
 			enableWAN: config.enableWAN ?? false,
 			dhtStoragePath: config.dhtStoragePath,
 			addressMapper: config.addressMapper,
+			swarmKey: config.swarmKey,
 		};
 	}
 
@@ -382,6 +391,19 @@ export class MeshNode {
 			services.dcutr = dcutr();
 		}
 
+		// Tier 1 Enclave: Pre-Shared Key (pnet) Connection Protection
+		// biome-ignore lint/suspicious/noExplicitAny: ConnectionProtector factory type
+		let connectionProtector: any;
+		if (this.config.swarmKey) {
+			const { preSharedKey } = await import("@libp2p/pnet");
+			connectionProtector = preSharedKey({
+				psk: this.config.swarmKey,
+			});
+			log.info(
+				"[LIOP-Mesh] 🔒 Private Network (pnet) enabled — transport-layer PSK isolation active",
+			);
+		}
+
 		this.node = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -390,6 +412,7 @@ export class MeshNode {
 			transports,
 			connectionEncrypters: [noise()],
 			streamMuxers: [yamux()],
+			...(connectionProtector ? { connectionProtector } : {}),
 			// biome-ignore lint/suspicious/noExplicitAny: services polymorphic definition
 			services: services as any,
 			peerDiscovery:
@@ -1125,5 +1148,19 @@ export class MeshNode {
 	public getPeers(): string[] {
 		if (!this.node) return [];
 		return this.node.getConnections().map((c) => c.remotePeer.toString());
+	}
+
+	/**
+	 * Returns true if this MeshNode was booted inside an isolated libp2p private network (pnet PSK).
+	 */
+	public isPrivateNetwork(): boolean {
+		return Boolean(this.config.swarmKey);
+	}
+
+	/**
+	 * Returns the configured 95-byte Swarm Key, or undefined if running in a public/consortium mesh.
+	 */
+	public getSwarmKey(): Uint8Array | undefined {
+		return this.config.swarmKey;
 	}
 }

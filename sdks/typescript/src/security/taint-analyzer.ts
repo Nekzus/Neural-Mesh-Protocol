@@ -93,6 +93,7 @@ export class TaintAnalyzer {
 
 	/** Reduce-family methods where the record param is the SECOND callback arg */
 	private static readonly REDUCE_METHODS = new Set(["reduce", "reduceRight"]);
+	private readonly currentRecordCollections: Set<string> = new Set();
 
 	constructor(piiFields: string[], sensitiveKeys: string[] = []) {
 		this.piiFields = new Set(piiFields.map((f) => f.toLowerCase()));
@@ -342,6 +343,59 @@ export class TaintAnalyzer {
 		return false;
 	}
 
+	/** Checks if an expression resolves to env.records, records, an alias, or a derivation chain */
+	private isRecordsSource(node: acorn.Node): boolean {
+		if (this.isEnvRecordsAccess(node)) return true;
+		if (
+			node.type === "Identifier" &&
+			this.currentRecordCollections.has((node as acorn.Identifier).name)
+		) {
+			return true;
+		}
+		if (node.type === "CallExpression") {
+			const call = node as acorn.CallExpression;
+			if (call.callee.type === "MemberExpression") {
+				const member = call.callee as acorn.MemberExpression;
+				const method = this.getPropertyName(member);
+				if (
+					method &&
+					(method === "slice" ||
+						method === "filter" ||
+						method === "toSorted" ||
+						method === "map" ||
+						method === "concat")
+				) {
+					return this.isRecordsSource(member.object);
+				}
+			}
+		}
+		return false;
+	}
+
+	/** Gathers aliases and derivations of env.records (e.g. const accounts = env.records; const top5 = accounts.filter(...)) */
+	private identifyRecordCollections(ast: acorn.Node): void {
+		this.currentRecordCollections.clear();
+		for (let pass = 0; pass < 3; pass++) {
+			const aliasVisitors: SimpleVisitors<void> = {
+				VariableDeclarator: (node) => {
+					if (!node.init || node.id.type !== "Identifier") return;
+					if (this.isRecordsSource(node.init)) {
+						this.currentRecordCollections.add(node.id.name);
+					}
+				},
+				AssignmentExpression: (node) => {
+					if (node.left.type !== "Identifier") return;
+					if (this.isRecordsSource(node.right)) {
+						this.currentRecordCollections.add(
+							(node.left as acorn.Identifier).name,
+						);
+					}
+				},
+			};
+			simple(ast, aliasVisitors);
+		}
+	}
+
 	/**
 	 * Extracts field names accessed on a record parameter within a function body.
 	 * e.g., in `(s, r) => s + r.balance`, extracts "balance".
@@ -452,7 +506,7 @@ export class TaintAnalyzer {
 		if (call.callee.type !== "MemberExpression") return false;
 		const callee = call.callee as acorn.MemberExpression;
 		const method = this.getPropertyName(callee);
-		return method === "map" && this.isEnvRecordsChain(callee.object);
+		return method === "map" && this.isRecordsSource(callee.object);
 	}
 
 	// ── Pass 1: Record-Bound Variable Identification ──────────────────
@@ -461,6 +515,8 @@ export class TaintAnalyzer {
 		ast: acorn.Node,
 		recordBoundVars: Set<string>,
 	): void {
+		this.identifyRecordCollections(ast);
+
 		const visitors: SimpleVisitors<void> = {
 			CallExpression: (node) => {
 				if (node.callee.type !== "MemberExpression") return;
@@ -469,8 +525,8 @@ export class TaintAnalyzer {
 				const methodName = this.getPropertyName(member);
 				if (!methodName) return;
 
-				// Check if this is env.records.METHOD(callback)
-				if (!this.isEnvRecordsAccess(member.object)) return;
+				// Check if this is env.records.METHOD(callback) or alias.METHOD(callback)
+				if (!this.isRecordsSource(member.object)) return;
 
 				const callback = node.arguments[0];
 				if (!callback) return;
@@ -503,9 +559,9 @@ export class TaintAnalyzer {
 				}
 			},
 
-			// for (const r of env.records) → r is record-bound
+			// for (const r of env.records) or for (const r of accounts) → r is record-bound
 			ForOfStatement: (node) => {
-				if (!this.isEnvRecordsAccess(node.right)) return;
+				if (!this.isRecordsSource(node.right)) return;
 
 				if (node.left.type === "VariableDeclaration") {
 					for (const declarator of node.left.declarations) {
@@ -519,7 +575,7 @@ export class TaintAnalyzer {
 
 		simple(ast, visitors);
 
-		// Also handle: const r = env.records[N]
+		// Also handle: const r = env.records[N] or const r = accounts[N]
 		const indexVisitors: SimpleVisitors<void> = {
 			VariableDeclarator: (node) => {
 				if (!node.init || node.id.type !== "Identifier") return;
@@ -529,7 +585,7 @@ export class TaintAnalyzer {
 					(node.init as acorn.MemberExpression).computed
 				) {
 					const member = node.init as acorn.MemberExpression;
-					if (this.isEnvRecordsAccess(member.object)) {
+					if (this.isRecordsSource(member.object)) {
 						recordBoundVars.add(node.id.name);
 					}
 				}
@@ -563,6 +619,23 @@ export class TaintAnalyzer {
 				},
 
 				AssignmentExpression: (node) => {
+					// Handle computed property assignment with tainted property: acc[a.accountHolder] = ...
+					if (node.left.type === "MemberExpression") {
+						const member = node.left as acorn.MemberExpression;
+						if (
+							member.computed &&
+							this.isExpressionTainted(
+								member.property,
+								recordBoundVars,
+								taintedVars,
+							)
+						) {
+							if (member.object.type === "Identifier") {
+								taintedVars.add((member.object as acorn.Identifier).name);
+							}
+						}
+					}
+
 					if (node.left.type !== "Identifier") return;
 
 					if (
@@ -744,11 +817,29 @@ export class TaintAnalyzer {
 
 			case "ObjectExpression": {
 				const obj = node as acorn.ObjectExpression;
-				return obj.properties.some(
-					(prop) =>
-						prop.type === "Property" &&
-						this.isExpressionTainted(prop.value, recordBoundVars, taintedVars),
-				);
+				return obj.properties.some((prop) => {
+					if (prop.type === "Property") {
+						if (
+							prop.computed &&
+							this.isExpressionTainted(prop.key, recordBoundVars, taintedVars)
+						) {
+							return true;
+						}
+						return this.isExpressionTainted(
+							prop.value,
+							recordBoundVars,
+							taintedVars,
+						);
+					}
+					if (prop.type === "SpreadElement") {
+						return this.isExpressionTainted(
+							prop.argument,
+							recordBoundVars,
+							taintedVars,
+						);
+					}
+					return false;
+				});
 			}
 
 			case "ArrayExpression": {
@@ -803,7 +894,7 @@ export class TaintAnalyzer {
 			return true;
 		}
 
-		// Case 2: env.records[N].piiField (direct indexed access without callback)
+		// Case 2: env.records[N].piiField or accounts[N].piiField (direct indexed access without callback)
 		// AST: MemberExpression { object: MemberExpression { object: env.records, computed: true }, property: piiField }
 		if (
 			member.object.type === "MemberExpression" &&
@@ -811,10 +902,7 @@ export class TaintAnalyzer {
 			this.piiFields.has(propName.toLowerCase())
 		) {
 			const parentMember = member.object as acorn.MemberExpression;
-			if (
-				parentMember.computed &&
-				this.isEnvRecordsAccess(parentMember.object)
-			) {
+			if (parentMember.computed && this.isRecordsSource(parentMember.object)) {
 				return true;
 			}
 		}
@@ -871,8 +959,8 @@ export class TaintAnalyzer {
 				return true;
 			}
 
-			// env.records.map/filter/reduce(callback) — check if callback produces taint
-			if (this.isEnvRecordsAccess(callee.object) && call.arguments[0]) {
+			// env.records.map/filter/reduce(callback) or alias.map/filter/reduce(callback) — check if callback produces taint
+			if (this.isRecordsSource(callee.object) && call.arguments[0]) {
 				const callback = call.arguments[0];
 				if (
 					callback.type === "ArrowFunctionExpression" ||
@@ -995,7 +1083,14 @@ export class TaintAnalyzer {
 			);
 		}
 
-		// For block bodies, check return statements or yield expressions within the callback
+		// For block bodies, propagate taint within the callback scope first
+		this.propagateTaint(
+			callback.body as acorn.Node,
+			scopedRecordVars,
+			scopedTaintedVars,
+		);
+
+		// Check return statements or yield expressions within the callback
 		let hasTaintedReturnOrYield = false;
 		const returnVisitors: SimpleVisitors<void> = {
 			ReturnStatement: (node) => {

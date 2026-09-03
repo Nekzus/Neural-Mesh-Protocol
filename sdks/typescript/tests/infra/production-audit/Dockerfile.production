@@ -15,6 +15,7 @@ RUN npm init -y \
     && npm pkg set type="module" \
     && npm install --save --no-audit --no-fund \
        @nekzus/liop@2.5.0 \
+       @libp2p/pnet@3.0.29 \
        zod@4.4.3 \
        hono@4.13.5 \
        @hono/node-server@2.1.1

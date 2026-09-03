@@ -18,6 +18,8 @@ describe("RBAC authorizeRequest", () => {
 			"notifications/initialized",
 			"notifications/cancelled",
 			"ping",
+			"server/discover",
+			"subscriptions/listen",
 		];
 
 		for (const method of publicMethods) {
@@ -39,6 +41,7 @@ describe("RBAC authorizeRequest", () => {
 			{ method: "tools/call", scope: "liop:tools:call" },
 			{ method: "resources/list", scope: "liop:resources:read" },
 			{ method: "resources/read", scope: "liop:resources:read" },
+			{ method: "resources/templates/list", scope: "liop:resources:read" },
 			{ method: "prompts/list", scope: "liop:schema:read" },
 			{ method: "prompts/get", scope: "liop:schema:read" },
 		];

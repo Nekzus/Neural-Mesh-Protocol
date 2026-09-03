@@ -24,11 +24,6 @@ async function main() {
 		},
 		{
 			tokenSlug: "VAULT",
-			auth: {
-				role: "node",
-				nexusUrl: "http://nexus:3000",
-				revocationPath: path.join(dataDir, "vault-revocations.json"),
-			},
 			taxonomy: {
 				domain: "Healthcare (REALISTIC PRODUCTION AUDIT)",
 				clearanceTier: 5,
@@ -127,12 +122,25 @@ async function main() {
 
 	const bootstrapSeed = process.env.LIOP_BOOTSTRAP_PEER || "/ip4/172.21.0.10/tcp/4000";
 
+	let swarmKey: Uint8Array | undefined;
+	const pskPath = process.env.LIOP_SWARM_KEY_PATH || path.join(dataDir, "tier1.psk");
+	if (fs.existsSync(pskPath)) {
+		try {
+			const { loadSwarmKey } = await import("@nekzus/liop");
+			swarmKey = await loadSwarmKey(pskPath);
+			console.log(`[Vault-Prod] 🔒 Tier 1 Enclave Swarm Key loaded from: ${pskPath}`);
+		} catch (err) {
+			console.warn(`[Vault-Prod] Failed to load Swarm Key from ${pskPath}:`, err);
+		}
+	}
+
 	await liopServer.connectToMesh({
 		port: 50051,
 		meshConfig: {
 			identityPath: path.join(dataDir, "vault-identity.json"),
 			listenAddresses: ["/ip4/0.0.0.0/tcp/4000"],
 			bootstrapNodes: [bootstrapSeed],
+			swarmKey,
 		},
 	});
 

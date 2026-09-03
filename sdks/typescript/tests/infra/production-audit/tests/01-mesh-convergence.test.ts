@@ -19,6 +19,7 @@ describe("Production Audit Suite 01 — Realistic WAN P2P Mesh Convergence", () 
 			{ name: "Edge (Hostile 3G)", url: EDGE_URL },
 			{ name: "Relay (NAT Traversal)", url: RELAY_URL },
 			{ name: "Playground (Client SDK)", url: PLAYGROUND_URL },
+			{ name: "BLG (Border Gateway)", url: process.env.BLG_URL || "http://127.0.0.1:15018" },
 		];
 
 		for (const node of nodes) {
@@ -28,21 +29,25 @@ describe("Production Audit Suite 01 — Realistic WAN P2P Mesh Convergence", () 
 		}
 	});
 
-	it("should discover all core tools through Nexus gateway via Kademlia DHT", async () => {
+	it("should discover Consortium tools through Nexus gateway via Kademlia DHT", async () => {
 		const tools = await listTools(NEXUS_URL);
 		const toolNames = tools.map((t) => t.name);
 		console.log(`[Discovered Tools via WAN DHT] ${toolNames.join(", ")}`);
 
-		expect(toolNames).toContain("Analyze_Synthetic_Bank_Transactions");
-		expect(toolNames).toContain("Analyze_Synthetic_Medical_Records");
 		expect(toolNames).toContain("Analyze_HFT_Market_Data");
+		expect(toolNames).toContain("Analyze_IoT_Sensor_Data");
 		expect(toolNames).toContain("LiopMeshStatus");
 	});
 
-	it("should discover edge IoT capability despite severe hostile 3G network latency", async () => {
-		const tools = await listTools(NEXUS_URL);
+	it("should discover Tier 1 Sovereign Enclave tools through Border LIO Gateway", async () => {
+		const blgUrl = process.env.BLG_URL || "http://127.0.0.1:15018";
+		const tools = await listTools(blgUrl);
 		const toolNames = tools.map((t) => t.name);
-		expect(toolNames).toContain("Analyze_IoT_Sensor_Data");
+		console.log(`[Discovered Tools via BLG Perimeter] ${toolNames.join(", ")}`);
+
+		expect(toolNames).toContain("Analyze_Synthetic_Bank_Transactions");
+		expect(toolNames).toContain("Analyze_Synthetic_Medical_Records");
+		expect(toolNames).toContain("BLG_Inspect_Enclave_Perimeter");
 	});
 
 	it("should verify LiopMeshStatus returns active connections with multi-region nodes", async () => {

@@ -12,7 +12,11 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
-		"types": ["node", "vitest/globals", "vitest"]
+		"types": ["node", "vitest/globals", "vitest"],
+		"paths": {
+			"@nekzus/liop": ["./src/index.ts"],
+			"@nekzus/liop/*": ["./src/*"]
+		}
 	},
 	"include": ["src/**/*", "tests/**/*", "scripts/**/*.ts"],
 	"exclude": ["node_modules", "dist", "tests/infra/playground-web"]

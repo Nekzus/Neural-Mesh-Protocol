@@ -288,6 +288,14 @@ export class LiopHybridGateway {
 								}
 							: undefined;
 
+					const topologyInfo = {
+						tier: this.meshNode?.isPrivateNetwork?.() ? 1 : 2,
+						prmEndpoint: this.jwtValidator
+							? "/.well-known/oauth-protected-resource"
+							: undefined,
+						transportCapabilities: ["http-mcp", "grpc-lio", "p2p-dht"],
+					};
+
 					res.writeHead(200, { "Content-Type": "application/json" });
 					res.end(
 						JSON.stringify({
@@ -296,6 +304,7 @@ export class LiopHybridGateway {
 							mesh: meshInfo,
 							tools: this.liopServer.listTools().map((t) => t.name),
 							auth: authInfoResponse,
+							topology: topologyInfo,
 							timestamp: new Date().toISOString(),
 						}),
 					);

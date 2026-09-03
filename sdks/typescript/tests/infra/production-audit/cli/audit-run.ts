@@ -16,6 +16,7 @@ console.log("══════════════════════�
 const env = {
 	...process.env,
 	NEXUS_URL: process.env.NEXUS_URL || "http://127.0.0.1:15000",
+	BLG_URL: process.env.BLG_URL || "http://127.0.0.1:15018",
 	VAULT_URL: process.env.VAULT_URL || "http://127.0.0.1:15013",
 	BANK_URL: process.env.BANK_URL || "http://127.0.0.1:15014",
 	ORACLE_URL: process.env.ORACLE_URL || "http://127.0.0.1:15015",
@@ -28,6 +29,7 @@ const env = {
 	LIOP_TOKEN_VAULT: "vault-local-test-token",
 	LIOP_TOKEN_ORACLE: "oracle-local-test-token",
 	LIOP_TOKEN_EDGE: "edge-local-test-token",
+	LIOP_TOKEN_BLG: "blg-local-test-token",
 };
 
 const sdkRoot = path.resolve(auditDir, "../../..");

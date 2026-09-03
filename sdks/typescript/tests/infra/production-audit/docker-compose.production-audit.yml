@@ -1,5 +1,17 @@
 networks:
-  liop-audit-wan:
+  liop-tier1-enclave:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+          gateway: 172.22.0.1
+  liop-tier2-consortium:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/24
+          gateway: 172.23.0.1
+  liop-tier3-backbone:
     driver: bridge
     ipam:
       config:
@@ -13,8 +25,6 @@ x-audit-base: &audit-base
   build:
     context: .
     dockerfile: Dockerfile.production
-  networks:
-    liop-audit-wan: {}
   restart: "no"
   cap_add:
     - NET_ADMIN
@@ -22,8 +32,17 @@ x-audit-base: &audit-base
     - audit-shared-data:/app/data
     - ./entrypoints:/app/entrypoints
     - ./utils:/app/utils
+    - ../../../dist:/app/node_modules/@nekzus/liop/dist
 
 services:
+  psk-init:
+    <<: *audit-base
+    container_name: liop-psk-init
+    command: ["tsx", "--no-warnings", "utils/generate-psk.ts"]
+    networks:
+      liop-tier1-enclave:
+        ipv4_address: 172.22.0.2
+
   nexus-prod:
     <<: *audit-base
     container_name: liop-nexus-prod
@@ -42,11 +61,13 @@ services:
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
-      liop-audit-wan:
-        ipv4_address: 172.21.0.10
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.10
         aliases:
           - nexus
           - liop-nexus
+      liop-tier3-backbone:
+        ipv4_address: 172.21.0.10
     ports:
       - "15001:4000"    # libp2p TCP P2P
       - "15000:3000"    # HTTP health / Gateway
@@ -56,6 +77,38 @@ services:
       timeout: 3s
       start_period: 10s
       retries: 5
+
+  blg-prod:
+    <<: *audit-base
+    container_name: liop-blg-prod
+    hostname: blg-prod
+    command: ["tsx", "--no-warnings", "entrypoints/blg.ts"]
+    environment:
+      LIOP_NODE_ROLE: blg
+      LIOP_LOG_LEVEL: info
+      LIOP_NET_PROFILE: lan
+      LIOP_NEXUS_URL: http://nexus:3000
+      VAULT_INTERNAL_URL: http://172.22.0.11:3000
+      BANK_INTERNAL_URL: http://172.22.0.12:3000
+    networks:
+      liop-tier1-enclave:
+        ipv4_address: 172.22.0.10
+        aliases:
+          - blg-enclave
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.20
+        aliases:
+          - blg
+          - liop-blg
+    ports:
+      - "15008:4000"    # libp2p TCP P2P
+      - "15018:3000"    # Health / Gateway
+      - "15051:50051"   # gRPC BLG
+    depends_on:
+      psk-init:
+        condition: service_completed_successfully
+      nexus-prod:
+        condition: service_healthy
 
   vault-prod:
     <<: *audit-base
@@ -67,19 +120,23 @@ services:
       LIOP_LOG_LEVEL: info
       LIOP_NET_PROFILE: cross-atlantic
       LIOP_DATASET_SCALE: ${LIOP_DATASET_SCALE:-500}
-      LIOP_BOOTSTRAP_PEER: /ip4/172.21.0.10/tcp/4000
+      LIOP_BOOTSTRAP_PEER: /ip4/172.22.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
-      liop-audit-wan:
-        ipv4_address: 172.21.0.11
+      liop-tier1-enclave:
+        ipv4_address: 172.22.0.11
+        aliases:
+          - vault
     ports:
       - "15003:4000"    # libp2p TCP P2P
       - "15011:50051"   # gRPC Vault
       - "15013:3000"    # Health
     depends_on:
-      nexus-prod:
-        condition: service_healthy
+      psk-init:
+        condition: service_completed_successfully
+      blg-prod:
+        condition: service_started
 
   bank-prod:
     <<: *audit-base
@@ -91,19 +148,23 @@ services:
       LIOP_LOG_LEVEL: info
       LIOP_NET_PROFILE: cross-atlantic-london
       LIOP_DATASET_SCALE: ${LIOP_DATASET_SCALE:-500}
-      LIOP_BOOTSTRAP_PEER: /ip4/172.21.0.10/tcp/4000
+      LIOP_BOOTSTRAP_PEER: /ip4/172.22.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
-      liop-audit-wan:
-        ipv4_address: 172.21.0.12
+      liop-tier1-enclave:
+        ipv4_address: 172.22.0.12
+        aliases:
+          - bank
     ports:
       - "15004:4000"    # libp2p TCP P2P
       - "15021:50051"   # gRPC Bank
       - "15014:3000"    # Health
     depends_on:
-      nexus-prod:
-        condition: service_healthy
+      psk-init:
+        condition: service_completed_successfully
+      blg-prod:
+        condition: service_started
 
   oracle-prod:
     <<: *audit-base
@@ -116,12 +177,14 @@ services:
       LIOP_NET_PROFILE: cross-pacific
       LIOP_HFT_TICK_INTERVAL_MS: 50
       LIOP_HFT_INSTRUMENTS: 8
-      LIOP_BOOTSTRAP_PEER: /ip4/172.21.0.10/tcp/4000
+      LIOP_BOOTSTRAP_PEER: /ip4/172.23.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
-      liop-audit-wan:
-        ipv4_address: 172.21.0.13
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.13
+        aliases:
+          - oracle
     ports:
       - "15005:4000"    # libp2p TCP P2P
       - "15031:50051"   # gRPC Oracle
@@ -139,12 +202,14 @@ services:
       LIOP_NODE_ROLE: edge
       LIOP_LOG_LEVEL: info
       LIOP_NET_PROFILE: hostile-3g
-      LIOP_BOOTSTRAP_PEER: /ip4/172.21.0.10/tcp/4000
+      LIOP_BOOTSTRAP_PEER: /ip4/172.23.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
-      liop-audit-wan:
-        ipv4_address: 172.21.0.14
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.14
+        aliases:
+          - edge
     ports:
       - "15006:4000"    # libp2p TCP P2P
       - "15041:50051"   # gRPC Edge
@@ -162,9 +227,13 @@ services:
       LIOP_NODE_ROLE: relay
       LIOP_LOG_LEVEL: info
       LIOP_NET_PROFILE: moderate
-      LIOP_BOOTSTRAP_PEER: /ip4/172.21.0.10/tcp/4000
+      LIOP_BOOTSTRAP_PEER: /ip4/172.23.0.10/tcp/4000
     networks:
-      liop-audit-wan:
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.15
+        aliases:
+          - relay
+      liop-tier3-backbone:
         ipv4_address: 172.21.0.15
     ports:
       - "15007:4000"    # libp2p TCP P2P
@@ -182,12 +251,16 @@ services:
       LIOP_NODE_ROLE: client
       LIOP_LOG_LEVEL: info
       LIOP_NET_PROFILE: cross-atlantic
-      NEXUS_P2P: "/ip4/172.21.0.10/tcp/4000"
+      NEXUS_P2P: "/ip4/172.23.0.10/tcp/4000"
       LIOP_CLIENT_ID: liop-mesh-agent
       LIOP_CLIENT_SECRET: dev-secret-change-me
-      LIOP_NEXUS_URL: http://172.21.0.10:3000
+      LIOP_NEXUS_URL: http://172.23.0.10:3000
     networks:
-      liop-audit-wan:
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.200
+        aliases:
+          - playground
+      liop-tier3-backbone:
         ipv4_address: 172.21.0.200
     ports:
       - "16000:3000"    # Playground Web/API
@@ -202,6 +275,7 @@ services:
     command: ["vitest", "run", "--config", "tests/vitest.audit.config.ts"]
     environment:
       NEXUS_URL: http://nexus-prod:3000
+      BLG_URL: http://blg-prod:3000
       VAULT_URL: http://vault-prod:3000
       BANK_URL: http://bank-prod:3000
       ORACLE_URL: http://oracle-prod:3000
@@ -216,11 +290,17 @@ services:
       LIOP_TOKEN_EDGE: edge-local-test-token
       LIOP_NET_PROFILE: lan
     networks:
-      liop-audit-wan:
+      liop-tier1-enclave:
+        ipv4_address: 172.22.0.100
+      liop-tier2-consortium:
+        ipv4_address: 172.23.0.100
+      liop-tier3-backbone:
         ipv4_address: 172.21.0.100
     depends_on:
       nexus-prod:
         condition: service_healthy
+      blg-prod:
+        condition: service_started
       vault-prod:
         condition: service_started
       bank-prod:

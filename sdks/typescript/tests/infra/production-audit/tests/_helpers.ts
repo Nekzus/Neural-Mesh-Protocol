@@ -1,6 +1,7 @@
 import { expect } from "vitest";
 
 const DEFAULT_NEXUS_URL = process.env.NEXUS_URL || "http://127.0.0.1:15000";
+export const DEFAULT_BLG_URL = process.env.BLG_URL || "http://127.0.0.1:15018";
 const DEFAULT_TIMEOUT_MS = 60_000;
 
 export type JsonRpcResponse = {
@@ -13,10 +14,10 @@ export type JsonRpcResponse = {
 
 let cachedAuthToken: string | null = null;
 
-export async function getAuthToken(baseUrl = DEFAULT_NEXUS_URL, forceRefresh = false): Promise<string | null> {
+export async function getAuthToken(authServerUrl = DEFAULT_NEXUS_URL, forceRefresh = false): Promise<string | null> {
 	if (cachedAuthToken && !forceRefresh) return cachedAuthToken;
 	try {
-		const res = await fetch(`${baseUrl}/oidc/token`, {
+		const res = await fetch(`${authServerUrl}/oidc/token`, {
 			method: "POST",
 			headers: { "Content-Type": "application/x-www-form-urlencoded" },
 			body: new URLSearchParams({
@@ -45,8 +46,9 @@ export async function mcpCall(
 	params: Record<string, unknown>,
 	id = Date.now(),
 	baseUrl = DEFAULT_NEXUS_URL,
+	authServerUrl = DEFAULT_NEXUS_URL,
 ): Promise<JsonRpcResponse> {
-	let token = await getAuthToken(baseUrl);
+	let token = await getAuthToken(authServerUrl);
 	const headers: Record<string, string> = { "Content-Type": "application/json" };
 	if (token) {
 		headers.Authorization = `Bearer ${token}`;
@@ -165,15 +167,32 @@ export async function callTool(
 	// biome-ignore lint/suspicious/noExplicitAny: transient tracking
 	let lastResult: any = undefined;
 
+	// In Tri-Tier Sovereign Architecture, Tier 1 Enclave tools route through the Border LIO Gateway (BLG)
+	let targetUrl = baseUrl;
+	let targetTool = toolName;
+	let targetArgs: Record<string, unknown> = { payload };
+
+	if (baseUrl === DEFAULT_NEXUS_URL) {
+		if (toolName === "Analyze_Synthetic_Bank_Transactions") {
+			targetUrl = DEFAULT_BLG_URL;
+			targetTool = "BLG_Execute_Banking_Analytics";
+			targetArgs = { envelope: payload };
+		} else if (toolName === "Analyze_Synthetic_Medical_Records") {
+			targetUrl = DEFAULT_BLG_URL;
+			targetTool = "BLG_Execute_Healthcare_Analytics";
+			targetArgs = { envelope: payload };
+		}
+	}
+
 	while (Date.now() < deadline) {
 		const response = await mcpCall(
 			"tools/call",
 			{
-				name: toolName,
-				arguments: { payload },
+				name: targetTool,
+				arguments: targetArgs,
 			},
 			Date.now() % 100000,
-			baseUrl,
+			targetUrl,
 		);
 
 		if (response.error) {

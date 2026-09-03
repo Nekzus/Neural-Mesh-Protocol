@@ -21,8 +21,8 @@ if (shouldBuild) {
 	runDockerCompose(["-f", "docker-compose.production-audit.yml", ...buildArgs], { cwd: auditDir });
 }
 
-console.log("\n🌐 [Stage 2/2] Launching 7 realistic WAN nodes in subnet 172.21.0.0/24...");
-const services = ["nexus-prod", "vault-prod", "bank-prod", "oracle-prod", "edge-prod", "relay-prod", "playground-prod"];
+console.log("\n🌐 [Stage 2/2] Launching 8 Tri-Tier Sovereign Mesh nodes across Tier 1, 2, and 3...");
+const services = ["nexus-prod", "blg-prod", "vault-prod", "bank-prod", "oracle-prod", "edge-prod", "relay-prod", "playground-prod"];
 runDockerCompose(["-f", "docker-compose.production-audit.yml", "up", "-d", ...services], { cwd: auditDir });
 
 console.log(`\n⏳ Waiting ${sleepMs / 1000}s for P2P mesh convergence under WAN latency...`);

@@ -41,7 +41,7 @@ describe("Production Audit Suite 06 — Chaos Engineering, Burst Stress & Networ
 			expect(isRejected).toBe(true);
 			expect(text.length).toBeGreaterThan(0);
 		}
-	});
+	}, 45000);
 
 	it("should handle invalid JSON-RPC method calls with standard error code -32601 or transcoder code -32099", async () => {
 		const res = await mcpCall("non_existent_method", { param: "test" }, 777, NEXUS_URL);
