@@ -77,8 +77,11 @@ The developer-facing SDK, published as [`@nekzus/liop`](https://www.npmjs.com/pa
 | `LiopMcpBridge` | JSON-RPC 2.0 adapter for legacy MCP clients (Claude Desktop, Cursor) |
 | Dual-Era MCP | Support for modern stateless MCP v2 (2026-07-28) and legacy MCP (2025-11-25) fallback |
 | Token Economy | Inlined BPE `o200k_base` tokenizer with zero runtime dependencies and OpenTelemetry bridge |
-| Interactive Playground | Live Web UI (`:14000`) with SSE streaming timeline and cryptographic proof inspector |
+| Interactive Playground | Live Web UI (`:16000` / `:14000`) with real-time token economics, AST fuel telemetry, and tri-tab proof inspector |
+| Multi-Tier Enclaves | Sovereign enclave isolation via `@libp2p/pnet` (256-bit Swarm Key PSK) and Border LIO Gateway (`blg`) |
+| AST Fuel Metering | Deterministic AST instruction fuel scoring with 100-bucket quantization for NIST SP 800-53 timing invariance |
 | Guardian AST | Static analysis of WASM imports to prevent sandbox escapes |
+| IFC Taint Analyzer | Static AST information flow control blocking computed keys and PII derivation at preflight |
 | PII Shield | Real-time detection and blocking of sensitive data via Customizable Regional Presets (Email, Credit Card, SSN, IBAN, Passport MRZ, custom regex) |
 | Worker Pool | Multi-threaded execution via Piscina for non-blocking cryptography |
 | PQC (Kyber & Dilithium) | ML-KEM-768 key encapsulation + ML-DSA-65 digital signatures with 1-hour session expiry |
@@ -143,10 +146,19 @@ npm install @nekzus/liop@latest
 
 ### Launch the Interactive Web Playground & Local Mesh
 
-Experience in-situ execution, PQC handshakes, and cryptographic ZK-receipts in real-time at `http://localhost:14000`:
+Experience in-situ execution, PQC handshakes, AST fuel metering, and cryptographic ZK-receipts in real-time:
 
 ```bash
-# Clone and launch the full 5-node mesh + Web UI in Docker
+# 1. Production-Grade Multi-Tier Audit Mesh (8 Nodes + Web UI at http://localhost:16000)
+pnpm run audit:prod:start
+
+# Run the full 10-suite automated production audit against the running mesh
+pnpm run audit:prod:run
+
+# Clean up production containers and network bridges
+pnpm run audit:prod:clean
+
+# 2. Alternatively, launch the lightweight 5-node demo at http://localhost:14000
 docker compose up -d
 ```
 

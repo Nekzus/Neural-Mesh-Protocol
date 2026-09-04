@@ -1,0 +1,75 @@
+---
+title: "Auditoría de Producción y Malla Multi-Tier"
+description: "Entorno Docker multi-capa listo para SOC 2, control de tráfico WAN simulado y suites de certificación de extremo a extremo"
+---
+
+La **Auditoría de Preparación para Producción** (*Production Readiness Audit*) es una infraestructura de certificación y pruebas de grado empresarial diseñada para validar el paquete `@nekzus/liop` bajo condiciones del mundo real, incluyendo enclaves de seguridad multi-capa, latencias transatlánticas y conexiones celulares hostiles en el borde (Edge).
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Topología de Auditoría de Producción" />
+</Frame>
+
+## Topología de la Red
+
+El entorno de pruebas simula un despliegue corporativo distribuido de 8 nodos segmentado en tres niveles de seguridad (Tiers):
+
+| Tier | Nodo | Rol | Aislamiento / Perfil de Red | Dataset en Origen |
+|---|---|---|---|---|
+| **Tier 1** | `The Bank` | Enclave Financiero | `pnet` PSK Swarm Key (`172.22.0.12`) | 1.500 cuentas sintéticas ($148M) |
+| **Tier 1** | `The Vault` | Enclave de Salud | `pnet` PSK Swarm Key (`172.22.0.11`) | 2.500 historias clínicas EHR |
+| **Tier 2** | `The Oracle` | Motor HFT Financiero | Consorcio P2P (`172.23.0.14`) | Libro de órdenes L2 + difusión Heston |
+| **Tier 2** | `BLG` | Border LIO Gateway | Pasarela Asimétrica (`172.23.0.13`) | Proxy seguro hacia Tier 1 vía OAuth 2.1 |
+| **Tier 2** | `Nexus` | Descubrimiento y Auth | Proveedor OIDC (`172.23.0.10`) | Registro de nodos y autoridad JWT |
+| **Tier 3** | `Edge IoT` | Nodo Industrial Borde | 3G Hostil (`172.21.0.50`, 250ms ± 50ms, 2% pérdida) | Telemetría (temperatura, presión, vibración) |
+| **Tier 3** | `Relay` | Circuit Relay P2P | Traversal de NAT Público (`172.21.0.15`) | AutoNAT & Relay v2 |
+| **Tier 3** | `Playground`| Cliente SDK y Web UI | Transatlántico (`172.21.0.200`, 85ms ± 15ms) | Puerto `:16000` (Web UI :3000) |
+
+---
+
+## Modelado de Tráfico con Linux Traffic Control (`tc`)
+
+Cada contenedor se ejecuta con `iproute2` y `tc netem` para modelar perfiles de red empíricos:
+
+* **`lan`**: Red local nativa (sin atenuación, latencia < 1ms, 0% de pérdida).
+* **`cross-atlantic`**: Enlace intercontinental (latencia de 85ms ± 15ms con distribución normal de jitter).
+* **`hostile-3g`**: Red celular / móvil degradada (latencia de 250ms ± 50ms con 2% de paquetes perdidos).
+
+---
+
+## Comandos del CLI de Auditoría
+
+El arnés de pruebas se gestiona de forma automatizada mediante tres comandos configurados en `sdks/typescript/package.json`:
+
+<CodeGroup>
+```bash 1. Iniciar Infraestructura
+# Compila e inicia la malla Docker de 8 nodos con healthchecks de preparación
+pnpm audit:prod:start
+```
+
+```bash 2. Ejecutar Suites de Auditoría
+# Ejecuta las 10 suites automatizadas de Vitest dentro del contenedor audit-runner
+pnpm audit:prod:run
+```
+
+```bash 3. Limpieza y Desmantelamiento
+# Detiene contenedores, elimina redes y purga volúmenes compartidos
+pnpm audit:prod:clean
+```
+</CodeGroup>
+
+---
+
+## Batería de Pruebas Automatizadas (Suites 00 a 09)
+
+El arnés ejecuta 10 suites exhaustivas de Vitest en el contenedor `liop-audit-runner`:
+
+1. **`00-npm-integrity`**: Verifica que el paquete generado por `npm pack` contenga únicamente archivos de producción y tipos DTS válidos, sin código de prueba residual.
+2. **`01-mesh-convergence`**: Valida el descubrimiento de nodos vía DHT Kademlia en todos los tiers y la estabilización de tablas de ruteo en menos de 5 segundos.
+3. **`02-pqc-wan`**: Evalúa el apretón de manos cuántico ML-KEM-768 y el cifrado de sesión AES-256-GCM sobre enlaces WAN de alta latencia.
+4. **`03-auth-apikey`**: Comprueba el control de acceso fail-closed de RBAC, bloqueando llamadas no autorizadas y validando credenciales de cliente OAuth 2.1.
+5. **`04-logic-wan`**: Ejecuta consultas de inyección lógica in-situ a través de fronteras de red (ej. cálculo de riesgo financiero a través del enlace transatlántico).
+6. **`05-security-shields`**: Batería de pruebas adversariales intentando exfiltración de PII, envenenamiento de prototipos, bombas de memoria e inferencia estadística (100% interceptados).
+7. **`06-resilience`**: Simula caídas intencionadas de nodos, disparo del circuit breaker y recuperación transparente entre gRPC y libp2p.
+8. **`07-observability`**: Valida los endpoints de métricas dinámicas de Prometheus (`/metrics`) y la emisión de tokens a OpenTelemetry (`gen_ai.client.token.usage`).
+9. **`08-lifecycle-traceability`**: Certifica los identificadores criptográficos deterministas que vinculan cada solicitud con su ejecución en el nodo de origen.
+10. **`09-pnet-tier-isolation`**: Certifica que los Enclaves Tier 1 (`Bank` y `Vault`) rechazan conexiones de nodos sin la clave privada Swarm Key PSK, y confirma que el tráfico cruzado se enruta de forma segura a través del Border LIO Gateway (`BLG`).

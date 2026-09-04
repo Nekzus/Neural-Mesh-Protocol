@@ -21,11 +21,11 @@ El SDK TypeScript de LIOP aplica un modelo de seguridad basado en **defensa en p
 | Capa | Propósito | Momento |
 |:-----|:----------|:--------|
 | **Guardian AST** | Bloquea importaciones WASM no autorizadas antes de la ejecución | Pre-compilación |
-| **WASI Sandbox** | Aísla el entorno de ejecución con 25 globales envenenados y límites de CPU | Ejecución |
-| **Prototype Defense** | Congela 11 prototipos core en modo estricto para prevenir ataques de contaminación | Ejecución |
-| **PII Shield** | Previene la fuga de datos mediante validadores algorítmicos | Post-ejecución |
-| **Aggregation Policy** | Impone límites de cardinalidad en la salida de datos a nivel de fila | Post-ejecución |
-| **ZK-Receipt** | Proporciona prueba HMAC-SHA256 de computación honesta | Post-ejecución |
+| **WASI Sandbox** | Aísla el entorno de ejecución con 25 globales envenenados, congelamiento de prototipos y límites de CPU | Ejecución |
+| **IFC Taint Analyzer** | Control de flujo de información que previene derivaciones PII y canales laterales por claves computadas | Pre-flight |
+| **PII Shield** | Previene la fuga de datos mediante validadores algorítmicos y detección NER | Post-ejecución |
+| **Aggregation Policy** | Impone límites de cardinalidad en la salida de datos a nivel de fila (Aggregation-First) | Post-ejecución |
+| **ZK-Receipt** | Proporciona prueba HMAC-SHA256 de computación honesta vinculada a claves de sesión PQC | Post-ejecución |
 
 ---
 
@@ -158,7 +158,43 @@ await fs.rm(workingDir, { recursive: true, force: true });
 
 ---
 
-## Capa 3: Escudo de Privacidad (PII Egress Shield)
+## Capa 3: Control de Flujo de Información (IFC Taint Analyzer)
+
+El **IFC Taint Analyzer** (`TaintAnalyzer`) inspecciona el Árbol de Sintaxis Abstracta (AST) de JavaScript generado por Acorn **antes de que el código huésped ingrese al isolate V8**. Rastrea el flujo de datos sensibles y bloquea cualquier intento de filtrar información confidencial a través de canales computacionales indirectos.
+
+### Vectores de Ataque Mitigados
+
+| Vector de Ataque | Mecanismo | Defensa |
+|:-----------------|:----------|:--------|
+| **Inferencia Booleana** | Ramas condicionales `if (record.balance > 1000000)` | El rastreo estático de ramas previene derivaciones de PII en tiempo de preflight |
+| **Derivación de Caracteres** | Fuga ASCII vía `record.ssn.charCodeAt(0)` | El acceso a miembros sobre campos sensibles contamina todas las expresiones derivadas |
+| **Colecciones con Alias** | `const accounts = env.records; accounts.filter(...)` | Detección iterativa de fuentes que identifica cadenas de asignación y vincula variables de registro |
+| **Claves Computadas Dinámicas** | `acc[record.accountHolder] = record.balance` en `.reduce()` | Marca los objetos que reciben claves o valores contaminados, deteniendo el preflight |
+| **Operadores Spread en Objetos** | `{ [record.name]: record.id, ...rest }` | Las expresiones de propiedades computadas evalúan la contaminación de la clave y bloquean diccionarios dinámicos |
+
+### Defensa contra Claves Computadas Dinámicas
+
+Los atacantes que intentan eludir la Capa 5 (Aggregation-First) transformando datasets en diccionarios dinámicos (ej., usando `reduce` para generar `{ [nombre]: saldo }`) son interceptados de forma estática en la fase de preflight:
+
+```javascript
+// Payload adversarial bloqueado en preflight:
+const accounts = env.records;
+const top5 = accounts.slice(0, 5);
+return top5.reduce((acc, a) => {
+  acc[a.accountHolder] = a.balance; // BLOQUEADO: acc marcado como derivado de PII
+  return acc;
+}, {});
+```
+
+Cuando `propagateTaint` detecta una asignación a un `MemberExpression` donde la propiedad es computada y está contaminada (`isExpressionTainted(member.property)`), el objeto contenedor se marca permanentemente como contaminado. Cualquier `ReturnStatement` posterior que intente retornar dicho objeto dispara un rechazo fail-closed:
+
+```text
+Preflight policy rejected: PII side-channel detected: output contains values derived from restricted fields. Operation: variable 'acc' is PII-derived
+```
+
+---
+
+## Capa 4: Escudo de Privacidad (PII Egress Shield)
 
 El escáner PII intercepta toda la salida del sandbox **antes** de devolver los resultados al llamador. A partir de la v3, opera un **pipeline de detección en cuatro etapas** que combina análisis estructural, coincidencia de patrones y procesamiento de lenguaje natural. Cada etapa es independiente — el sistema bloquea los datos si **cualquier** etapa detecta una violación.
 
@@ -343,11 +379,20 @@ El `LiopStreamBridge` aplica autenticación obligatoria mediante token Bearer en
 
 | Componente | Tecnología |
 |:-----------|:-----------|
+| **Aislamiento de Enclave** | `@libp2p/pnet` (PSK Swarm Key de 256 bits) |
 | **Cifrado de Transporte** | Protocolo Noise (Ed25519) |
 | **Multiplexación de Streams** | Yamux |
 | **Identidad** | Pares de claves Ed25519 persistentes |
 | **Descubrimiento** | Kademlia DHT con nodos bootstrap públicos |
 | **Transportes** | TCP + WebSocket |
+
+### Aislamiento de Enclaves Soberanos Tier 1 (PSK Swarm Key de `pnet`)
+
+Para entornos con exigencias regulatorias críticas (Core Bancario, Registros Médicos y Defensa), LIOP aplica aislamiento físico de malla mediante **Redes Privadas de libp2p (`@libp2p/pnet`)**:
+
+- **Clave Pre-Compartida (PSK)**: Una clave criptográfica de 256 bits (con encabezado `/key/swarm/psk/1.0.0/`) se carga en los nodos de enclave (`The Bank`, `The Vault`) y en el gateway perimetral autorizado (`blg`).
+- **Blindaje a Nivel de Socket de Transporte**: La PSK opera antes de cualquier multiplexación de streams o negociación criptográfica (Noise/TLS/Kyber). Toda conexión entrante TCP, WebSocket o QUIC proveniente de un nodo que no posea la clave de enjambre coincidente es abortada inmediatamente en la capa de socket en bruto.
+- **Defensa Perimétrica**: Incluso si un nodo no autorizado descubre la multiaddr o IP del enclave en la misma subred o VPC, no puede establecer una sesión libp2p, enviar envelopes RPC ni participar en la tabla de enrutamiento DHT Kademlia.
 
 ---
 
@@ -459,12 +504,14 @@ $$\text{Bloque}_{n}.\text{hash} = \text{SHA-256}(\text{Bloque}_{n-1}.\text{hash}
 - **Evidencia contra Manipulación**: Modificar o eliminar cualquier registro histórico rompe la integridad de la cadena SHA-256, alertando de inmediato a los auditores de cumplimiento.
 - **Soberanía de Datos**: Los registros almacenan resúmenes criptográficos y métricas de consumo de tokens sin persistir jamás datos confidenciales sin procesar.
 
-### Medición Determinista de Combustible por AST
+### Medición Determinista de Combustible por AST e Invarianza de Temporización (NIST SP 800-53)
 
-Para protegerse contra ataques de agotamiento de CPU que ejecutan bucles computacionales ocultos, el motor analiza estáticamente el Árbol de Sintaxis Abstracta (AST) de JavaScript mediante `calculateAstInstructionFuel`:
+Para neutralizar ataques de agotamiento de CPU por bucles ocultos y eliminar canales laterales de temporización, el motor analiza estáticamente el Árbol de Sintaxis Abstracta (AST) de JavaScript mediante `calculateAstInstructionFuel`:
 
-- Analiza la complejidad del AST (profundidad de bucles, factor de ramificación, declaraciones de funciones) antes de la ejecución.
-- Inyecta un presupuesto estricto y determinista de combustible en el ejecutor del isolate V8.
+- **Puntuación Estática de Complejidad**: Evalúa las operaciones del AST (profundidad de bucles, ramificaciones, llamadas a funciones e iteraciones) antes de ejecutar el código.
+- **Cuantización en Bloques de 100 Unidades**: Cumpliendo con los controles NIST SP 800-53 contra canales laterales de temporización, el valor de combustible calculado se cuantiza a bloques de 100 unidades:
+  $$\text{Combustible}_{\text{cuantizado}} = \lceil \frac{\text{CombustibleRaw}}{100} \rceil \times 100$$
+- **Desviación Estándar Cero (`stddev = 0`)**: Payloads con la misma estructura sintáctica que evalúan entradas secretas distintas consumen exactamente las mismas unidades de combustible, impidiendo que un adversario deduzca la cardinalidad de registros o valores privados mediante diferencias de temporización o métricas de combustible.
 
 ---
 

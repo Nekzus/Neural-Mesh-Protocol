@@ -1,0 +1,110 @@
+---
+title: "Web Playground Interactivo"
+description: "Estudio de inyección de lógica en tiempo real con telemetría de fuel AST, economía de tokens y verificación de pruebas criptográficas"
+---
+
+El **LIOP Web Playground** es un estudio interactivo de inyección de lógica y consola de pruebas para navegadores web. Se conecta directamente a la malla descentralizada, permitiendo la ejecución instantánea de micro-módulos WebAssembly, la visualización en tiempo real de la tubería criptográfica y telemetría granular de recursos.
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Arquitectura del Playground LIOP" />
+</Frame>
+
+## Puesta en Marcha del Playground
+
+El playground puede ejecutarse de forma independiente o como parte de la malla auditada multi-capa de producción:
+
+<CodeGroup>
+```bash Malla de Producción (:16000)
+# Iniciar la malla completa de 8 nodos con latencia WAN simulada
+pnpm audit:prod:start
+
+# Acceder a la consola desde el navegador:
+# http://localhost:16000
+```
+
+```bash Desarrollo Standalone (:14000)
+# Iniciar un nodo gateway local y la interfaz del estudio
+pnpm demo:playground
+
+# Acceder a la consola desde el navegador:
+# http://localhost:14000
+```
+</CodeGroup>
+
+---
+
+## Capacidades Principales del Estudio
+
+### 1. Panel de Resultados Tri-Pestaña
+La consola organiza los datos de ejecución en tres pestañas especializadas con animación fluida:
+
+* **Aggregated Output (Salida Agregada)**: Muestra el payload JSON devuelto por el nodo de origen tras el cómputo y filtrado in-situ.
+* **Fuel & Telemetry (Fuel y Telemetría)**:
+  * **Economía de Tokens frente a MCP Tradicional**: Comparación en tiempo real entre los tokens consumidos por el micro-módulo inyectado y los ~16.000–48.000 tokens requeridos por la extracción masiva de datos en MCP tradicional (-98.9% de tokens evitados).
+  * **Consumo de Fuel AST en WASI Sandbox**: Muestra la cuota de fuel determinista consumida a nivel de instrucción AST (ej. `500 u / 1.000.000 u máx`) con **Cuantización en Bloques de 100 Unidades** para eliminar canales laterales de temporización según NIST SP 800-53.
+  * **Tasa de Soberanía de Datos**: Mide el tamaño de los datos en tránsito por red frente al volumen del dataset original protegido in-situ (más de 99.6% de reducción de tráfico).
+  * **Desglose de Latencias por Fase**: Tiempos exactos en milisegundos para Descubrimiento de Ruta, enlace cuántico Kyber-768, cifrado AES-256-GCM, ejecución en WASI Sandbox y verificación ZK-Receipt.
+* **Crypto Proofs (Pruebas Criptográficas)**:
+  * **ZK-Receipt HMAC-SHA256**: Valida la prueba matemática de integridad computacional que vincula el resultado al código exacto ejecutado y al hash del dataset. Incluye botón de copiado rápido con confirmación visual.
+  * **Intercambio Cuántico de Claves**: Certifica el secreto de sesión cuántico-resistente acordado mediante ML-KEM-768 (Kyber).
+  * **Estado del Escudo Egress PII**: Confirma si la salida cumplió con las políticas de k-anonimato y privacidad diferencial (`PASSED`) o fue interceptada (`INTERCEPTED`).
+
+---
+
+### 2. Estimador de Tokens en Vivo y Sincronización Bidireccional
+
+* **Estadísticas en el Editor de Código**: El pie del editor calcula dinámicamente los tokens estimados con el tokenizador BPE `o200k_base` (`~141 tokens (est.)`) y muestra el límite de fuel asignado (`1.000.000 u máx`).
+* **Sincronización Bidireccional**: Al seleccionar una plantilla se actualiza automáticamente la capacidad objetivo en la malla, y al elegir una herramienta del catálogo se carga de inmediato su plantilla canónica, evitando errores de esquema de datos.
+
+---
+
+### 3. Tematización Dinámica de Alto Contraste
+
+El playground permite alternar atómicamente entre temas visuales sin conflictos de especificidad CSS:
+
+* **Obsidian OLED**: Superficies de negro puro (`#000000`) optimizadas para entornos con poca luz y pantallas OLED.
+* **Slate Navy**: Superficies corporativas en azul pizarra (`#0f172a`) de alto contraste y legibilidad.
+
+---
+
+## API REST de Telemetría
+
+El servidor del playground expone un endpoint REST para consultar métricas agregadas de sesión:
+
+```bash
+curl http://localhost:16000/api/telemetry
+```
+
+### Ejemplo de Respuesta JSON
+
+```json
+{
+  "session": {
+    "sessionId": "79f3d3bf-c9e5-4996-9b70-14641c50c1f7",
+    "operations": [
+      {
+        "type": "tool_call",
+        "method": "tools/call",
+        "estimatedInputTokens": 62,
+        "estimatedOutputTokens": 356,
+        "toolName": "Analyze_Synthetic_Bank_Transactions",
+        "durationMs": 609,
+        "timestamp": 1788537457801
+      }
+    ],
+    "totalInputTokens": 62,
+    "totalOutputTokens": 356,
+    "estimatorName": "o200k_base",
+    "sessionUptimeMs": 40083
+  },
+  "perTool": {
+    "Analyze_Synthetic_Bank_Transactions": {
+      "input": 62,
+      "output": 356,
+      "calls": 1,
+      "avgDurationMs": 609
+    }
+  },
+  "timestamp": 1788537464700
+}
+```

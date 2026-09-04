@@ -112,9 +112,21 @@ El comportamiento del agente se puede personalizar mediante las siguientes varia
 | `LIOP_MCP_COMPACT_TOOL_DESCRIPTIONS` | `true` | Elimina metadatos verbosos del protocolo en las descripciones de herramientas, reduciendo el consumo de tokens en ~500 por herramienta. Establecer en `0` para desactivar |
 | `LIOP_GRPC_PORT` | `50051` | Sobreescribe el puerto gRPC por defecto del servidor RPC interno |
 | `LIOP_WORKER_MAX_HEAP_MB` | `64` | Tamaño máximo del heap V8 por thread worker (defensa contra Heap Bomb) |
+| `LIOP_QUERY_BUDGET` | *(ninguno)* | Sobrescritura de presupuesto de consultas por sesión para pruebas de auditoría analítica de alta frecuencia |
 | `LIOP_DOCKER_MAP` | `false` | Fuerza la traducción de IPs internas de contenedores Docker (`172.x.x.x`) a la dirección loopback del host (`127.0.0.1`), mapeando los servicios gRPC de los nodos a los puertos publicados en el host para poder ejecutar demos locales con contenedores aislados |
 | `LIOP_DEV_MODE` | `false` | Activa heurísticas de desarrollo que automatizan el mapeo de puertos Docker si la URL de Nexus apunta a puertos típicos de la demo local (`13000`/`13001`) |
 | `LIOP_DATASET_SCALE` | `1` | Factor de escala utilizado por los nodos de prueba y demo para escalar dinámicamente el tamaño de generación de registros sintéticos (ej. transacciones bancarias, registros médicos) |
+
+### Compatibilidad de Handshake MCP Dual-Era
+
+El LIOP Agent satisface de forma nativa los protocolos de clientes MCP modernos y heredados:
+
+- **Revisión MCP v2 (2026-07-28)**:
+  - Responde a sondas `server/discover` sin autenticación para descubrimiento de herramientas sin estado.
+  - Incluye automáticamente el campo obligatorio `resultType: "complete"` en las respuestas de `tools/list`.
+  - Gestiona `subscriptions/listen` y `resources/templates/list` sin sobrecarga de sondeo.
+- **Era Heredada MCP (2025-11-25)**:
+  - Purga metadatos de la versión v2 mediante `adaptResponseForLegacyClient()` para evitar fallos de deserialización en clientes de escritorio tradicionales.
 
 <Warning>
   `LIOP_BOOTSTRAP_FILE` está **deprecada** desde v2.0.0-alpha. Usa `LIOP_NEXUS_URL` en su lugar. El agente emitirá un warning si detecta esta variable.

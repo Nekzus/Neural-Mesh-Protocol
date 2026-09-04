@@ -58,6 +58,33 @@ La frontera final antes de tocar el hardware y los datos locales.
 - **Enclaves Hardware (TEEs)**: Ejecución opcional dentro de entornos como AWS Nitro o Intel SGX para blindar la memoria RAM.
 - **Zero-Knowledge Evidence**: Uso de zkVMs para devolver resultados sellados matemáticamente que garantizan la integridad absoluta del cómputo.
 
+---
+
+## Topología de Malla Soberana Multi-Tier
+
+En despliegues de producción empresarial, la topología de la malla está dividida en tres niveles de seguridad (*tiers*) con control de fronteras asimétricas:
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Topología de Malla Soberana Multi-Tier" />
+</Frame>
+
+### Tier 1: Enclaves de Soberanía de Datos
+* **Aislamiento Criptográfico**: Red privada estricta mediante **`pnet` Swarm Key (PSK)** (`/key/swarm/psk/1.0.0/`). Cualquier intento de conexión de un peer sin la clave PSK compartida es abortado a nivel de socket de transporte.
+* **Nodos**: Banca Core (`The Bank`, 1.500 cuentas sintéticas con saldo de $148M) y Salud EHR (`The Vault`, 2.500 historias clínicas).
+* **Políticas**: Aplica Privacidad Diferencial (ruido de Laplace) y límites estrictos de cardinalidad (la salida de registros individuales en crudo está bloqueada por el hardware y el sandbox).
+
+### Tier 2: Consorcio P2P y Pasarelas Perimétricas
+* **Border LIO Gateway (`BLG`)**: Cortafuegos criptográfico y proxy inverso. Conecta consultas de clientes externos hacia los enclaves Tier 1 cruzando una frontera asimétrica mediante credenciales OAuth 2.1 RFC 6749.
+* **Trading de Alta Frecuencia (`The Oracle`)**: Motor financiero HFT en tiempo real que simula libros de órdenes L2 y volatilidad estocástica (Heston + Jump Diffusion).
+* **Nexus**: Directorio de descubrimiento descentralizado y proveedor de autenticación OIDC.
+
+### Tier 3: Backbone Público y Borde (Edge IoT)
+* **Nodos Industriales en el Borde (`Edge IoT`)**: Desplegados en hardware industrial bajo perfiles de red WAN degradados (latencia de 250ms ± 50ms y 2% de paquetes perdidos). Procesa anomalías in-situ y transmite solo telemetría agregada crítica.
+* **Relays de Circuito P2P (`Relay`)**: Servidores públicos de alta capacidad que implementan AutoNAT y Circuit Relay v2 para superar firewalls corporativos.
+* **Cliente SDK y Web Playground**: Consolas de ejecución interactivas que operan sobre enlaces transatlánticos simulados.
+
+---
+
 ## La Odisea: Lógica Inyectada en el Origen (LIO)
 
 <Frame>

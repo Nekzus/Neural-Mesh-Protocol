@@ -1,0 +1,75 @@
+---
+title: "Production Audit & Multi-Tier Mesh"
+description: "SOC 2-ready multi-tier Docker environment, simulated WAN traffic control, and end-to-end verification suites"
+---
+
+The **Production Readiness Audit** is an enterprise-grade testing and verification infrastructure designed to certify the `@nekzus/liop` package under real-world conditions, including multi-tier security enclaves, cross-Atlantic latencies, and hostile mobile edge connections.
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Production Audit Topology" />
+</Frame>
+
+## Topology Overview
+
+The audit harness simulates an 8-node enterprise deployment partitioned across three security tiers:
+
+| Tier | Node | Role | Isolation / Network Profile | Dataset |
+|---|---|---|---|---|
+| **Tier 1** | `The Bank` | Financial Enclave | `pnet` PSK Swarm Key (`172.22.0.12`) | 1,500 synthetic accounts ($148M) |
+| **Tier 1** | `The Vault` | Healthcare Enclave | `pnet` PSK Swarm Key (`172.22.0.11`) | 2,500 clinical EHR records |
+| **Tier 2** | `The Oracle` | Financial HFT Engine | Consortium P2P (`172.23.0.14`) | L2 Orderbook + Heston jump diffusion |
+| **Tier 2** | `BLG` | Border LIO Gateway | Asymmetric Perimeter Bridge (`172.23.0.13`) | Cross-enclave OAuth 2.1 proxy |
+| **Tier 2** | `Nexus` | Mesh Discovery / Auth | OIDC Token Provider (`172.23.0.10`) | Node registry & JWT authority |
+| **Tier 3** | `Edge IoT` | Industrial Edge Node | Hostile 3G (`172.21.0.50`, 250ms ± 50ms, 2% loss) | Temperature, vibration, pressure telemetry |
+| **Tier 3** | `Relay` | P2P Circuit Relay | Public NAT Traversal (`172.21.0.15`) | AutoNAT & Relay v2 |
+| **Tier 3** | `Playground`| Client SDK & Web UI | Cross-Atlantic (`172.21.0.200`, 85ms ± 15ms) | Port `:16000` (Web UI :3000) |
+
+---
+
+## Traffic Shaping with Linux Traffic Control (`tc`)
+
+Each container is orchestrated with Linux `iproute2` and `tc netem` to simulate empirical network profiles:
+
+* **`lan`**: Native LAN mode (zero shaping, < 1ms latency, 0% packet loss).
+* **`cross-atlantic`**: Intercontinental link (85ms ± 15ms latency, normal jitter distribution).
+* **`hostile-3g`**: Degraded cellular / edge network (250ms ± 50ms latency, 2% packet loss).
+
+---
+
+## Audit CLI Commands
+
+The test harness is fully automated via three primary CLI commands configured in `sdks/typescript/package.json`:
+
+<CodeGroup>
+```bash 1. Start Infrastructure
+# Builds and boots the 8-node Docker mesh with healthy readiness checks
+pnpm audit:prod:start
+```
+
+```bash 2. Execute Audit Suites
+# Runs the 10 automated test suites inside the audit runner container
+pnpm audit:prod:run
+```
+
+```bash 3. Teardown & Clean
+# Gracefully stops containers, removes networks, and purges volumes
+pnpm audit:prod:clean
+```
+</CodeGroup>
+
+---
+
+## Automated Verification Suites (Suites 00 to 09)
+
+The audit harness executes 10 comprehensive Vitest suites inside the `liop-audit-runner` container:
+
+1. **`00-npm-integrity`**: Verifies that the tarball created by `npm pack` contains only production binaries and valid TypeScript declarations without test or scratch pollution.
+2. **`01-mesh-convergence`**: Validates Kademlia DHT peer discovery across all tiers, verifying routing table stabilization within 5 seconds.
+3. **`02-pqc-wan`**: Tests ML-KEM-768 quantum-resistant handshakes and AES-256-GCM session key agreement over high-latency WAN links.
+4. **`03-auth-apikey`**: Evaluates fail-closed RBAC enforcement, rejecting unauthenticated calls and validating OAuth 2.1 client credentials.
+5. **`04-logic-wan`**: Dispatches in-situ logic queries across network boundaries (e.g. executing financial risk models over the Atlantic link).
+6. **`05-security-shields`**: Adversarial test suite attempting PII exfiltration, prototype pollution, memory bombs, and side-channel inference (100% blocked).
+7. **`06-resilience`**: Simulates node drops, circuit breaker recovery, and seamless transport failover between gRPC and libp2p.
+8. **`07-observability`**: Validates dynamic Prometheus metrics scrape handlers (`/metrics`) and OpenTelemetry token emission (`gen_ai.client.token.usage`).
+9. **`08-lifecycle-traceability`**: Verifies deterministic cryptographic lifecycle hashes binding each request to origin execution.
+10. **`09-pnet-tier-isolation`**: Certifies that Tier 1 Enclaves (`Bank` and `Vault`) reject connections from nodes lacking the private Swarm Key PSK, and confirms that cross-boundary traffic is securely routed via the Border LIO Gateway (`BLG`).

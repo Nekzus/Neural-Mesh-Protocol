@@ -26,22 +26,23 @@ gantt
     Session Key Lifetime Enforcement (< 1h TTL)          :done, 2026-08, 2026-08
     gRPC-Web HTTP/1.1 Framing Fallback (Hybrid Gateway)  :done, 2026-08, 2026-08
     
-    section Phase Beta-3: Observability & Compliance
-    Distributed OpenTelemetry + Prometheus /metrics      :active, 2026-09, 2026-11
-    Kubernetes Health Probes (/healthz, /readyz) + Drain :2026-10, 2026-12
-    Immutable Append-Only Audit Trail (SOC 2 / HIPAA)    :2026-11, 2027-01
-    Deterministic AST-Based Fuel Metering (Acorn)        :2026-11, 2027-01
+    section Phase Beta-3: Observability & Compliance (Completed)
+    Distributed OpenTelemetry + Prometheus /metrics      :done, 2026-08, 2026-09
+    Kubernetes Health Probes (/healthz, /readyz) + Drain :done, 2026-08, 2026-09
+    Immutable Append-Only Audit Trail (SOC 2 / HIPAA)    :done, 2026-08, 2026-09
+    Deterministic AST-Based Fuel Metering (Acorn)        :done, 2026-08, 2026-09
     
-    section Phase Beta-4: Developer Ecosystem & Interactive Inspector
-    CLI Inspector (npx @nekzus/liop playground)          :2026-12, 2027-02
-    Interactive Cryptographic Pipeline Visualizer        :2026-12, 2027-02
-    Ad-Hoc Process Spawning & Diagnostic Inspector CLI   :2027-01, 2027-03
-    Public Cloud Showcase & Embedded Mintlify Docs       :2027-01, 2027-03
+    section Phase Beta-4: Ecosystem & Playground (Completed)
+    Interactive Web Playground (:16000) & OTel Telemetry :done, 2026-08, 2026-09
+    Multi-Tier Sovereign Enclaves (pnet Swarm Key PSK)   :done, 2026-08, 2026-09
+    Cryptographic Pipeline Visualizer (7-phase SSE)      :done, 2026-08, 2026-09
+    8-Node Production Audit Mesh + Traffic Shaping       :done, 2026-08, 2026-09
     
     section Phase RC: Production Resilience & Hardware TEE
-    Hardware TEE Remote Attestation (AWS Nitro / SGX)    :2027-02, 2027-04
-    Automated Chaos Engineering Test Suite               :2027-03, 2027-05
-    Geo-Proximity (Latency-Based) Routing & Failover     :2027-04, 2027-06
+    Hardware TEE Remote Attestation (AWS Nitro / SGX)    :active, 2026-09, 2027-01
+    Rust Core Protocol Parity (servers/liop-node)        :active, 2026-09, 2027-01
+    Automated Chaos Engineering Test Suite               :2026-11, 2027-02
+    Geo-Proximity (Latency-Based) Routing & Failover     :2026-12, 2027-03
     
     section Phase GA: Massive Global Availability
     Dedicated LIOP Bootstrap Supernodes (US, EU, Asia)   :milestone, 2027-06, 0d
@@ -105,72 +106,54 @@ gantt
 
 ## ⏳ 2. Upcoming Phases (Detailed Specifications)
 
-### 🟡 Phase Beta-3: Enterprise Observability & Compliance (SOC 2 / HIPAA)
-* **Target Window**: Q1 2027
-* **Key Components**:
-  1. **Kubernetes Health & Liveness Probes**:
-     - Standardized `/healthz` and `/readyz` endpoints on the Hybrid Gateway.
-     - Graceful connection draining before shutdown in `rpc/server.ts` and `mesh/node.ts`.
-     - *Target Files*: `src/gateway/hybrid.ts`, `src/rpc/server.ts`.
-  2. **Prometheus Metrics Endpoint (`/metrics`)**:
-     - Core protocol telemetry metrics:
-       - `liop_tool_calls_total{status, tool}` (Counter)
-       - `liop_fuel_consumed{tool}` (Histogram)
-       - `liop_mesh_peers_connected` (Gauge)
-       - `liop_manifest_cache_size` (Gauge)
-       - `liop_egress_blocks_total{reason}` (Counter)
-       - `liop_zk_verification_duration_ms` (Histogram)
-     - *Dependencies*: `pnpm add prom-client`.
-     - *Target Files*: `src/observability/metrics.ts`.
-  3. **Distributed OpenTelemetry Tracing**:
-     - Promote `@opentelemetry/api` to production dependencies and add `@opentelemetry/sdk-node`, `@opentelemetry/exporter-otlp-http`.
-     - Propagate W3C `traceparent` headers across gRPC metadata and MCP requests.
-     - *Target Files*: `package.json`, `src/observability/tracing.ts`.
-  4. **Immutable Audit Trail for SOC 2 Type II & HIPAA**:
-     - Cryptographically signed (Ed25519) append-only JSON audit records for every `tools/call` execution.
-     - Fields: `timestamp`, `agentDid`, `peerId`, `toolName`, `datasetHash`, `fuelConsumed`, `outputHash`, `zkReceiptSig`.
-     - Configurable retention policy (`LIOP_AUDIT_RETENTION_DAYS`, minimum 90 days).
-     - *Target Files*: `src/utils/logger.ts`, `src/security/audit-logger.ts`.
-  5. **Deterministic AST-Based Fuel Metering**:
-     - Replace execution-time fuel estimation (`duration * 1500`) with deterministic AST operation counting using `acorn` to ensure identical fuel consumption regardless of server CPU load.
-     - *Target Files*: `src/sandbox/wasi.ts`.
+### 1.4 Phase Beta-3: Enterprise Observability & Compliance (SOC 2 / HIPAA)
+* **Status**: Complete & Verified.
+* **Kubernetes Health & Liveness Probes**:
+  - Implemented `/healthz` and `/readyz` endpoints in `LiopHybridGateway` with DHT status inspection.
+  - Implemented graceful draining (`gateway.drain(5000)`) in `src/gateway/hybrid.ts` and `src/rpc/server.ts`.
+* **Prometheus Metrics Endpoint (`GET /metrics`)**:
+  - Real-time scrape-handler refreshing `liop_mesh_peers_connected`, `liop_tool_calls_total`, and `liop_fuel_consumed`.
+* **Distributed OpenTelemetry Integration**:
+  - Bound to `gen_ai.client.token.usage` and `gen_ai.client.operation.duration` via `LiopOTelBridge`.
+* **Immutable Audit Trail for SOC 2 Type II & HIPAA**:
+  - Cryptographically verifiable Hash-Chain in `AuditLogger` with append-only integrity checking and tamper flags.
+* **Deterministic AST-Based Fuel Metering & Side-Channel Invariance (NIST SP 800-53)**:
+  - Implemented `calculateAstInstructionFuel` with 100-bucket quantization ensuring `stddev = 0` across heterogeneous secret payloads.
+
+### 1.5 Phase Beta-4: Developer Ecosystem, Interactive Web Playground & Multi-Tier Production Audit
+* **Status**: Complete & Verified against 8-node Docker topology.
+* **Interactive Web Playground (`:16000` / `:14000`)**:
+  - Real-time 7-phase SSE execution stream (`http://localhost:16000`).
+  - Tri-tab results panel: `Aggregated Output`, `Fuel & Telemetry`, and `Crypto Proofs`.
+  - Dual high-contrast theme engine (Obsidian OLED `#000000` vs Slate Navy `#0f172a`) with atomic DOM switching.
+  - Live token economy dashboard demonstrating **98.9% - 99.6% token reduction** compared to traditional MCP.
+  - REST telemetry endpoint at `GET /api/telemetry` for aggregated session tracking.
+* **Multi-Tier Sovereign Enclaves (`pnet` Swarm Key PSK)**:
+  - Physical socket shielding on Tier 1 subnets (`The Bank`, `The Vault`) using 256-bit PSK (`/key/swarm/psk/1.0.0/`).
+  - Border LIO Gateway (`blg`) perimeter enforcement with RFC 6749 OAuth 2.1 client credentials against Nexus OIDC.
+* **Production Audit Automation (10 Suites, 00 to 09)**:
+  - Validated with Linux `tc netem` traffic shaping across LAN, transoceanic, and hostile 3G profiles.
+  - Automated CLI scripts: `pnpm run audit:prod:start`, `audit:prod:run`, `audit:prod:clean`.
 
 ---
 
-### 🟢 Phase Beta-4: Developer Ecosystem, Interactive Inspector & Global Showcase
-* **Target Window**: Q1-Q2 2027
-* **Key Components**:
-  1. **Official Interactive Inspector (`@modelcontextprotocol/inspector` Paradigm)**:
-     - Standalone developer CLI (`npx @nekzus/liop playground` and `npx @nekzus/liop-inspector`).
-     - Bundles precompiled high-fidelity web assets (`dist/playground-dist/`) inside the published `@nekzus/liop` package.
-     - Dual-binary execution: `liop` for Claude Desktop STDIO agent, `liop-inspector` for visual developer inspector.
-     - *Target Files*: `src/bin/cli.ts`, `src/bin/playground-cli.ts`, `src/playground/server.ts`.
-  2. **Ad-Hoc Process Spawning & Live Inspection**:
-     - Ability to pass child process execution commands (`liop playground node ./server.js`) to spawn, connect, and debug local LIOP servers on the fly with live logging.
-     - *Target Files*: `src/bin/playground-cli.ts`.
-  3. **Cryptographic Pipeline Visualizer**:
-     - Real-time visual timeline mapping post-quantum key exchange (ML-KEM-768), symmetric encryption (AES-256-GCM), WASI sandbox execution, and ZK-Receipt integrity verification.
-     - *Target Files*: `tests/infra/playground-web/src/App.tsx`.
-  4. **Public Cloud Showcase & Embedded Mintlify Documentation**:
-     - Publicly deployed demo instance (`playground.liop.dev`) connected to WAN testnet bootstrap nodes.
-     - Interactive embedded playground component for official documentation at `https://nekzus-32.mintlify.app/`.
-  5. **CLI Diagnostics & Network Verification**:
-     - Subcommands for peer health and network inspection: `liop ping <peerId>`, `liop discover`, `liop health`.
-     - *Target Files*: `src/bin/cli.ts`.
+## ⏳ 2. Upcoming Phases (Detailed Specifications)
 
----
-
-### 🔵 Phase RC: Production Resilience & Hardware TEE Attestation
-* **Target Window**: Q2 2027
+### 🔵 Phase RC: Production Resilience, Hardware TEE & Rust Core Parity
+* **Target Window**: Q4 2026 - Q1 2027
 * **Key Components**:
-  1. **Hardware TEE Remote Attestation (AWS Nitro Enclaves / Intel SGX)**:
-     - Replace the simulation stub in `crypto/verifier.ts` (`verifyTeeAttestation()`) with cryptographic verification of signed AWS Nitro attestation documents.
+  1. **Rust Core Protocol Parity (`servers/liop-node`)**:
+     - Port multi-tier enclaves (`pnet` Swarm Key PSK) to `libp2p-pnet` in Rust.
+     - Implement Dual-Era MCP v2 / v1 handshake in Rust gateway.
+     - Symmetrical Tonic gRPC keepalive channel options.
+  2. **Hardware TEE Remote Attestation (AWS Nitro Enclaves / Intel SGX)**:
+     - Replace simulation stubs in `crypto/verifier.ts` (`verifyTeeAttestation()`) with cryptographic verification of signed AWS Nitro attestation documents.
      - *Dependencies*: `pnpm add @aws-sdk/client-nitro-enclaves-attestation`.
-     - *Target Files*: `src/crypto/verifier.ts`.
-  2. **Automated Chaos Engineering Suite**:
+     - *Target Files*: `src/crypto/verifier.ts`, `servers/liop-node/src/tee.rs`.
+  3. **Automated Chaos Engineering Suite**:
      - Automated test suite verifying mesh behavior under simulated transcontinental WAN latency (300ms), packet loss, partition splits, and abrupt bootstrap node termination.
      - *Target Files*: `tests/chaos/network-partition.test.ts`, `tests/chaos/bootstrap-drain.test.ts`.
-  3. **Geo-Proximity Routing & Multi-Region Failover**:
+  4. **Geo-Proximity Routing & Multi-Region Failover**:
      - RTT-aware and region-aware routing prioritizing closest geographic nodes with seamless failover.
      - *Target Files*: `src/gateway/router.ts`.
 

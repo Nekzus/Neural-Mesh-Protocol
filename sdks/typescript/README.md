@@ -35,9 +35,12 @@ This fundamentally solves the data privacy, bandwidth, and latency challenges of
 | **Logic-Injection-on-Origin** | LLMs send code, not queries. Data never leaves the origin server.                                                                          |
 | **Dual-Era MCP Compliance**   | Seamless support for modern stateless MCP v2 (2026-07-28) and legacy MCP (2025-11-25) clients (Claude Desktop, Cursor).                    |
 | **Token Economy Engine**      | Inlined BPE `o200k_base` tokenizer with zero runtime dependencies (16.5MB footprint reduction) and OpenTelemetry `gen_ai.*` bridge.       |
-| **Interactive Playground UI** | Real-time Web UI (`:14000`) with live 7-phase SSE execution stream and cryptographic proof inspector.                                    |
+| **Interactive Playground UI** | Real-time Web UI (`:16000` prod / `:14000` dev) with tri-tab results, live token economics dashboard, and dual high-contrast themes.      |
+| **Multi-Tier Sovereign Enclaves** | Physical socket isolation via `@libp2p/pnet` (256-bit Swarm Key PSK) and Border LIO Gateway (`blg`) with OAuth 2.1 authentication.       |
+| **AST Fuel Metering**         | Deterministic AST instruction fuel scoring with 100-bucket quantization for NIST SP 800-53 timing side-channel elimination (`stddev = 0`).|
 | **MCP Drop-in Replacement**   | `LiopServer` mirrors the Anthropic MCP `Server` API — tools, resources, and prompts with `Zod` schemas.                             |
 | **Guardian AST**              | Zero-time heuristic inspection blocks sandbox escapes (`require`, `fs`, `eval`, `fetch`, prototype pollution).                     |
+| **IFC Taint Analyzer**        | Static Acorn AST information flow control tracking collection aliases and neutralizing dynamic computed keys at preflight.                |
 | **WASI Sandbox**              | JavaScript payloads execute inside V8 isolates with CPU fuel limits, no Node.js globals, and safe environment isolation (`allowEnv`). |
 | **PII Shield**                | Multi-layer egress filter with Regional Presets, custom keys, and recursive floats sanitization (`sanitizeOutput`). |
 | **ZK-Receipts**               | Cryptographic proof with `output_hash` cross-verification (Replay Mitigation) and balanced-brace proxy extraction. |
@@ -528,21 +531,32 @@ await server.connectToMesh();
 
 ---
 
-## Interactive Web Playground (`:14000`)
+## Interactive Web Playground (`:16000` prod / `:14000` dev)
 
-The SDK includes an industrial, real-time developer interface to visually test Logic-Injection-on-Origin, trace post-quantum handshakes, and inspect cryptographic proofs:
+The SDK includes an industrial, real-time developer interface to visually test Logic-Injection-on-Origin, trace post-quantum handshakes, evaluate AST fuel consumption, and inspect cryptographic proofs:
 
 ```bash
-# Launch the full Docker mesh and interactive Web UI
+# 1. Launch the full 8-node production audit mesh with traffic shaping (http://localhost:16000)
+pnpm run audit:prod:start
+
+# Run the 10-suite automated production audit against the mesh
+pnpm run audit:prod:run
+
+# Teardown and cleanup production containers
+pnpm run audit:prod:clean
+
+# 2. Alternatively, launch the lightweight 5-node demo (http://localhost:14000)
 pnpm run demo:start
 ```
 
-Navigate to **`http://localhost:14000`** in your browser:
+Navigate to **`http://localhost:16000`** in your browser:
 
 * **Live 7-Phase Streaming:** Visualizes Bootstrap, DHT Discovery, ML-KEM-768 Handshake, AES-256-GCM Sealing, WASI Sandbox Execution, ZK-Receipt Verification, and Output Aggregation via real-time Server-Sent Events (SSE).
-* **Built-in Industrial Presets:** Ready-to-run micro-modules for High-Frequency Trading (HFT Level 2 order books), Banking transaction analysis, Medical Vault HIPAA records, and PII exfiltration defense.
-* **Cryptographic Proof Inspector:** Validates SHA-256 `ImageID`, HMAC-SHA256 ZK-receipt seals, and dataset integrity digests on the fly.
-* **Dual Dark Modes:** Seamlessly toggle between OLED Obsidian and Slate Midnight interfaces.
+* **Tri-Tab Results Panel:** Seamlessly switch between `Aggregated Output` (sanitized JSON), `Fuel & Telemetry` (WASI fuel metering, token economy comparison banner), and `Crypto Proofs` (ImageID, Dataset Hash, and HMAC-SHA256 signature with instant copy).
+* **Token Economy Dashboard:** Live comparison showing **98.9% – 99.6% token reduction** and **99.6% network bandwidth savings** over traditional MCP context-pulling.
+* **REST Telemetry Endpoint:** Query session analytics programmatically at `GET http://localhost:16000/api/telemetry`.
+* **Built-in Industrial Presets:** Ready-to-run micro-modules for High-Frequency Trading (HFT Level 2 order books), Banking transaction analysis, Medical Vault HIPAA records, and Edge IoT industrial sensor telemetry.
+* **Dual Dark Modes:** Seamlessly toggle between Obsidian OLED (`#000000`) and Slate Navy (`#0f172a`) interfaces.
 
 ---
 

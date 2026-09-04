@@ -56,6 +56,33 @@ The final boundary before touching bare metal.
 - **Hardware Enclaves (TEEs)**: Optionally bootstraps the entire `wasmtime` engine inside an Intel SGX or AWS Nitro enclave, shielding the RAM from server administrators.
 - **Zero-Knowledge Evidence**: Optionally leverages zkVMs (like `RISC Zero`) so the server returns the requested insight mathematically sealed, guaranteeing the compute wasn't tampered with.
 
+---
+
+## Multi-Tier Sovereign Mesh Topology
+
+In enterprise production deployments, the mesh topology is partitioned across three distinct security tiers with asymmetric boundary enforcement:
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Multi-Tier Sovereign Mesh Topology" />
+</Frame>
+
+### Tier 1: Data Sovereignty Enclaves
+* **Cryptographic Isolation**: Strict private network isolation via **`pnet` Swarm Key (PSK)** (`/key/swarm/psk/1.0.0/`). Any connection attempt from an unauthenticated peer without the symmetric PSK is aborted at the socket transport layer.
+* **Nodes**: Core Banking (`The Bank`, 1,500 synthetic accounts with $148M balance) and Healthcare EHR (`The Vault`, 2,500 patient records).
+* **Policy**: Enforces Differential Privacy (Laplace noise) and strict Cardinality limits (raw row-level data is permanently blocked from egressing).
+
+### Tier 2: Consortium P2P & Perimeter Gateways
+* **Border LIO Gateway (`BLG`)**: Acts as a cryptographic firewall and reverse proxy. Bridges external client queries into Tier 1 enclaves across an asymmetric network boundary using RFC 6749 OAuth 2.1 client credentials.
+* **High-Frequency Trading (`The Oracle`)**: Real-time HFT market matching engine simulating L2 orderbooks and stochastic volatility models (Heston + Jump Diffusion).
+* **Nexus**: Decentralized service discovery directory and OIDC authentication provider.
+
+### Tier 3: Public Backbone & Edge IoT
+* **Edge Industrial Nodes (`Edge IoT`)**: Deployed directly on edge industrial hardware under hostile WAN profiles (simulated 250ms ± 50ms latency with 2% packet loss). Computes anomaly detection in-situ, transmitting only critical aggregated telemetry.
+* **P2P Circuit Relays (`Relay`)**: High-throughput public relays implementing AutoNAT and Circuit Relay v2 for traversal of corporate firewalls.
+* **Client SDK & Web Playground**: Interactive execution consoles operating over intercontinental WAN links.
+
+---
+
 ## The Logic-on-Origin Journey
 
 <Frame>

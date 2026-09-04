@@ -1,0 +1,110 @@
+---
+title: "Interactive Web Playground"
+description: "Real-time logic injection studio with AST fuel telemetry, token economy comparison, and cryptographic proof verification"
+---
+
+The **LIOP Web Playground** is an interactive, browser-based logic injection studio and testing console. It connects directly to the decentralized mesh, providing instant execution of WebAssembly micro-modules, real-time cryptographic pipeline visualization, and fine-grained resource telemetry.
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="LIOP Playground Architecture" />
+</Frame>
+
+## Launching the Playground
+
+The playground can be launched standalone or as part of the multi-tier production audit mesh:
+
+<CodeGroup>
+```bash Production Mesh (:16000)
+# Start the full 8-node multi-tier mesh with simulated WAN latency
+pnpm audit:prod:start
+
+# Access the console in your browser:
+# http://localhost:16000
+```
+
+```bash Standalone Dev (:14000)
+# Launch a local standalone gateway node and studio UI
+pnpm demo:playground
+
+# Access the console in your browser:
+# http://localhost:14000
+```
+</CodeGroup>
+
+---
+
+## Key Studio Features
+
+### 1. Tri-Tab Results Panel
+The output console organizes execution data into three specialized tabs:
+
+* **Aggregated Output**: Displays the structured JSON payload returned by the remote origin node after in-situ execution and aggregation.
+* **Fuel & Telemetry**:
+  * **Token Economy vs Traditional MCP**: Real-time comparison contrasting the tokens consumed by the injected micro-module against the ~16,000–48,000 tokens required by traditional MCP raw context-pulling.
+  * **WASI Sandbox AST Fuel Metering**: Displays deterministic instruction-level fuel quota consumed (e.g. `500 u / 1,000,000 max`) with **100-Unit Bucket Quantization** to eliminate side-channel timing attacks per NIST SP 800-53.
+  * **Data Sovereignty Ratio**: Measures the wire payload size against the raw origin dataset protected in-situ (achieving over 99.6% wire traffic reduction).
+  * **Cryptographic Phase Latencies**: Exact millisecond breakdown across Route Discovery, Kyber-768 handshake, AES-256-GCM sealing, WASI Sandbox run, and ZK-Receipt verification.
+* **Crypto Proofs**:
+  * **ZK-Receipt HMAC-SHA256**: Validates the mathematical integrity proof binding the returned data to the exact code executed and the origin dataset hash. Features a quick-copy button for the proof hash.
+  * **Post-Quantum Key Exchange**: Verifies the active ML-KEM-768 (Kyber) quantum-resistant session secret.
+  * **Egress PII Shield Status**: Confirms whether the execution passed cardinality and differential privacy policies (`PASSED`) or was intercepted (`INTERCEPTED`).
+
+---
+
+### 2. Live Token Estimator & Bidirectional Synchronization
+
+* **Live Editor Stats**: The code editor footer dynamically estimates BPE tokens for the code currently written (`~141 tokens (est.)`) and displays the active fuel limit (`1,000,000 max`).
+* **Bidirectional Synchronization**: Selecting an analytical template automatically targets the corresponding capability and node in the mesh, while selecting any discovered capability automatically loads its canonical template, eliminating schema mismatch errors.
+
+---
+
+### 3. High-Contrast Dynamic Theming
+
+The playground supports atomic, high-contrast theme toggling via `document.documentElement` without CSS specificity conflicts:
+
+* **Obsidian OLED**: Pure OLED black (`#000000`) surfaces optimized for low-light environments and OLED displays.
+* **Slate Navy**: Modern deep navy/slate surfaces (`#0f172a`) with high readability.
+
+---
+
+## Telemetry REST API
+
+The playground server exposes an aggregated telemetry endpoint providing session statistics and per-tool breakdowns:
+
+```bash
+curl http://localhost:16000/api/telemetry
+```
+
+### Example Response
+
+```json
+{
+  "session": {
+    "sessionId": "79f3d3bf-c9e5-4996-9b70-14641c50c1f7",
+    "operations": [
+      {
+        "type": "tool_call",
+        "method": "tools/call",
+        "estimatedInputTokens": 62,
+        "estimatedOutputTokens": 356,
+        "toolName": "Analyze_Synthetic_Bank_Transactions",
+        "durationMs": 609,
+        "timestamp": 1788537457801
+      }
+    ],
+    "totalInputTokens": 62,
+    "totalOutputTokens": 356,
+    "estimatorName": "o200k_base",
+    "sessionUptimeMs": 40083
+  },
+  "perTool": {
+    "Analyze_Synthetic_Bank_Transactions": {
+      "input": 62,
+      "output": 356,
+      "calls": 1,
+      "avgDurationMs": 609
+    }
+  },
+  "timestamp": 1788537464700
+}
+```

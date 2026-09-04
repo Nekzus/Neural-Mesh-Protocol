@@ -75,8 +75,37 @@ await stream.start();
 await stream.stop();
 ```
 
+## Border LIO Gateway (BLG) & Perimeter Defense
+
+In production topologies with multi-tier security domains, the **Border LIO Gateway (`blg`)** acts as the protocol boundary between external untrusted networks and Tier 1 sovereign enclaves:
+
+```typescript
+// Client invocation targeting Border LIO Gateway with OAuth 2.1 Bearer authentication
+const tokenResponse = await fetch("http://nexus:3000/oidc/token", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: "border-gateway-client",
+    client_secret: process.env.LIOP_BLG_SECRET || "default-secret"
+  })
+});
+
+const { access_token, expires_in } = await tokenResponse.json();
+// Bearer token is cached in memory with a 30s pre-expiration margin
+```
+
+### Gateway Responsibilities
+
+1. **OAuth 2.1 Token Verification**: Asserts Bearer tokens signed by Nexus OIDC before proxying JSON-RPC requests to internal services.
+2. **Swarm Key Bridge**: Possesses the private 256-bit PSK required to communicate directly with Tier 1 enclaves (`The Bank`, `The Vault`) across the isolated `pnet` subnet.
+3. **Defense-in-Depth Inspection**: Runs preflight validation on AST logic payloads before dispatching to destination enclaves.
+
+---
+
 ## Security Notes
 
 - `LiopStreamBridge` supports Zero-Trust bearer enforcement via `ZERO_TRUST_TOKEN`.
 - Sessions are isolated and evicted when idle to reduce long-lived attack surfaces.
 - Gateway/router components preserve full MCP JSON-RPC compatibility while maintaining mesh-native routing behavior.
+- The Border LIO Gateway caches RFC 6749 credentials in-memory with automatic refresh 30 seconds prior to expiration, eliminating transient 401 Unauthorized errors during high-frequency batch executions.

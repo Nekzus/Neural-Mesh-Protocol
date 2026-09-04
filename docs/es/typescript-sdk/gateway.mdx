@@ -75,8 +75,37 @@ await stream.start();
 await stream.stop();
 ```
 
+## Border LIO Gateway (BLG) y Defensa Perimétrica
+
+En topologías de producción con múltiples dominios de seguridad, el **Border LIO Gateway (`blg`)** actúa como la frontera protocolar entre redes externas no confiables y enclaves soberanos Tier 1:
+
+```typescript
+// Invocación de cliente dirigida al Border LIO Gateway con autenticación Bearer OAuth 2.1
+const tokenResponse = await fetch("http://nexus:3000/oidc/token", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: "border-gateway-client",
+    client_secret: process.env.LIOP_BLG_SECRET || "default-secret"
+  })
+});
+
+const { access_token, expires_in } = await tokenResponse.json();
+// El token Bearer se almacena en memoria con un margen preventivo de 30s antes de su expiración
+```
+
+### Responsabilidades del Gateway Perimetral
+
+1. **Verificación de Tokens OAuth 2.1**: Valida los tokens Bearer firmados por Nexus OIDC antes de transferir peticiones JSON-RPC a los servicios internos.
+2. **Puente de Swarm Key**: Posee la clave simétrica privada (PSK de 256 bits) requerida para comunicarse directamente con los enclaves Tier 1 (`The Bank`, `The Vault`) sobre la subred aislada `pnet`.
+3. **Inspección de Defensa en Profundidad**: Ejecuta validación estática de preflight sobre los payloads de lógica AST antes de enviarlos a los enclaves de destino.
+
+---
+
 ## Notas de Seguridad
 
 - `LiopStreamBridge` soporta política Zero-Trust bearer mediante `ZERO_TRUST_TOKEN`.
 - Las sesiones se aíslan y se expulsan por inactividad para reducir superficies de ataque persistentes.
 - Los componentes gateway/router mantienen compatibilidad total MCP JSON-RPC preservando el enrutamiento nativo de malla.
+- El Border LIO Gateway almacena en caché las credenciales RFC 6749 en memoria con refresco automático 30 segundos antes de su expiración, eliminando errores transitorios 401 Unauthorized durante ejecuciones analíticas concurrentes.
