@@ -13,12 +13,13 @@ WORKDIR /app
 # Install the exact production package published on NPM along with required peer/runtime tools
 RUN npm init -y \
     && npm pkg set type="module" \
-    && npm install --save --no-audit --no-fund \
+    && npm install --save --no-audit --no-fund --legacy-peer-deps \
        @nekzus/liop@2.5.0 \
        @libp2p/pnet@3.0.29 \
        zod@4.4.3 \
        hono@4.13.5 \
-       @hono/node-server@2.1.1
+       @hono/node-server@2.1.1 \
+       vitest@4.1.11
 
 # Copy production audit assets
 COPY entrypoints/ ./entrypoints/
@@ -41,6 +42,9 @@ RUN npm install -g tsx vitest
 
 # Copy application artifacts from builder
 COPY --from=builder /app ./
+
+# Ensure local node_modules binaries and packages are prioritized
+ENV PATH="/app/node_modules/.bin:$PATH"
 
 # Ensure network scripts have execution permissions
 RUN chmod +x /app/network-profiles/*.sh

@@ -90,6 +90,8 @@ services:
       LIOP_NEXUS_URL: http://nexus:3000
       VAULT_INTERNAL_URL: http://172.22.0.11:3000
       BANK_INTERNAL_URL: http://172.22.0.12:3000
+      LIOP_RATE_LIMIT_MAX: 500
+      LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
     networks:
       liop-tier1-enclave:
         ipv4_address: 172.22.0.10
@@ -123,6 +125,7 @@ services:
       LIOP_BOOTSTRAP_PEER: /ip4/172.22.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
+      LIOP_QUERY_BUDGET: 1000
     networks:
       liop-tier1-enclave:
         ipv4_address: 172.22.0.11
@@ -151,6 +154,7 @@ services:
       LIOP_BOOTSTRAP_PEER: /ip4/172.22.0.10/tcp/4000
       LIOP_RATE_LIMIT_MAX: 500
       LIOP_RATE_LIMIT_GLOBAL_MAX: 2000
+      LIOP_QUERY_BUDGET: 1000
     networks:
       liop-tier1-enclave:
         ipv4_address: 172.22.0.12
@@ -247,6 +251,12 @@ services:
     container_name: liop-playground-prod
     hostname: playground-prod
     command: ["tsx", "--no-warnings", "entrypoints/playground.ts"]
+    volumes:
+      - audit-shared-data:/app/data
+      - ./entrypoints:/app/entrypoints
+      - ./utils:/app/utils
+      - ../playground-dist:/app/playground-dist
+      - ../../../dist:/app/node_modules/@nekzus/liop/dist
     environment:
       LIOP_NODE_ROLE: client
       LIOP_LOG_LEVEL: info
@@ -273,6 +283,12 @@ services:
     container_name: liop-audit-runner
     hostname: audit-runner
     command: ["vitest", "run", "--config", "tests/vitest.audit.config.ts"]
+    volumes:
+      - audit-shared-data:/app/data
+      - ./entrypoints:/app/entrypoints
+      - ./utils:/app/utils
+      - ./tests:/app/tests
+      - ../../../dist:/app/node_modules/@nekzus/liop/dist
     environment:
       NEXUS_URL: http://nexus-prod:3000
       BLG_URL: http://blg-prod:3000

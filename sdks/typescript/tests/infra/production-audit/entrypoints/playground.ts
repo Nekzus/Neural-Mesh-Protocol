@@ -4,8 +4,11 @@
  * Exposes a Hono HTTP server running a persistent LiopClient connected to the mesh.
  * Provides REST + SSE endpoints to execute logic and monitor the 7-phase execution pipeline.
  */
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { streamSSE } from "hono/streaming";
 import { LiopClient } from "@nekzus/liop";
 
@@ -26,6 +29,21 @@ function extractText(result: unknown): string {
 }
 
 const app = new Hono();
+const here = path.dirname(fileURLToPath(import.meta.url));
+const distPath = path.resolve(here, "../playground-dist");
+
+app.use(
+	"/*",
+	serveStatic({
+		root: path.relative(process.cwd(), distPath).replace(/\\/g, "/"),
+		rewriteRequestPath: (pathStr) => {
+			if (!pathStr.includes(".") && !pathStr.startsWith("/api") && pathStr !== "/health") {
+				return "/index.html";
+			}
+			return pathStr;
+		},
+	}),
+);
 const client = new LiopClient();
 let isConnected = false;
 let cachedTools: { name: string; description?: string }[] = [];

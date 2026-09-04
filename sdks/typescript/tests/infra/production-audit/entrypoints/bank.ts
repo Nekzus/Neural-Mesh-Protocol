@@ -118,7 +118,9 @@ async function main() {
 			dpEpsilon: 2.0,
 			dpSensitivity: 100000.0,
 			sensitiveKeys: ["accountType"],
-			queryBudgetPerField: 10,
+			queryBudgetPerField: process.env.LIOP_QUERY_BUDGET
+				? Number.parseInt(process.env.LIOP_QUERY_BUDGET, 10)
+				: 1000,
 		},
 	);
 

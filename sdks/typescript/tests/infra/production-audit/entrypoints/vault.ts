@@ -117,6 +117,9 @@ async function main() {
 			dpEpsilon: 2.0,
 			dpSensitivity: 1.0,
 			sensitiveKeys: ["diagnosis", "bloodType"],
+			queryBudgetPerField: process.env.LIOP_QUERY_BUDGET
+				? Number.parseInt(process.env.LIOP_QUERY_BUDGET, 10)
+				: 1000,
 		},
 	);
 
