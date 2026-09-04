@@ -347,6 +347,12 @@ export default function App() {
   const [tools, setTools] = useState<Tool[]>([])
   const [nodes, setNodes] = useState<ScannedNode[]>([])
   const [scanSummary, setScanSummary] = useState<ScanSummary | null>(null)
+
+  // Dynamic topology stats (derived from live scan, fallback to health, zero hardcoding)
+  const totalNodes = scanSummary?.totalNodes ?? network?.totalNodes ?? (nodes.length > 0 ? nodes.length : null)
+  const onlineNodes = scanSummary?.onlineNodes ?? network?.nodesOnline ?? (nodes.length > 0 ? nodes.filter(n => n.status === "online").length : null)
+  const hasNodeStats = totalNodes !== null && totalNodes > 0 && onlineNodes !== null
+
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTemplateId, setSelectedTemplateId] = useState(TEMPLATES[0].id)
   const [selectedToolName, setSelectedToolName] = useState(TEMPLATES[0].tool)
@@ -690,7 +696,11 @@ export default function App() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-white font-medium">
-                {scanSummary ? `${scanSummary.onlineNodes}/${scanSummary.totalNodes} Nodes Online` : `${network?.peersCount ? network.peersCount + 1 : 8} Nodes Active`}
+                {hasNodeStats
+                  ? `${onlineNodes}/${totalNodes} Nodes Online`
+                  : isScanning
+                    ? "Scanning Mesh Nodes..."
+                    : "Discovering Topology..."}
               </span>
               <span className="text-cyan-400 font-mono text-[10px] hidden sm:inline">
                 (3 Tiers)
@@ -784,7 +794,7 @@ export default function App() {
                     }`}
                   >
                     <Server className="h-3.5 w-3.5" />
-                    Server Scan ({scanSummary?.onlineNodes ?? 8}/8)
+                    Server Scan {hasNodeStats ? `(${onlineNodes}/${totalNodes})` : ""}
                   </button>
                   <button
                     type="button"
@@ -1125,14 +1135,27 @@ export default function App() {
                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                   <span className="text-zinc-400">Mesh Topology:</span>
                   <span className="text-cyan-400 font-mono text-[11px]">
-                    {scanSummary ? `${scanSummary.onlineNodes}/${scanSummary.totalNodes} Nodes (3 Tiers)` : "8 Nodes Verified"}
+                    {hasNodeStats
+                      ? `${onlineNodes}/${totalNodes} Nodes (3 Tiers)`
+                      : isScanning
+                        ? "Discovering Topology..."
+                        : "Synchronizing Mesh..."}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                   <span className="text-zinc-400">Avg Mesh Latency:</span>
                   <span className="text-emerald-400 font-mono text-[11px]">
-                    {scanSummary?.avgLatencyMs ? `${scanSummary.avgLatencyMs} ms` : "12 ms"}
+                    {scanSummary?.avgLatencyMs !== undefined && scanSummary.avgLatencyMs > 0
+                      ? `${scanSummary.avgLatencyMs} ms`
+                      : nodes.some((n) => n.rttMs > 0 && n.status === "online")
+                        ? `${Math.round(
+                            nodes
+                              .filter((n) => n.status === "online" && n.rttMs > 0)
+                              .reduce((acc, curr) => acc + curr.rttMs, 0) /
+                            Math.max(1, nodes.filter((n) => n.status === "online" && n.rttMs > 0).length),
+                          )} ms`
+                        : "Measuring..."}
                   </span>
                 </div>
 

@@ -512,11 +512,16 @@ app.get("/api/health", async (c) => {
 	const peerId = (client as any)["meshNode"]?.getPeerId()?.toString() || "12D3KooWPlaygroundClient";
 	// biome-ignore lint/suspicious/noExplicitAny: internal inspection
 	const connections = (client as any)["meshNode"]?.["node"]?.getConnections() || [];
+	const uniquePeers = new Set(
+		// biome-ignore lint/suspicious/noExplicitAny: peer id extraction
+		connections.map((conn: any) => conn.remotePeer?.toString()).filter(Boolean),
+	).size;
 
 	return c.json({
 		status: isConnected ? "healthy" : "connecting",
 		peerId,
-		peersCount: connections.length,
+		peersCount: uniquePeers,
+		connectionsCount: connections.length,
 		role: "client",
 		address: "172.21.0.200:3000",
 		version: "2.5.0",
