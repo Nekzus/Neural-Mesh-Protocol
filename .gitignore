@@ -86,6 +86,7 @@ out2.json
 preview*.html
 docs/images/*.png
 docs/images/*.jpg
+docs/*.html
 
 # Graphify local output
 graphify-out/
