@@ -4,28 +4,43 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-theme="obsidian"],
+.theme-obsidian {
   color-scheme: dark;
-  /* Default Theme: OLED Obsidian */
-  --bg-canvas: #060709;
-  --bg-surface-1: #0d0e14;
-  --bg-surface-2: #13151f;
-  --bg-surface-3: #1a1c2b;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-muted: rgba(255, 255, 255, 0.14);
-  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
-}
-
-[data-theme="slate"] {
-  color-scheme: dark;
-  /* Slate Midnight Theme */
-  --bg-canvas: #0a0e17;
-  --bg-surface-1: #111827;
-  --bg-surface-2: #1a2234;
-  --bg-surface-3: #222e44;
+  /* OLED Obsidian — Pure Deep Pitch Black Stealth Theme */
+  --bg-canvas: #000000;
+  --bg-surface-1: #07080b;
+  --bg-surface-2: #0e1017;
+  --bg-surface-3: #151822;
+  --bg-editor: #030406;
+  --bg-input: #0a0c12;
+  --bg-tier1: #03120b;
+  --bg-tier2: #041019;
+  --bg-tier3: #0d071a;
   --border-subtle: rgba(255, 255, 255, 0.09);
   --border-muted: rgba(255, 255, 255, 0.16);
-  --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.7), 0 2px 8px -1px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.9), 0 2px 6px -1px rgba(0, 0, 0, 0.7);
+  --text-code: #7dd3fc;
+}
+
+[data-theme="slate"],
+.theme-slate {
+  color-scheme: dark;
+  /* Slate Midnight — Rich Enterprise Navy / Blue-Gray Theme */
+  --bg-canvas: #0f172a;
+  --bg-surface-1: #1e293b;
+  --bg-surface-2: #283548;
+  --bg-surface-3: #334155;
+  --bg-editor: #0c1527;
+  --bg-input: #172235;
+  --bg-tier1: #072e24;
+  --bg-tier2: #0e2947;
+  --bg-tier3: #221a3a;
+  --border-subtle: rgba(148, 163, 184, 0.22);
+  --border-muted: rgba(148, 163, 184, 0.38);
+  --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5), 0 2px 8px -1px rgba(0, 0, 0, 0.35);
+  --text-code: #93c5fd;
 }
 
 @layer base {
@@ -34,21 +49,22 @@
     color: #f4f4f5;
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Reset form controls so they never default to white user-agent styling */
+  /* Form controls styled with theme variable background */
   input, textarea, select {
     color-scheme: dark;
-    background-color: #0b0e14;
+    background-color: var(--bg-input);
     color: #f4f4f5;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
   }
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus {
     -webkit-text-fill-color: #f4f4f5;
-    -webkit-box-shadow: 0 0 0px 1000px #0b0e14 inset;
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-input) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 }

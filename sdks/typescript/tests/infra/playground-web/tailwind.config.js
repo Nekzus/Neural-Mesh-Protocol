@@ -45,6 +45,13 @@ export default {
           DEFAULT: "var(--bg-surface-1)",
           foreground: "#f4f4f5",
         },
+        surface1: "var(--bg-surface-1)",
+        surface2: "var(--bg-surface-2)",
+        surface3: "var(--bg-surface-3)",
+        editor: "var(--bg-editor)",
+        tier1: "var(--bg-tier1)",
+        tier2: "var(--bg-tier2)",
+        tier3: "var(--bg-tier3)",
       },
       boxShadow: {
         card: "var(--card-shadow)",
