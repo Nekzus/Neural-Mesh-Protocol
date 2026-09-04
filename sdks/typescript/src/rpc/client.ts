@@ -9,6 +9,10 @@ import type {
 	LogicResponse,
 } from "./types.js";
 
+export type TokenProvider =
+	| string
+	| (() => Promise<string | undefined> | string | undefined);
+
 /**
  * LIOP gRPC Client Implementation
  * Provides a high-level interface for secure intent negotiation and logic execution.
@@ -16,10 +20,11 @@ import type {
 export class LiopRpcClient {
 	// biome-ignore lint/suspicious/noExplicitAny: internal gRPC client type
 	private client: any;
-	private token?: string;
+	private token?: TokenProvider;
+	private lastResolvedToken?: string;
 	public readonly address: string;
 
-	constructor(address: string, tls?: LiopTlsOptions, token?: string) {
+	constructor(address: string, tls?: LiopTlsOptions, token?: TokenProvider) {
 		const credentials = createChannelCredentials(tls);
 		this.client = new liopV1.LogicMesh(
 			address,
@@ -27,7 +32,26 @@ export class LiopRpcClient {
 			GRPC_CHANNEL_OPTIONS,
 		);
 		this.token = token;
+		if (typeof token === "string") {
+			this.lastResolvedToken = token;
+		}
 		this.address = address;
+	}
+
+	public setToken(token?: TokenProvider): void {
+		this.token = token;
+		if (typeof token === "string") {
+			this.lastResolvedToken = token;
+		}
+	}
+
+	private async resolveToken(): Promise<string | undefined> {
+		if (typeof this.token === "function") {
+			this.lastResolvedToken = await this.token();
+			return this.lastResolvedToken;
+		}
+		this.lastResolvedToken = this.token;
+		return this.token;
 	}
 
 	/**
@@ -37,10 +61,11 @@ export class LiopRpcClient {
 	public async negotiateIntent(
 		request: IntentRequest,
 	): Promise<IntentResponse> {
+		const activeToken = await this.resolveToken();
 		return new Promise((resolve, reject) => {
 			const metadata = new grpc.Metadata();
-			if (this.token) {
-				metadata.add("authorization", `Bearer ${this.token}`);
+			if (activeToken) {
+				metadata.add("authorization", `Bearer ${activeToken}`);
 			}
 			this.client.NegotiateIntent(
 				request,
@@ -64,8 +89,11 @@ export class LiopRpcClient {
 		request: LogicRequest,
 	): grpc.ClientReadableStream<LogicResponse> {
 		const metadata = new grpc.Metadata();
-		if (this.token) {
-			metadata.add("authorization", `Bearer ${this.token}`);
+		const activeToken =
+			this.lastResolvedToken ||
+			(typeof this.token === "string" ? this.token : undefined);
+		if (activeToken) {
+			metadata.add("authorization", `Bearer ${activeToken}`);
 		}
 		return this.client.ExecuteLogic(request, metadata);
 	}

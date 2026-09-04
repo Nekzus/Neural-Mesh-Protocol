@@ -29,7 +29,7 @@ export class TokenManager {
 	private readonly clientSecret: string;
 	private readonly audience: string;
 	private readonly scope: string;
-	private readonly staticToken?: string;
+	private staticToken?: string;
 
 	// Preemptive refresh threshold: 30 seconds before expiration
 	private static readonly REFRESH_BUFFER_MS = 30_000;
@@ -86,6 +86,9 @@ export class TokenManager {
 	public invalidate(): void {
 		this.cachedToken = null;
 		this.expiresAt = 0;
+		if (this.clientId && this.clientSecret) {
+			this.staticToken = undefined;
+		}
 		log.info("[TokenManager] Cached OAuth access token invalidated.");
 	}
 

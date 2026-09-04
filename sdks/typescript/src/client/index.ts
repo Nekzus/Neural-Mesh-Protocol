@@ -13,6 +13,7 @@ import { AesGcmWrapper } from "../rpc/crypto/aes.js";
 import { Kyber768Wrapper } from "../rpc/crypto/kyber.js";
 import type { LiopTlsOptions } from "../rpc/tls.js";
 import type { LogicRequest, LogicResponse } from "../rpc/types.js";
+import { TokenManager } from "../runtime/token-manager.js";
 import {
 	type CallToolRequest,
 	type CallToolResult,
@@ -33,6 +34,7 @@ export class LiopClient {
 	private serverInfo?: { name: string; version: string };
 	public verifier: LiopVerifier = new LiopVerifier();
 	private oauthToken?: string;
+	private tokenManager?: TokenManager;
 
 	/** Protocol negotiation era */
 	public era: McpEra = "modern";
@@ -41,59 +43,6 @@ export class LiopClient {
 
 	constructor(tls?: LiopTlsOptions) {
 		this.tlsOptions = tls;
-	}
-
-	/**
-	 * Requests an M2M access token from the Nexus Authorization Server using Client Credentials.
-	 */
-	private async acquireM2MToken(authOpts: {
-		clientId: string;
-		clientSecret: string;
-		nexusUrl: string;
-		audience: string;
-		scope?: string;
-	}): Promise<string> {
-		const baseUrl = authOpts.nexusUrl.endsWith("/oidc")
-			? authOpts.nexusUrl
-			: `${authOpts.nexusUrl}/oidc`;
-		const tokenUrl = `${baseUrl}/token`;
-		log.info(`[LiopClient] Requesting M2M Token from Nexus AS: ${tokenUrl}`);
-
-		const params = new URLSearchParams({
-			grant_type: "client_credentials",
-			scope:
-				authOpts.scope ||
-				"liop:tools:call liop:tools:list liop:resources:read liop:schema:read liop:mesh:query",
-			resource: authOpts.audience,
-			client_id: authOpts.clientId,
-			client_secret: authOpts.clientSecret,
-		});
-
-		const response = await fetch(tokenUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-			body: params.toString(),
-		});
-
-		if (!response.ok) {
-			const text = await response.text();
-			throw new Error(
-				`OAuth token request failed with status ${response.status}: ${text}`,
-			);
-		}
-
-		const data = (await response.json()) as {
-			access_token: string;
-			expires_in?: number;
-		};
-		if (!data.access_token) {
-			throw new Error("OAuth token response did not contain an access_token.");
-		}
-
-		log.info("[LiopClient] M2M Token acquired successfully.");
-		return data.access_token;
 	}
 
 	/**
@@ -142,14 +91,24 @@ export class LiopClient {
 			process.env.LIOP_TOKEN;
 
 		if (clientId && clientSecret) {
+			const baseUrl = (nexusUrl || "http://127.0.0.1:3000").endsWith("/oidc")
+				? nexusUrl || "http://127.0.0.1:3000"
+				: `${nexusUrl || "http://127.0.0.1:3000"}/oidc`;
+			const tokenEndpoint = `${baseUrl}/token`;
+
+			this.tokenManager = new TokenManager({
+				tokenEndpoint,
+				clientId,
+				clientSecret,
+				audience,
+				scopes: scope,
+			});
+
 			try {
-				this.oauthToken = await this.acquireM2MToken({
-					clientId,
-					clientSecret,
-					nexusUrl,
-					audience,
-					scope,
-				});
+				this.oauthToken = await this.tokenManager.getToken();
+				log.info(
+					"[LiopClient] Dynamic TokenManager configured and initial token acquired.",
+				);
 			} catch (err: unknown) {
 				log.error(
 					`[LiopClient] Failed to acquire OAuth M2M Token: ${
@@ -167,9 +126,15 @@ export class LiopClient {
 		);
 
 		if (address) {
+			const tokenResolver = async () => {
+				if (this.tokenManager) {
+					return await this.tokenManager.getToken();
+				}
+				return this.oauthToken;
+			};
 			this.rpcClients.set(
 				"static",
-				new LiopRpcClient(address, this.tlsOptions, this.oauthToken),
+				new LiopRpcClient(address, this.tlsOptions, tokenResolver),
 			);
 			this.serverInfo = { name: `LiopServer (${address})`, version: "1.0.0" };
 			log.info(`[LiopClient] Static gRPC configured for: ${address}`);
@@ -451,11 +416,7 @@ export class LiopClient {
 			? await this.meshNode.sign(intentPayload)
 			: intentPayload;
 
-		const intentResponse = (await rpcClient.negotiateIntent({
-			agent_did: agentDid,
-			capability_hash: toolName,
-			proof_of_intent: proofOfIntent,
-		})) as unknown as {
+		let intentResponse: {
 			accepted: boolean;
 			error_message: string;
 			kyber_public_key: Uint8Array;
@@ -464,8 +425,64 @@ export class LiopClient {
 			sessionToken: string;
 		};
 
+		try {
+			intentResponse = (await rpcClient.negotiateIntent({
+				agent_did: agentDid,
+				capability_hash: toolName,
+				proof_of_intent: proofOfIntent,
+			})) as unknown as typeof intentResponse;
+		} catch (err: unknown) {
+			const errMsg = err instanceof Error ? err.message : String(err);
+			if (
+				this.tokenManager &&
+				(errMsg.includes("UNAUTHENTICATED") ||
+					errMsg.includes("Invalid JWT") ||
+					errMsg.includes("timestamp check failed") ||
+					errMsg.includes("expired"))
+			) {
+				log.warn(
+					`[LiopClient] Token expired/unauthenticated for ${toolName}. Preemptively refreshing OAuth token and retrying negotiateIntent...`,
+				);
+				this.tokenManager.invalidate();
+				const freshToken = await this.tokenManager.getToken();
+				this.oauthToken = freshToken;
+				rpcClient.setToken(freshToken);
+				intentResponse = (await rpcClient.negotiateIntent({
+					agent_did: agentDid,
+					capability_hash: toolName,
+					proof_of_intent: proofOfIntent,
+				})) as unknown as typeof intentResponse;
+			} else {
+				throw err;
+			}
+		}
+
 		if (!intentResponse.accepted) {
-			throw new Error(`Intent denied by host: ${intentResponse.error_message}`);
+			if (
+				this.tokenManager &&
+				(intentResponse.error_message?.includes("token") ||
+					intentResponse.error_message?.includes("UNAUTHENTICATED") ||
+					intentResponse.error_message?.includes("expired") ||
+					intentResponse.error_message?.includes("timestamp check failed"))
+			) {
+				log.warn(
+					`[LiopClient] Intent rejected with auth error: "${intentResponse.error_message}". Refreshing token and retrying...`,
+				);
+				this.tokenManager.invalidate();
+				const freshToken = await this.tokenManager.getToken();
+				this.oauthToken = freshToken;
+				rpcClient.setToken(freshToken);
+				intentResponse = (await rpcClient.negotiateIntent({
+					agent_did: agentDid,
+					capability_hash: toolName,
+					proof_of_intent: proofOfIntent,
+				})) as unknown as typeof intentResponse;
+			}
+			if (!intentResponse.accepted) {
+				throw new Error(
+					`Intent denied by host: ${intentResponse.error_message}`,
+				);
+			}
 		}
 
 		// LIOP Robust Field Extraction (Supports both snake_case and camelCase via gRPC-JS)
@@ -603,8 +620,6 @@ export class LiopClient {
 	private getOrCreateRpcClient(peerId: string, address: string): LiopRpcClient {
 		let client = this.rpcClients.get(peerId);
 		if (!client) {
-			let nodeToken = this.oauthToken;
-
 			let manifest = this.manifests.get(peerId);
 			let realPeerId = peerId;
 
@@ -670,10 +685,17 @@ export class LiopClient {
 				log.info(
 					`[LiopClient] Resolved node-specific token for peer ${realPeerId.slice(-8)} (${providerName || "unknown"})`,
 				);
-				nodeToken = envToken;
 			}
 
-			client = new LiopRpcClient(address, this.tlsOptions, nodeToken);
+			const tokenResolver = async () => {
+				if (envToken) return envToken;
+				if (this.tokenManager) {
+					return await this.tokenManager.getToken();
+				}
+				return this.oauthToken;
+			};
+
+			client = new LiopRpcClient(address, this.tlsOptions, tokenResolver);
 			this.rpcClients.set(peerId, client);
 		}
 		return client;
