@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Network Mesh Abstraction - Peer-to-Peer Zero-Trust (libp2p)
 // Encapsulates the DHT and the Noise Protocol logic.
 

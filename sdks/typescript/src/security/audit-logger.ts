@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Immutable Audit Logger (Phase Beta-3)
  * SOC 2 Type II & HIPAA compliant audit trail with cryptographic Hash-Chain.

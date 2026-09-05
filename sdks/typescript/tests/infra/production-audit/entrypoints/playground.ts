@@ -134,7 +134,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "bank",
 		name: "The Bank (Enclave)",
 		tier: 1,
-		tierLabel: "Tier 1: Enclave Soberano",
+		tierLabel: "Tier 1: Sovereign Enclave",
 		url: process.env.BANK_INTERNAL_URL || "http://172.22.0.12:3000",
 		host: "172.22.0.12",
 		ports: { http: 3000, p2p: 4000, grpc: 50051 },
@@ -147,7 +147,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "vault",
 		name: "The Vault (Enclave)",
 		tier: 1,
-		tierLabel: "Tier 1: Enclave Soberano",
+		tierLabel: "Tier 1: Sovereign Enclave",
 		url: process.env.VAULT_INTERNAL_URL || "http://172.22.0.11:3000",
 		host: "172.22.0.11",
 		ports: { http: 3000, p2p: 4000, grpc: 50051 },
@@ -161,7 +161,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "blg",
 		name: "Border LIO Gateway (BLG)",
 		tier: 2,
-		tierLabel: "Tier 2: Consorcio & Perímetro",
+		tierLabel: "Tier 2: Consortium & Perimeter",
 		url: process.env.BLG_URL || "http://blg:3000",
 		host: "172.23.0.20",
 		ports: { http: 3000, p2p: 4000, grpc: 50051 },
@@ -172,7 +172,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "nexus",
 		name: "Nexus Seed Supernode",
 		tier: 2,
-		tierLabel: "Tier 2: Consorcio & Perímetro",
+		tierLabel: "Tier 2: Consortium & Perimeter",
 		url: process.env.LIOP_NEXUS_URL || "http://nexus:3000",
 		host: "172.23.0.10",
 		ports: { http: 3000, p2p: 4000 },
@@ -183,7 +183,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "oracle",
 		name: "The Oracle (HFT)",
 		tier: 2,
-		tierLabel: "Tier 2: Consorcio & Perímetro",
+		tierLabel: "Tier 2: Consortium & Perimeter",
 		url: process.env.ORACLE_URL || "http://oracle:3000",
 		host: "172.23.0.13",
 		ports: { http: 3000, p2p: 4000, grpc: 50051 },
@@ -196,7 +196,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "relay",
 		name: "Circuit Relay v2",
 		tier: 3,
-		tierLabel: "Tier 3: Backbone Público & Edge",
+		tierLabel: "Tier 3: Public Backbone & Edge",
 		url: process.env.RELAY_URL || "http://relay:3000",
 		host: "172.21.0.15",
 		ports: { http: 3000, p2p: 4000 },
@@ -207,7 +207,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "edge",
 		name: "Edge Industrial IoT",
 		tier: 3,
-		tierLabel: "Tier 3: Backbone Público & Edge",
+		tierLabel: "Tier 3: Public Backbone & Edge",
 		url: process.env.EDGE_URL || "http://edge:3000",
 		host: "172.21.0.50",
 		ports: { http: 3000, p2p: 4000, grpc: 50051 },
@@ -219,7 +219,7 @@ const TOPOLOGY_NODES: TargetNodeDef[] = [
 		id: "playground",
 		name: "Playground Client Node",
 		tier: 3,
-		tierLabel: "Tier 3: Backbone Público & Edge",
+		tierLabel: "Tier 3: Public Backbone & Edge",
 		url: "http://127.0.0.1:3000",
 		host: "172.21.0.200",
 		ports: { http: 3000 },
@@ -585,7 +585,9 @@ app.get("/api/telemetry", async (c) => {
 });
 
 app.post("/api/execute", async (c) => {
-	const { tool, logic } = await c.req.json();
+	const body = await c.req.json();
+	const tool = body.tool;
+	const logic = body.logic ?? body.code;
 	console.log(`[Playground-Prod] Executing capability "${tool}"`);
 
 	return streamSSE(c, async (stream) => {
@@ -708,7 +710,7 @@ app.post("/api/execute", async (c) => {
 						method: "tools/call",
 						params: {
 							name: tool,
-							arguments: tool === "BLG_Inspect_Enclave_Perimeter" ? {} : { envelope },
+							arguments: tool === "BLG_Inspect_Enclave_Perimeter" ? {} : { envelope, payload: envelope },
 						},
 					}),
 					signal: AbortSignal.timeout(10000),

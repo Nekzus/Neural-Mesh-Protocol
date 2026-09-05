@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { AesGcmWrapper } from "./aes.js";

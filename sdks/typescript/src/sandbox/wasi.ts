@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";

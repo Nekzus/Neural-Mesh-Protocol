@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { createTestClient, waitForDiscovery, buildEnvelope, extractText } from "./_client-helpers.js";
 import { LiopClient } from "../../src/client/index.js";
@@ -8,13 +11,13 @@ describe("12-client-sdk-e2e: Native Client SDK P2P Mesh Execution", () => {
 
   beforeAll(async () => {
     client = await createTestClient();
-    // Esperar a que la DHT de Kademlia descubra al menos 3 herramientas (Bank, Vault, Oracle)
+    // Wait for Kademlia DHT to discover at least 3 tools (Bank, Vault, Oracle)
     await waitForDiscovery(client, 3, 60000);
   }, 70000);
 
   afterAll(async () => {
     if (client) {
-      log.info("[E2E-Test] Cerrando el cliente de pruebas...");
+      log.info("[E2E-Test] Closing test client...");
       await client.close();
     }
   });
@@ -38,7 +41,7 @@ return {
     `;
     const envelope = buildEnvelope(logic, "DirectBankAggregation");
     
-    log.info("[E2E-Test] Invocando Bank con LiopClient...");
+    log.info("[E2E-Test] Invoking Bank with LiopClient...");
     const result = await client.callTool(
       { name: "Analyze_Synthetic_Bank_Transactions", arguments: {} },
       Buffer.from(envelope)
@@ -61,7 +64,7 @@ return {
     `;
     const envelope = buildEnvelope(logic, "DirectHftAnalysis");
 
-    log.info("[E2E-Test] Invocando Oracle con LiopClient...");
+    log.info("[E2E-Test] Invoking Oracle with LiopClient...");
     const result = await client.callTool(
       { name: "Analyze_HFT_Market_Data", arguments: {} },
       Buffer.from(envelope)
@@ -84,7 +87,7 @@ return {
     `;
     const envelope = buildEnvelope(logic, "DirectMedicalStats");
 
-    log.info("[E2E-Test] Invocando Vault con LiopClient...");
+    log.info("[E2E-Test] Invoking Vault with LiopClient...");
     const result = await client.callTool(
       { name: "Analyze_Synthetic_Medical_Records", arguments: {} },
       Buffer.from(envelope)
@@ -100,21 +103,21 @@ return {
   it("should block PII data exfiltration with Egress Shield", async () => {
     const logic = `
 const records = env.records;
-// Intento de exfiltrar informacion de dueños de cuenta (PII)
+// Adversarial attempt to exfiltrate account owner information (PII)
 return {
   leak: records.map(r => ({ owner: r.ownerName, token: r.ownerId }))
 };
     `;
     const envelope = buildEnvelope(logic, "AdversarialPiiExfiltration");
 
-    log.info("[E2E-Test] Invocando Bank adversarial con LiopClient...");
+    log.info("[E2E-Test] Invoking Bank adversarial tool with LiopClient...");
     const result = await client.callTool(
       { name: "Analyze_Synthetic_Bank_Transactions", arguments: {} },
       Buffer.from(envelope)
     );
 
     expect(result).toBeDefined();
-    // Debe reportarse como error debido al bloqueo del Egress Shield (Differential Privacy / PiiShield)
+    // Must report error due to Egress Shield enforcement (Differential Privacy / PiiShield)
     expect(result.isError).toBe(true);
     const text = extractText(result);
     expect(text.toLowerCase()).toContain("block");

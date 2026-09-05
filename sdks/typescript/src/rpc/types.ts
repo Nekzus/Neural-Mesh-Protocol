@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * TypeScript interfaces reflecting liop_core.proto (LIOP v1)
  * Optimized for logic-on-origin and high-performance serialization.

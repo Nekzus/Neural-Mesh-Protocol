@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * MCP UX: compact tool descriptions are ENABLED by default to optimize
  * token consumption for LLM clients (e.g. Claude Desktop).

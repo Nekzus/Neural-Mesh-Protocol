@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP gRPC-Web Protocol Adapter (HTTP/1.1 Fallback)
  *

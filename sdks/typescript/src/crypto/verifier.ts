@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import * as fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";

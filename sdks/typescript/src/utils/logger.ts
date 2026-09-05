@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 export type LogLevel = "silent" | "error" | "warn" | "info" | "debug";
 
 /**

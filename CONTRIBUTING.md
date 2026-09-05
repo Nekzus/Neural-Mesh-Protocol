@@ -35,8 +35,23 @@ We maintain a strict 3-channel release topology:
 2. Bug fix branches should be named `fix/<bug-name>`.
 3. Submit Pull Requests targeting the **`alpha`** branch for active development, or **`beta`** for stabilization fixes.
 
-## 6. Mandatory GPG Commit Signing
-All git commits must be cryptographically signed with GPG (`git commit -S`). Unsigned commits will not pass automated security checks.
+## 6. Developer Certificate of Origin (DCO 1.1) & Mandatory GPG Commit Signing
+To ensure full compliance with Section 5 of the Apache License 2.0 and establish clear intellectual property provenance, LIOP requires all contributions to be certified under the **Developer Certificate of Origin (DCO), Version 1.1**, and signed cryptographically with GPG:
+
+```bash
+git commit -s -S -m "feat(scope): descriptive commit message"
+```
+
+The `-s` flag automatically appends the required `Signed-off-by: Your Name <your.email@example.com>` trailer. By signing off your commit, you certify the following statement:
+
+> **Developer Certificate of Origin 1.1**
+> By making a contribution to this project, I certify that:
+> (a) The contribution was created in whole or in part by me and I have the right to submit it under the open source license indicated in the file; or
+> (b) The contribution is based upon previous work that, to the best of my knowledge, is covered under an appropriate open source license and I have the right under that license to submit that work with modifications, whether created in whole or in part by me, under the same open source license; or
+> (c) The contribution was provided directly to me by some other person who certified (a), (b) or (c) and I have not modified it; and
+> (d) In the case of each of (a), (b), or (c), I understand and agree that this project and the contribution are public and that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the open source license(s) involved.
+
+Commits without GPG signatures (`-S`) and valid DCO sign-offs (`-s`) will be rejected by CI security checks.
 
 ## 7. Pull Request Requirements
 - Use the official Pull Request template (`.github/pull_request_template.md`).
@@ -89,8 +104,23 @@ Mantenemos una topología estricta de 3 canales de release:
 2. Las ramas de corrección de errores deben nombrarse `fix/<nombre-del-bug>`.
 3. Envía tus Pull Requests apuntando a la rama **`alpha`** para desarrollo activo, o a **`beta`** para estabilización.
 
-## 6. Firma GPG Obligatoria en Commits
-Todos los commits deben estar firmados criptográficamente con GPG (`git commit -S`). Los commits sin firma no superarán las comprobaciones de seguridad.
+## 6. Certificado de Origen del Desarrollador (DCO 1.1) y Firma GPG Obligatoria
+Para asegurar el pleno cumplimiento con la Sección 5 de la Licencia Apache 2.0 y garantizar la titularidad legítima de la propiedad intelectual aportada, LIOP exige que todas las contribuciones sean certificadas bajo el **Developer Certificate of Origin (DCO), Versión 1.1**, y firmadas criptográficamente con GPG:
+
+```bash
+git commit -s -S -m "feat(scope): mensaje descriptivo del commit"
+```
+
+El banderín `-s` añade automáticamente la línea `Signed-off-by: Tu Nombre <tu.email@ejemplo.com>`. Al firmar tu commit con sign-off, certificas la siguiente declaración formal:
+
+> **Developer Certificate of Origin 1.1**
+> Al realizar una contribución a este proyecto, certifico que:
+> (a) La contribución fue creada total o parcialmente por mí y tengo el derecho de presentarla bajo la licencia de código abierto indicada en el archivo; o
+> (b) La contribución se basa en trabajos previos que, a mi leal saber y entender, están cubiertos por una licencia de código abierto apropiada y tengo el derecho de presentar dicho trabajo con modificaciones bajo la misma licencia; o
+> (c) La contribución me fue proporcionada directamente por otra persona que certificó (a), (b) o (c) y no la he modificado; y
+> (d) En el caso de (a), (b) o (c), entiendo y acepto que este proyecto y la contribución son públicos, y que un registro de la contribución (incluyendo mi sign-off) se mantendrá indefinidamente y podrá ser redistribuido de manera consistente con este proyecto o las licencias de código abierto involucradas.
+
+Los commits que carezcan de firma criptográfica GPG (`-S`) o del sign-off DCO (`-s`) serán rechazados automáticamente por los controles de seguridad en CI.
 
 ## 7. Requisitos de Pull Requests
 - Utiliza la plantilla oficial de Pull Request (`.github/pull_request_template.md`).

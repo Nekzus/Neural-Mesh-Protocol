@@ -1,17 +1,20 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Production Package Audit — Suite 08: End-to-End Lifecycle Traceability
  *
- * Instrumenta y audita cronológicamente los 10 hitos del ciclo de vida de la malla:
- *   Hito 1: Identidad criptográfica Ed25519 y derivación del PeerId
- *   Hito 2: Capa de transporte libp2p (Noise + Yamux) en puertos efímeros
- *   Hito 3: Anclaje al nodo Bootstrap y convergencia en Kademlia DHT
- *   Hito 4: Registro y anuncio del protocolo de manifiesto (/liop/manifest/1.0.0)
- *   Hito 5: Atestación de capacidades mediante firma digital post-cuántica ML-DSA-65
- *   Hito 6: Descubrimiento dinámico por el Gateway e indexación en MCP tools/list
- *   Hito 7: Emisión y validación de tokens OAuth 2.1 M2M (RFC 8707/9068)
- *   Hito 8: Handshake PQC ML-KEM-768 (Kyber) y derivación de clave de sesión simétrica
- *   Hito 9: Inyección lógica en Worker WASI con análisis estático y defensas Zero-Trust
- *   Hito 10: Sellado y validación de ZK-Receipt criptográfico ligado al dataset inmutable
+ * Chronologically instruments and audits the 10 core milestones of the mesh lifecycle:
+ *   Milestone 1: Ed25519 Cryptographic Identity & PeerId derivation
+ *   Milestone 2: libp2p Transport Layer (Noise + Yamux) on ephemeral ports
+ *   Milestone 3: Bootstrap Node peering & Kademlia DHT convergence
+ *   Milestone 4: Manifest protocol registration and announcement (/liop/manifest/1.0.0)
+ *   Milestone 5: Capability attestation via ML-DSA-65 post-quantum digital signature
+ *   Milestone 6: Dynamic discovery by Gateway & indexing in MCP tools/list
+ *   Milestone 7: OAuth 2.1 M2M token issuance & validation (RFC 8707/9068)
+ *   Milestone 8: ML-KEM-768 (Kyber) PQC handshake & symmetric session secret derivation
+ *   Milestone 9: WASI Worker logic injection with static analysis & Zero-Trust defenses
+ *   Milestone 10: Cryptographic ZK-Receipt sealing & verification bound to immutable dataset
  */
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
@@ -19,7 +22,6 @@ import * as crypto from "node:crypto";
 import {
 	LiopServer,
 	LiopHybridGateway,
-	LiopClient,
 	MeshNode,
 	Kyber768Wrapper,
 	Dilithium65Wrapper,
@@ -27,7 +29,7 @@ import {
 } from "@nekzus/liop";
 
 describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Verification", () => {
-	// Contexto compartido entre pasos del ciclo de vida
+	// Shared context across lifecycle steps
 	let bootstrapNode: MeshNode;
 	let bootstrapPeerId: string;
 	let bootstrapMultiaddr: string;
@@ -56,8 +58,8 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		.update(JSON.stringify(testDataset))
 		.digest("hex");
 
-	it("Paso 01: Génesis de Identidad Criptográfica y Derivación de PeerId (Ed25519)", async () => {
-		console.log("\n[Hito 1] Generando identidad criptográfica soberana...");
+	it("Step 01: Cryptographic Identity Genesis & PeerId Derivation (Ed25519)", async () => {
+		console.log("\n[Milestone 1] Generating sovereign cryptographic identity...");
 		bootstrapNode = new MeshNode({
 			listenAddresses: ["/ip4/127.0.0.1/tcp/0"],
 		});
@@ -75,8 +77,8 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		console.log(`  ✓ Bootstrap Multiaddr:   ${bootstrapMultiaddr}`);
 	});
 
-	it("Paso 02: Inicialización de Transporte Seguro (Noise + Yamux) en Nodo de Datos", async () => {
-		console.log("\n[Hito 2] Instanciando nodo de datos con transporte cifrado Noise...");
+	it("Step 02: Secure Transport Initialization (Noise + Yamux) on Data Node", async () => {
+		console.log("\n[Milestone 2] Instantiating data node with Noise encrypted transport...");
 		dataMeshNode = new MeshNode({
 			listenAddresses: ["/ip4/127.0.0.1/tcp/0"],
 			bootstrapNodes: [bootstrapMultiaddr],
@@ -88,21 +90,21 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		expect(dataPeerId).not.toBe(bootstrapPeerId);
 
 		console.log(`  ✓ Data Node PeerId:     ${dataPeerId}`);
-		console.log(`  ✓ Enlazado al Bootstrap: ${bootstrapMultiaddr}`);
+		console.log(`  ✓ Bound to Bootstrap:   ${bootstrapMultiaddr}`);
 	});
 
-	it("Paso 03: Anclaje P2P y Convergencia en Kademlia DHT", async () => {
-		console.log("\n[Hito 3] Verificando descubrimiento y conectividad en la DHT Kademlia...");
+	it("Step 03: P2P Peering & Kademlia DHT Convergence", async () => {
+		console.log("\n[Milestone 3] Verifying discovery and connectivity in Kademlia DHT...");
 		const bootstrapPeers = bootstrapNode.getPeers();
-		console.log(`  ✓ Peers conectados al Bootstrap inicialmente: ${bootstrapPeers.length}`);
+		console.log(`  ✓ Peers connected to Bootstrap initially: ${bootstrapPeers.length}`);
 
-		// La DHT conecta a los peers mediante Noise Handshake
+		// DHT connects peers via Noise Handshake
 		expect(typeof dataMeshNode.announceCapability).toBe("function");
 		expect(typeof dataMeshNode.findProviders).toBe("function");
 	});
 
-	it("Paso 04: Registro y Anuncio del Protocolo de Manifiesto de Capacidades", async () => {
-		console.log("\n[Hito 4] Registrando herramientas en LiopServer y anunciando en la DHT...");
+	it("Step 04: Capability Manifest Protocol Registration and Announcement", async () => {
+		console.log("\n[Milestone 4] Registering tools in LiopServer and announcing in DHT...");
 		dataNodeServer = new LiopServer({
 			name: "Traceable-Bank-Vault",
 			version: "2.5.0",
@@ -123,13 +125,13 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		expect(tools.length).toBe(1);
 		expect(tools[0].name).toBe("Analyze_Audited_Ledger");
 
-		// Anunciar capacidad en la DHT
+		// Announce capability in DHT
 		await dataMeshNode.announceCapability("Analyze_Audited_Ledger");
-		console.log(`  ✓ Capacidad 'Analyze_Audited_Ledger' anunciada en la malla P2P`);
+		console.log(`  ✓ Capability 'Analyze_Audited_Ledger' announced in P2P mesh`);
 	});
 
-	it("Paso 05: Atestación de Capacidades con Firma Digital Post-Cuántica (ML-DSA-65)", () => {
-		console.log("\n[Hito 5] Firmando criptográficamente el manifiesto del nodo con ML-DSA-65 (FIPS 204)...");
+	it("Step 05: Capability Attestation with Post-Quantum Digital Signature (ML-DSA-65)", () => {
+		console.log("\n[Milestone 5] Cryptographically signing node manifest with ML-DSA-65 (FIPS 204)...");
 		dsaKeyPair = Dilithium65Wrapper.generateKeyPair();
 		expect(dsaKeyPair.publicKey.length).toBe(1952);
 		expect(dsaKeyPair.secretKey.length).toBe(4032);
@@ -157,18 +159,18 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		);
 		expect(isAuthentic).toBe(true);
 
-		console.log(`  ✓ Firma digital generada: ${manifestSigned.signature.slice(0, 32)}...`);
-		console.log(`  ✓ Verificación criptográfica: AUTÉNTICA (true)`);
+		console.log(`  ✓ Digital signature generated: ${manifestSigned.signature.slice(0, 32)}...`);
+		console.log(`  ✓ Cryptographic verification: AUTHENTIC (true)`);
 	});
 
-	it("Paso 06: Descubrimiento Dinámico e Indexación en MCP Gateway", async () => {
-		console.log("\n[Hito 6] Levantando Hybrid Gateway para exponer herramientas a clientes MCP...");
+	it("Step 06: Dynamic Discovery & Indexing in MCP Gateway", async () => {
+		console.log("\n[Milestone 6] Spawning Hybrid Gateway to expose tools to MCP clients...");
 		gateway = new LiopHybridGateway(dataNodeServer, null, 0);
 		gatewayPort = await gateway.listen(0, "127.0.0.1");
 
 		expect(gatewayPort).toBeGreaterThan(0);
 
-		// Consultar endpoint MCP tools/list
+		// Query MCP tools/list endpoint
 		const res = await fetch(`http://127.0.0.1:${gatewayPort}/mcp`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -181,39 +183,41 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		});
 
 		expect(res.status).toBe(200);
+		// biome-ignore lint/suspicious/noExplicitAny: generic json rpc inspection
 		const body = (await res.json()) as any;
 		expect(body.result?.tools).toBeDefined();
 
+		// biome-ignore lint/suspicious/noExplicitAny: generic json rpc inspection
 		const ledgerTool = body.result.tools.find((t: any) => t.name === "Analyze_Audited_Ledger");
 		expect(ledgerTool).toBeDefined();
-		console.log(`  ✓ Gateway activo en puerto ${gatewayPort}`);
-		console.log(`  ✓ Herramienta indexada dinámicamente en catálogo MCP: ${ledgerTool.name}`);
+		console.log(`  ✓ Gateway listening on port ${gatewayPort}`);
+		console.log(`  ✓ Tool dynamically indexed in MCP catalog: ${ledgerTool.name}`);
 	});
 
-	it("Paso 07: Autenticación OAuth 2.1 M2M con Claim de Recurso (RFC 8707)", () => {
-		console.log("\n[Hito 7] Validando estructura de tokens de autorización M2M RFC 8707...");
-		// Construcción y validación del claim canónico de recurso
+	it("Step 07: OAuth 2.1 M2M Authentication with Resource Claim (RFC 8707)", () => {
+		console.log("\n[Milestone 7] Validating RFC 8707 M2M authorization token structure...");
+		// Construction and validation of canonical resource claim
 		const resourceAudience = "urn:liop:mesh:api";
 		const requiredScopes = ["liop:tools:call", "liop:tools:list"];
 
 		expect(resourceAudience).toBe("urn:liop:mesh:api");
 		expect(requiredScopes).toContain("liop:tools:call");
-		console.log(`  ✓ Audience exigida: ${resourceAudience}`);
-		console.log(`  ✓ Scopes verificados: ${requiredScopes.join(", ")}`);
+		console.log(`  ✓ Required audience: ${resourceAudience}`);
+		console.log(`  ✓ Verified scopes: ${requiredScopes.join(", ")}`);
 	});
 
-	it("Paso 08: Negociación de Sesión Post-Cuántica (ML-KEM-768 / Kyber)", async () => {
-		console.log("\n[Hito 8] Estableciendo sesión cifrada post-cuántica ML-KEM-768...");
+	it("Step 08: Post-Quantum Session Negotiation (ML-KEM-768 / Kyber)", async () => {
+		console.log("\n[Milestone 8] Establishing ML-KEM-768 post-quantum encrypted session...");
 		kyberServerKeyPair = await Kyber768Wrapper.generateKeyPair();
 		expect(kyberServerKeyPair.publicKey.length).toBe(1184);
 
-		// Cliente encapsula el secreto compartido
+		// Client encapsulates shared secret
 		const { ciphertext, sharedSecret: clientSharedSecret } =
 			await Kyber768Wrapper.encapsulateAsymmetric(kyberServerKeyPair.publicKey);
 		expect(ciphertext.length).toBe(1088);
 		expect(clientSharedSecret.length).toBe(32);
 
-		// Servidor desencapsula el secreto compartido
+		// Server decapsulates shared secret
 		const serverSharedSecret = await Kyber768Wrapper.decapsulateSymmetric(
 			ciphertext,
 			kyberServerKeyPair.secretKey,
@@ -223,17 +227,17 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 		);
 
 		sharedSessionSecret = serverSharedSecret;
-		console.log(`  ✓ Secreto simétrico post-cuántico acordado: 32 bytes (256-bit AES-GCM)`);
-		console.log(`  ✓ Huella del secreto: ${Buffer.from(sharedSessionSecret).toString("hex").slice(0, 16)}...`);
+		console.log(`  ✓ Negotiated post-quantum symmetric secret: 32 bytes (256-bit AES-GCM)`);
+		console.log(`  ✓ Secret fingerprint: ${Buffer.from(sharedSessionSecret).toString("hex").slice(0, 16)}...`);
 	});
 
-	it("Paso 09: Inyección y Ejecución de Lógica en Sandbox WASI con Defensas Zero-Trust", async () => {
-		console.log("\n[Hito 9] Despachando envelope de inyección lógica hacia el Sandbox WASI...");
+	it("Step 09: Logic Injection & Execution in WASI Sandbox with Zero-Trust Defenses", async () => {
+		console.log("\n[Milestone 9] Dispatching logic injection envelope to WASI Sandbox...");
 		const sandbox = new WasiSandbox({ allowEnv: false });
 		await sandbox.init();
 
 		try {
-			// Lógica segura enviada por el cliente: calcular saldo total de cuentas 'CLEARED'
+			// Secure logic submitted by client: calculate total balance of 'CLEARED' accounts
 			const logicScript = [
 				"const accounts = env.records;",
 				"const cleared = accounts.filter(a => a.status === 'CLEARED');",
@@ -243,6 +247,7 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 			].join("\n");
 
 			const result = await sandbox.execute(logicScript, testDataset);
+			// biome-ignore lint/suspicious/noExplicitAny: generic json output inspection
 			const output = typeof result.output === "string" ? JSON.parse(result.output) : (result.output as any);
 
 			expect(output.totalClearedAccounts).toBe(3);
@@ -250,22 +255,22 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 			expect(output.averageBalance).toBe(140000);
 			expect(result.fuelConsumed).toBeGreaterThan(0);
 
-			console.log(`  ✓ Resultado agregado computado in-situ: Saldo Total Cleared: $${output.totalClearedBalance}`);
-			console.log(`  ✓ Consumo de fuel WASI: ${result.fuelConsumed} unidades`);
+			console.log(`  ✓ Aggregated in-situ computed result: Total Cleared Balance: $${output.totalClearedBalance}`);
+			console.log(`  ✓ WASI fuel consumed: ${result.fuelConsumed} units`);
 		} finally {
 			await sandbox.teardown();
 		}
 	});
 
-	it("Paso 10: Sellado y Verificación Criptográfica del ZK-Receipt (HMAC-SHA256)", () => {
-		console.log("\n[Hito 10] Sellando recibo criptográfico vinculando dataset inmutable y resultado...");
+	it("Step 10: Cryptographic Sealing & Verification of ZK-Receipt (HMAC-SHA256)", () => {
+		console.log("\n[Milestone 10] Sealing cryptographic receipt binding immutable dataset to result...");
 		const outputPayload = { totalClearedAccounts: 3, totalClearedBalance: 420000 };
 		const outputHash = crypto
 			.createHash("sha256")
 			.update(JSON.stringify(outputPayload))
 			.digest("hex");
 
-		// Sellar recibo criptográfico con el secreto de sesión PQC
+		// Seal cryptographic receipt with PQC session secret
 		const receiptProof = crypto
 			.createHmac("sha256", sharedSessionSecret)
 			.update(`${datasetHash}:${outputHash}`)
@@ -282,7 +287,7 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 
 		expect(zkReceipt.startsWith("AQEQ")).toBe(true);
 
-		// Verificación por parte del cliente
+		// Client verification
 		const rawReceiptJson = Buffer.from(zkReceipt.slice(4), "base64").toString("utf-8");
 		const parsedReceipt = JSON.parse(rawReceiptJson);
 
@@ -295,16 +300,16 @@ describe("Production Audit Suite 08 — Step-by-Step Lifecycle Traceability & Ve
 			.digest("hex");
 
 		expect(parsedReceipt.proof).toBe(expectedProof);
-		console.log(`  ✓ ZK-Receipt emitido: ${zkReceipt.slice(0, 36)}...`);
-		console.log(`  ✓ Vinculación matemática dataset <-> resultado: VERIFICADA CON ÉXITO`);
+		console.log(`  ✓ ZK-Receipt emitted: ${zkReceipt.slice(0, 36)}...`);
+		console.log(`  ✓ Mathematical binding dataset <-> result: VERIFIED SUCCESSFULLY`);
 	});
 
-	// Limpieza de recursos al finalizar
-	it("Teardown: Cierre ordenado de los nodos de prueba", async () => {
-		console.log("\n[Cierre] Liberando sockets y deteniendo servidores de auditoría...");
+	// Teardown resources on completion
+	it("Teardown: Graceful shutdown of test nodes", async () => {
+		console.log("\n[Teardown] Releasing sockets and stopping audit servers...");
 		if (gateway) await gateway.stop();
 		if (dataMeshNode) await dataMeshNode.stop();
 		if (bootstrapNode) await bootstrapNode.stop();
-		console.log("  ✓ Recursos liberados correctamente.");
+		console.log("  ✓ Resources released successfully.");
 	});
 });

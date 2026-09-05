@@ -35,3 +35,23 @@ Reports regarding the following critical layers receive expedited triage:
 * **Initial Assessment**: Within 48 hours.
 * **Triage & Reproduction**: Within 5 business days.
 * **Coordinated Disclosure**: Fixes will be backported to `alpha`, `beta`, and released in `main` with full CVE attribution prior to public disclosure.
+
+---
+
+## Cryptographic Software & Export Administration Notice
+
+This distribution includes cryptographic software implementing Post-Quantum algorithms (ML-KEM-768 / FIPS 203, ML-DSA-65 / FIPS 204), symmetric ciphers (AES-256-GCM), and cryptographic hashing (SHA-256 / HMAC-SHA256).
+
+Under the United States Export Administration Regulations (EAR), cryptographic software is classified under **Export Control Classification Number (ECCN) 5D002**. Because this software is open source, publicly available, and published without charge, it qualifies for the publicly available open-source exception under **EAR § 742.15(b)** (TSU / Publicly Available Technology and Software).
+
+However, individuals and entities downloading, exporting, or re-exporting this software are solely responsible for ensuring compliance with all applicable local laws, sanctions, and export control regulations in their respective jurisdictions.
+
+---
+
+## Sandbox Governance & Host Responsibility Disclaimer
+
+In accordance with Sections 7 and 8 of the Apache License, Version 2.0:
+1. **Host Configuration**: LIOP provides the WASI / V8 sandboxing runtime, AST Guardian, and Information Flow Control (IFC) filters on an "AS IS" basis without warranties of any kind.
+2. **Resource Quotas**: The operator of each origin data-host node bears sole responsibility for configuring appropriate deterministic fuel limits (`calculateAstInstructionFuel`), memory allocations, and network boundaries.
+3. **Execution Sovereignty**: Injected logic executes inside host environments under host supervision; node operators must maintain defense-in-depth isolation (including multi-tier mesh zoning and OS-level cgroups/namespaces) appropriate for their regulatory classification (HIPAA, SOC 2, PCI-DSS).
+

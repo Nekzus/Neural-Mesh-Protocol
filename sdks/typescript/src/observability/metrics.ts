@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Prometheus Metrics Registry (Phase Beta-3)
  * Lightweight, zero-dependency, high-performance metrics collector

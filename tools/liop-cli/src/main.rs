@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use liop_core::v1::logic_mesh_client::LogicMeshClient;

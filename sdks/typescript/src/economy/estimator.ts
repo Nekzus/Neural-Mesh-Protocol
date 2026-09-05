@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { countTokens, setMergeCacheSize } from "gpt-tokenizer/model/gpt-4o";
 import { log } from "../utils/logger.js";
 

@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Logic-Injection-on-Origin Protocol (LIOP) - Client Node (AI Agent Logic Injector)
 
 use aes_gcm::aead::{Aead, KeyInit};

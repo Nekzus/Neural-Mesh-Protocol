@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Professional PII Engine (The Shield V2 - Tier-1 Military Edition)
  * Implements high-fidelity detection based on NIST and OWASP standards.

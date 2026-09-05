@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { log } from "../utils/logger.js";
 /**
  * Represents a violation of the LIOP Zero-Trust Sandbox policy.

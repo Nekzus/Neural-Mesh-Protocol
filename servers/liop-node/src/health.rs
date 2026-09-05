@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Health Check HTTP Endpoint
 // Provides a lightweight /health endpoint for monitoring infrastructure.
 

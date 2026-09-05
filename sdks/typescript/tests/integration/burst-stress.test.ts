@@ -39,6 +39,7 @@ describe("LIOP High-Frequency Concurrency Stress Tests", () => {
 			async () => ({ content: [] }),
 			{
 				enforceAggregationFirst: true,
+				queryBudgetPerField: 200,
 			},
 		);
 

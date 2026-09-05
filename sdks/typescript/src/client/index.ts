@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { LiopVerifier } from "../crypto/verifier.js";
 import {
 	MCP_LEGACY_SUPPORT_ENABLED,

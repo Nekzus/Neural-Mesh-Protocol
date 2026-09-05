@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import crypto from "node:crypto";
 
 /**
@@ -5,7 +8,7 @@ import crypto from "node:crypto";
  * proxy logic embeds a full envelope inside JSON strings; `^` per line would
  * incorrectly treat that as the document root and desync ImageID vs the worker.
  */
-const TOP_LEVEL_ENVELOPE = /^\s*@LIOP\{[^}]+\}\n?([\s\S]*?)\n?@END\s*$/;
+const TOP_LEVEL_ENVELOPE = /^\s*@LIOP\{[^}]+\}[\r\n]+([\s\S]*?)[\r\n]+@END\s*$/;
 
 export function normalizeLogicSource(logicUtf8: string): string {
 	const match = logicUtf8.match(TOP_LEVEL_ENVELOPE);

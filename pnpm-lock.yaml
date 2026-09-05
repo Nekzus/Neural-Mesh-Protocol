@@ -292,6 +292,25 @@ importers:
         specifier: 14.16.0
         version: 14.16.0
 
+  sdks/typescript/examples/client:
+    dependencies:
+      '@nekzus/liop':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      tsdown:
+        specifier: 0.22.1
+        version: 0.22.1(tsx@4.21.0)(typescript@5.9.3)
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 4.1.8
+        version: 4.1.8(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(@vitest/coverage-v8@4.1.8)(vite@8.0.16(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.6.1)(tsx@4.21.0))
+
   sdks/typescript/examples/client-quickstart:
     dependencies:
       '@nekzus/liop':
@@ -8881,7 +8900,7 @@ snapshots:
       rolldown-plugin-dts: 0.25.2(rolldown@1.0.3)(typescript@5.9.3)
       semver: 7.8.1
       tinyexec: 1.1.2
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
     optionalDependencies:

@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Post-Quantum Digital Signature Wrapper
  * Implements ML-DSA-65 (CRYSTALS-Dilithium, NIST FIPS 204) for quantum-resistant

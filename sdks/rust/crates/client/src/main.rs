@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Neural Mesh Protocol - Client Node (AI Agent Logic Injector)
 // This node searches for the target capability and pushes a WASM filter rather than pulling data.
 

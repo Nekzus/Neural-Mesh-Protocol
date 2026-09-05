@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP OpenTelemetry Distributed Tracing (Phase Beta-3)
  * W3C TraceContext compliant distributed tracer for gRPC & MCP transports.

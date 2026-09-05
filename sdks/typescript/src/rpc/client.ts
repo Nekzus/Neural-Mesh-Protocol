@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import * as grpc from "@grpc/grpc-js";
 import { GRPC_CHANNEL_OPTIONS } from "./channel-options.js";
 import { liopV1 } from "./proto.js";

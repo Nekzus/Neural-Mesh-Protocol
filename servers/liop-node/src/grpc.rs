@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // LIOP (Logic-Injection-on-Origin Protocol) gRPC Service Implementation
 
 use tracing::{debug, error, info, warn};

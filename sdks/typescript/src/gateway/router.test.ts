@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { describe, expect, it, vi } from "vitest";
 import type { MeshNode } from "../mesh/index.js";
 import type { LiopServer } from "../server/index.js";

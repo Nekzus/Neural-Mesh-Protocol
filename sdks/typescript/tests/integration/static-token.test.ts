@@ -259,7 +259,8 @@ describe("Static Token Coexistence and Local Revocation Integration", () => {
 			client["manifests"].set(bankPeerId, bankManifest);
 
 			const bankClient = (client as any).getOrCreateRpcClient(bankPeerId, bankTarget);
-			expect(bankClient.token).toBe("bank-local-test-token");
+			const resolvedToken = typeof bankClient.token === "function" ? await bankClient.token() : bankClient.token;
+			expect(resolvedToken).toBe("bank-local-test-token");
 
 			const bankArgs = { data: "env-bank-test" };
 			const bankWasm = Buffer.from(
@@ -281,7 +282,8 @@ describe("Static Token Coexistence and Local Revocation Integration", () => {
 			client["manifests"].set(vaultPeerId, vaultManifest);
 
 			const vaultClient = (client as any).getOrCreateRpcClient(vaultPeerId, vaultTarget);
-			expect(vaultClient.token).toBe("vault-local-test-token");
+			const resolvedVaultToken = typeof vaultClient.token === "function" ? await vaultClient.token() : vaultClient.token;
+			expect(resolvedVaultToken).toBe("vault-local-test-token");
 
 			const vaultArgs = { data: "env-vault-test" };
 			const vaultWasm = Buffer.from(

@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Global type declarations for modern ES features not yet in all ambient types
 interface PromiseWithResolvers<T> {
 	promise: Promise<T>;

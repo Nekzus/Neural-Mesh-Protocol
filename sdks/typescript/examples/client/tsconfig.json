@@ -1,0 +1,16 @@
+{
+	"include": ["./"],
+	"exclude": ["node_modules", "dist"],
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"paths": {
+			"*": ["./*"],
+			"@nekzus/liop": ["./node_modules/@nekzus/liop/src/index.ts"]
+		}
+	}
+}

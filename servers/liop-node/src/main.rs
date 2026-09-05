@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // Logic-Injection-on-Origin Protocol (LIOP) - Server Node (Data Host)
 // This node holds the data and provides a Zero-Trust Wasmtime sandbox for execution.
 

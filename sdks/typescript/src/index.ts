@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 export * from "./bridge/index.js";
 export * from "./client/index.js";
 export * from "./economy/index.js";

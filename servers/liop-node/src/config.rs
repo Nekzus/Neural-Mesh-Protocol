@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // LIOP Server Configuration Module
 // Loads configuration from TOML file or environment variables.
 

@@ -1,9 +1,10 @@
 {
-	"name": "@liop/example-client-quickstart",
+	"name": "@liop/example-client",
 	"private": true,
 	"version": "1.0.0",
 	"license": "Apache-2.0",
 	"type": "module",
+	"description": "LIOP Advanced Client Example demonstrating Kademlia DHT discovery, Zod schema rejection and origin execution",
 	"scripts": {
 		"start": "tsx src/index.ts",
 		"test": "vitest run",

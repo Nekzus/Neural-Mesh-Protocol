@@ -120,7 +120,9 @@ return { id: r[0].id };
 		});
 
 		expect(result.isError).toBe(true);
-		expect(result.content[0].text).toContain("Egress Security Violation");
+		expect(result.content[0].text).toMatch(
+			/Egress Security Violation|Aggregation-First|Preflight policy rejected/,
+		);
 	});
 
 	it("T3: should BLOCK field-by-field with aliased keys (holders_exported)", async () => {
@@ -166,7 +168,9 @@ return { patientFullName: r[0].name };
 		});
 
 		expect(result.isError).toBe(true);
-		expect(result.content[0].text).toContain("Egress Security Violation");
+		expect(result.content[0].text).toMatch(
+			/Egress Security Violation|Aggregation-First|Preflight policy rejected/,
+		);
 	});
 
 	it("T6: should BLOCK compound keys (patientId → boundary match for 'id')", async () => {

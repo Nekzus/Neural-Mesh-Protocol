@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
 	isLegacyRequest,

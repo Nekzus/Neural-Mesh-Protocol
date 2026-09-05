@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import crypto from "node:crypto";
 import { parentPort } from "node:worker_threads";
 import { deriveLogicImageDigest } from "../crypto/logic-image-id.js";

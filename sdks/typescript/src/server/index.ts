@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import * as fs from "node:fs";
@@ -1068,14 +1071,17 @@ export class LiopServer {
 					};
 				}
 
-				const payloadValue = (args as Record<string, unknown>)
-					.payload as string;
-				const bypassCache =
-					(args as Record<string, unknown>).__liop_bypass_ast_cache === true;
+				const rawArgs = (
+					args && typeof args === "object" ? args : {}
+				) as Record<string, unknown>;
+				const payloadValue = (rawArgs.payload ??
+					rawArgs.envelope ??
+					rawArgs.code) as string;
+				const bypassCache = rawArgs.__liop_bypass_ast_cache === true;
 
 				const payloadHash = crypto
 					.createHash("sha256")
-					.update(payloadValue)
+					.update(payloadValue || "")
 					.digest("hex");
 				const logic = this.extractLogic(payloadValue);
 				const cached = this.logicCache.get(payloadHash);
@@ -1087,7 +1093,10 @@ export class LiopServer {
 				) {
 					// Hash verified. Skips boundaries check (already validated!). Extract logic directly.
 					if (logic) {
-						(args as Record<string, unknown>).payload = logic;
+						rawArgs.payload = logic;
+						if (rawArgs.envelope !== undefined) {
+							rawArgs.envelope = logic;
+						}
 
 						// DELEGATE TO WORKER POOL: Parallel PQC & Sandboxing
 						const preflightReason = this.runPreflightPolicy(
@@ -1124,11 +1133,12 @@ export class LiopServer {
 				try {
 					// Logic check already performed above, extraction is guaranteed at this point.
 					// biome-ignore lint/style/noNonNullAssertion: safe extraction after check
-					const logic = this.extractLogic(
-						(args as Record<string, unknown>).payload as string,
-					)!;
+					const logic = this.extractLogic(payloadValue)!;
 					// Extract pure logic and deliver it to the developer's function
-					(args as Record<string, unknown>).payload = logic;
+					rawArgs.payload = logic;
+					if (rawArgs.envelope !== undefined) {
+						rawArgs.envelope = logic;
+					}
 
 					// DELEGATE TO WORKER POOL: Parallel PQC & Sandboxing (Includes PII Shield)
 					const preflightReason = this.runPreflightPolicy(

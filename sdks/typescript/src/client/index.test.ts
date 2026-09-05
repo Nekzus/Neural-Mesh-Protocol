@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /// <reference types="node" />
 
 import { Buffer } from "node:buffer";

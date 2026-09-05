@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP NER Content Scanner (The Shield V3 — Named Entity Recognition Layer)
  *

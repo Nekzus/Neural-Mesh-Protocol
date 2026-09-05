@@ -9,6 +9,7 @@ export default defineConfig({
       "**/node_modules/**",
       "**/dist/**",
       "**/tests/crossnet/**",
+      "**/tests/infra/production-audit/tests/**",
       "**/.{idea,git,cache,output,temp}/**",
     ],
     coverage: {

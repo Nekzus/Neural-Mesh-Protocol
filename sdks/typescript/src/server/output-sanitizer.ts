@@ -1,3 +1,6 @@
+// Copyright 2026 Nekzus Solutions and contributors
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * LIOP Egress Shield Output Sanitizer (NIST SP 800-226 and OWASP DLP 2025 compliant)
  * Recursively sanitizes execution outputs by rounding floating-point numbers

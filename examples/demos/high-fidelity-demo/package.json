@@ -1,6 +1,7 @@
 {
 	"name": "@neural-mesh/high-fidelity-demo",
 	"version": "1.0.0",
+	"license": "Apache-2.0",
 	"description": "High-Fidelity dynamic demo demonstrating NMP Guardian AST, WASI Sandbox and ZK-STARK constraints.",
 	"type": "module",
 	"main": "index.js",

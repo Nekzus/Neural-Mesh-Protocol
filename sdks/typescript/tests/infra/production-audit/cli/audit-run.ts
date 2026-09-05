@@ -95,8 +95,8 @@ const reportContent = `# LIOP Protocol — Production Readiness Audit Report
 **Verdict**: **${verdict}**
 
 ${isSuccess
-	? "- El paquete publicado `@nekzus/liop@2.5.0` cumple de forma impecable con el 100% de los requisitos arquitectónicos, criptográficos y de red, incluso bajo condiciones de latencia extrema intercontinental (hasta 300ms y 3% de pérdida de paquetes).\n- **Recomendación**: El protocolo está plenamente preparado para operaciones en producción de alta exigencia."
-	: "- Se detectaron inconsistencias durante la prueba bajo condiciones de red WAN. Se recomienda tratar la versión actual como Release Candidate (RC) hasta solventar las fallas identificadas."
+	? "- The official `@nekzus/liop@2.5.0` package strictly satisfies 100% of architectural, cryptographic, and network requirements, even under severe intercontinental latency (up to 300ms RTT and 3% packet loss).\n- **Recommendation**: The protocol is fully production-ready for high-security enterprise and decentralized deployments."
+	: "- Network inconsistencies or execution timeouts were detected during WAN testing. Recommend addressing identified issues before production release."
 }
 `;
 
