@@ -32,6 +32,10 @@
     "demo:playground:rebuild": "pnpm --filter @nekzus/liop demo:playground:rebuild",
     "demo:client-sdk": "pnpm --filter @nekzus/liop demo:client-sdk",
     "demo:playground:build": "pnpm --filter @nekzus/liop demo:playground-web-build",
+    "audit:prod:start": "pnpm --filter @nekzus/liop audit:prod:start",
+    "audit:prod:run": "pnpm --filter @nekzus/liop audit:prod:run",
+    "audit:prod:runner": "pnpm --filter @nekzus/liop audit:prod:runner",
+    "audit:prod:clean": "pnpm --filter @nekzus/liop audit:prod:clean",
     "socket:scan": "socket scan create --report .",
     "socket:score": "socket package score npm @nekzus/liop --markdown",
     "socket:fix": "socket fix"

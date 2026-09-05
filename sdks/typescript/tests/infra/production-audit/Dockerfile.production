@@ -58,3 +58,5 @@ HEALTHCHECK --interval=5s --timeout=3s --start-period=15s --retries=5 \
   CMD curl -sf http://localhost:3000/health || exit 1
 
 ENTRYPOINT ["/app/network-profiles/entrypoint-wrapper.sh"]
+CMD ["vitest", "run", "--config", "tests/vitest.audit.config.ts"]
+
