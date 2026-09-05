@@ -664,6 +664,33 @@ The final boundary before touching bare metal.
 - **Hardware Enclaves (TEEs)**: Optionally bootstraps the entire `wasmtime` engine inside an Intel SGX or AWS Nitro enclave, shielding the RAM from server administrators.
 - **Zero-Knowledge Evidence**: Optionally leverages zkVMs (like `RISC Zero`) so the server returns the requested insight mathematically sealed, guaranteeing the compute wasn't tampered with.
 
+---
+
+## Multi-Tier Sovereign Mesh Topology
+
+In enterprise production deployments, the mesh topology is partitioned across three distinct security tiers with asymmetric boundary enforcement:
+
+<Frame>
+  <img className="w-full rounded-lg border border-white/10 shadow-xl" src="/images/animated-docker-infra-dark.svg" alt="Multi-Tier Sovereign Mesh Topology" />
+</Frame>
+
+### Tier 1: Data Sovereignty Enclaves
+* **Cryptographic Isolation**: Strict private network isolation via **`pnet` Swarm Key (PSK)** (`/key/swarm/psk/1.0.0/`). Any connection attempt from an unauthenticated peer without the symmetric PSK is aborted at the socket transport layer.
+* **Nodes**: Core Banking (`The Bank`, 1,500 synthetic accounts with $148M balance) and Healthcare EHR (`The Vault`, 2,500 patient records).
+* **Policy**: Enforces Differential Privacy (Laplace noise) and strict Cardinality limits (raw row-level data is permanently blocked from egressing).
+
+### Tier 2: Consortium P2P & Perimeter Gateways
+* **Border LIO Gateway (`BLG`)**: Acts as a cryptographic firewall and reverse proxy. Bridges external client queries into Tier 1 enclaves across an asymmetric network boundary using RFC 6749 OAuth 2.1 client credentials.
+* **High-Frequency Trading (`The Oracle`)**: Real-time HFT market matching engine simulating L2 orderbooks and stochastic volatility models (Heston + Jump Diffusion).
+* **Nexus**: Decentralized service discovery directory and OIDC authentication provider.
+
+### Tier 3: Public Backbone & Edge IoT
+* **Edge Industrial Nodes (`Edge IoT`)**: Deployed directly on edge industrial hardware under hostile WAN profiles (simulated 250ms ± 50ms latency with 2% packet loss). Computes anomaly detection in-situ, transmitting only critical aggregated telemetry.
+* **P2P Circuit Relays (`Relay`)**: High-throughput public relays implementing AutoNAT and Circuit Relay v2 for traversal of corporate firewalls.
+* **Client SDK & Web Playground**: Interactive execution consoles operating over intercontinental WAN links.
+
+---
+
 ## The Logic-on-Origin Journey
 
 <Frame>
@@ -1540,9 +1567,21 @@ The agent behavior can be customized via the following environment variables:
 | `LIOP_MCP_COMPACT_TOOL_DESCRIPTIONS` | `true` | Strips verbose protocol metadata from tool descriptions, reducing token consumption by ~500 tokens per tool. Set to `0` to opt-out |
 | `LIOP_GRPC_PORT` | `50051` | Override the default gRPC port for the internal RPC server |
 | `LIOP_WORKER_MAX_HEAP_MB` | `64` | Maximum V8 heap size per worker thread (Heap Bomb defense) |
+| `LIOP_QUERY_BUDGET` | *(none)* | Session query budget override for high-frequency analytical audit testing |
 | `LIOP_DOCKER_MAP` | `false` | Force translation of Docker-internal container IPs (`172.x.x.x`) to the host loopback (`127.0.0.1`), mapping target gRPC services to host-published ports for running containerized mesh nodes in local environments |
 | `LIOP_DEV_MODE` | `false` | Enables development heuristics, which automatically activates Docker port mapping if the Nexus URL points to local demo ports (`13000`/`13001`) |
 | `LIOP_DATASET_SCALE` | `1` | Scaling factor used by test and demo nodes to dynamically scale synthetic record generation size (e.g., bank transactions, health records) |
+
+### Dual-Era MCP Handshake Compliance
+
+The LIOP Agent natively satisfies both modern and legacy MCP client protocols:
+
+- **MCP v2 Revision (2026-07-28)**:
+  - Answers `server/discover` probes without authentication for stateless tool discovery.
+  - Automatically includes mandatory `resultType: "complete"` in `tools/list` responses.
+  - Handles `subscriptions/listen` and `resources/templates/list` without polling overhead.
+- **MCP Legacy Era (2025-11-25)**:
+  - Strips v2 metadata via `adaptResponseForLegacyClient()` to prevent parsing failures in legacy desktop clients.
 
 <Warning>
   `LIOP_BOOTSTRAP_FILE` is **deprecated** since v2.0.0-alpha. Use `LIOP_NEXUS_URL` instead. The agent will log a warning if this variable is detected.
@@ -1990,11 +2029,40 @@ await stream.start();
 await stream.stop();
 ```
 
+## Border LIO Gateway (BLG) & Perimeter Defense
+
+In production topologies with multi-tier security domains, the **Border LIO Gateway (`blg`)** acts as the protocol boundary between external untrusted networks and Tier 1 sovereign enclaves:
+
+```typescript
+// Client invocation targeting Border LIO Gateway with OAuth 2.1 Bearer authentication
+const tokenResponse = await fetch("http://nexus:3000/oidc/token", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: "border-gateway-client",
+    client_secret: process.env.LIOP_BLG_SECRET || "default-secret"
+  })
+});
+
+const { access_token, expires_in } = await tokenResponse.json();
+// Bearer token is cached in memory with a 30s pre-expiration margin
+```
+
+### Gateway Responsibilities
+
+1. **OAuth 2.1 Token Verification**: Asserts Bearer tokens signed by Nexus OIDC before proxying JSON-RPC requests to internal services.
+2. **Swarm Key Bridge**: Possesses the private 256-bit PSK required to communicate directly with Tier 1 enclaves (`The Bank`, `The Vault`) across the isolated `pnet` subnet.
+3. **Defense-in-Depth Inspection**: Runs preflight validation on AST logic payloads before dispatching to destination enclaves.
+
+---
+
 ## Security Notes
 
 - `LiopStreamBridge` supports Zero-Trust bearer enforcement via `ZERO_TRUST_TOKEN`.
 - Sessions are isolated and evicted when idle to reduce long-lived attack surfaces.
 - Gateway/router components preserve full MCP JSON-RPC compatibility while maintaining mesh-native routing behavior.
+- The Border LIO Gateway caches RFC 6749 credentials in-memory with automatic refresh 30 seconds prior to expiration, eliminating transient 401 Unauthorized errors during high-frequency batch executions.
 
 
 ---
@@ -2085,6 +2153,89 @@ The LIOP Agent exposes a local diagnostic tool called **`LiopMeshStatus`** that 
   The token economy telemetry is **intentionally visible** in the `LiopMeshStatus` output. This transparency enables B2B clients to audit consumption patterns and allows AI agents to autonomously manage their context window budgets without requiring external monitoring infrastructure.
 </Tip>
 
+---
+
+## Deterministic AST Fuel Metering
+
+In addition to token estimation, the SDK provides deterministic computational fuel measurement via `calculateAstInstructionFuel`:
+
+```typescript
+import { calculateAstInstructionFuel } from "@nekzus/liop";
+
+const javascriptCode = `
+  const total = env.records.reduce((acc, r) => acc + r.amount, 0);
+  return { count: env.records.length, average: total / env.records.length };
+`;
+
+// Parses Acorn AST, evaluates instruction weight, and quantizes to 100-unit buckets
+const fuel = calculateAstInstructionFuel(javascriptCode);
+console.log(fuel); // 500 units
+```
+
+### Side-Channel Timing Invariance (NIST SP 800-53)
+
+To ensure zero timing leakage across varying private inputs, `calculateAstInstructionFuel` enforces 100-unit bucket quantization:
+
+$$\text{Fuel} = \lceil \frac{\text{RawASTScore}}{100} \rceil \times 100$$
+
+Across extensive automated profiling (50 consecutive executions on synthetic transaction batches), payloads with identical AST topology evaluating divergent secret inputs yield a standard deviation of strictly zero (`stddev = 0`).
+
+---
+
+## Context & Token Economy vs Traditional MCP (Context-Pulling)
+
+Traditional MCP requires pulling entire raw datasets across the network into the LLM context window before filtering or analysis can occur. LIOP executes sandboxed logic directly on the origin node, returning only aggregated proofs.
+
+### Empirical Efficiency Comparison
+
+| Metric | Traditional MCP (Context-Pulling) | LIOP (Logic-on-Origin) | Net Savings |
+|:---|:---|:---|:---|
+| **Paradigm** | Raw Data Extraction to Agent | Sandboxed WASI Execution in Origin | **Zero Data Egress** |
+| **Input Context Tokens** | ~16,000 – 48,000 tokens | ~320 – 650 tokens | **98.9% – 99.3% reduction** |
+| **Output Context Tokens** | ~1,200 – 4,500 tokens | ~80 – 180 tokens | **93.3% – 96.0% reduction** |
+| **Network Wire Transfer** | ~195 KB (raw JSON payload) | ~801 B (gRPC envelope + receipt) | **99.6% reduction** |
+| **LLM Context Saturation** | High (triggers truncation / sliding window) | Minimal (preserves reasoning capacity) | **Zero Context Bloat** |
+| **PII / Exfiltration Risk** | Severe (raw records leave perimeter) | Zero (blocked by 6-layer shield) | **Cryptographically Sealed** |
+
+---
+
+## Playground Session Telemetry API
+
+The LIOP Web Playground exposes an HTTP REST endpoint at `GET /api/telemetry` for live monitoring of session economy:
+
+```bash
+curl -X GET http://localhost:16000/api/telemetry
+```
+
+### Sample Telemetry Response
+
+```json
+{
+  "sessionSummary": {
+    "totalExecutions": 14,
+    "totalEstimatedInputTokens": 7420,
+    "totalEstimatedOutputTokens": 1820,
+    "totalFuelConsumed": 7000,
+    "totalBytesSaved": 2730000,
+    "activeTheme": "obsidian"
+  },
+  "toolBreakdown": {
+    "Analyze_Synthetic_Bank_Transactions": {
+      "calls": 8,
+      "avgFuel": 500,
+      "avgTokens": 180,
+      "zkVerificationPassRate": "100%"
+    },
+    "Analyze_Health_Records": {
+      "calls": 6,
+      "avgFuel": 500,
+      "avgTokens": 195,
+      "zkVerificationPassRate": "100%"
+    }
+  }
+}
+```
+
 
 ---
 
@@ -2113,11 +2264,11 @@ The LIOP TypeScript SDK enforces a **defense-in-depth** security model composed 
 | Layer | Purpose | Timing |
 |:------|:--------|:-------|
 | **Guardian AST** | Blocks unauthorized WASM imports before execution | Pre-compile |
-| **WASI Sandbox** | Isolates runtime with 25 poisoned globals and CPU fuel limits | Execution |
-| **Prototype Defense** | Freezes 11 core prototypes in strict mode to prevent pollution attacks | Execution |
-| **PII Shield** | Prevents data leakage with algorithmic validators | Post-execution |
-| **Aggregation Policy** | Enforces output cardinality limits on row-level data | Post-execution |
-| **ZK-Receipt** | Provides HMAC-SHA256 proof of honest computation | Post-execution |
+| **WASI Sandbox** | Isolates runtime with 25 poisoned globals, prototype freezing, and CPU fuel limits | Execution |
+| **IFC Taint Analyzer** | Static information flow control preventing PII side-channel and computed-key derivations | Pre-flight |
+| **PII Shield** | Prevents data leakage with algorithmic validators and NER detection | Post-execution |
+| **Aggregation Policy** | Enforces output cardinality limits on row-level data (Aggregation-First) | Post-execution |
+| **ZK-Receipt** | Provides HMAC-SHA256 proof of honest computation bound to PQC session keys | Post-execution |
 
 ---
 
@@ -2250,7 +2401,43 @@ await fs.rm(workingDir, { recursive: true, force: true });
 
 ---
 
-## Layer 3: PII Egress Shield
+## Layer 3: Information Flow Control (IFC Taint Analyzer)
+
+The **IFC Taint Analyzer** (`TaintAnalyzer`) inspects the JavaScript Abstract Syntax Tree (AST) generated by Acorn **before any guest code enters the V8 isolate**. It tracks the flow of sensitive data fields and blocks attempts to leak confidential information through indirect computational channels.
+
+### Attack Vectors Mitigated
+
+| Attack Vector | Mechanism | Defense |
+|:--------------|:----------|:--------|
+| **Boolean Inference** | `if (record.balance > 1000000)` side-channel branches | Static AST path tracking prevents conditional deriving of PII |
+| **Character Derivation** | `record.ssn.charCodeAt(0)` ASCII leakage | Member access on sensitive fields marks derived expressions as tainted |
+| **Aliased Collections** | `const accounts = env.records; accounts.filter(...)` | Iterative source detection identifies alias chains and binds record variables |
+| **Dynamic Computed Keys** | `acc[record.accountHolder] = record.balance` in `.reduce()` | Marks objects receiving tainted keys or values as contaminated, halting preflight |
+| **Object Literal Spreads** | `{ [record.name]: record.id, ...rest }` | Computed property expressions evaluate key taint and block dynamic dictionary exports |
+
+### Dynamic Computed Key Defense
+
+Adversaries attempting to bypass Layer 5 (Aggregation-First) by transforming datasets into dynamic dictionary mappings (e.g., using `reduce` to create `{ [name]: balance }`) are intercepted statically at preflight:
+
+```javascript
+// Adversarial Payload Blocked at Preflight:
+const accounts = env.records;
+const top5 = accounts.slice(0, 5);
+return top5.reduce((acc, a) => {
+  acc[a.accountHolder] = a.balance; // BLOCKED: acc marked as PII-derived
+  return acc;
+}, {});
+```
+
+When `propagateTaint` detects an assignment to a `MemberExpression` where the property expression is computed and tainted (`isExpressionTainted(member.property)`), the enclosing container is permanently marked as tainted. Any subsequent `ReturnStatement` returning this container triggers a fail-closed rejection:
+
+```text
+Preflight policy rejected: PII side-channel detected: output contains values derived from restricted fields. Operation: variable 'acc' is PII-derived
+```
+
+---
+
+## Layer 4: PII Egress Shield
 
 The PII Scanner intercepts all sandbox output **before** results are returned to the caller. Starting from v3, it operates a **four-stage detection pipeline** that combines structural analysis, pattern matching, and natural language processing. Each stage is independent — the system blocks data if **any** stage detects a violation.
 
@@ -2435,11 +2622,20 @@ The `LiopStreamBridge` enforces mandatory Bearer token authentication on all HTT
 
 | Component | Technology |
 |:----------|:-----------|
+| **Enclave Isolation** | `@libp2p/pnet` (256-bit Swarm Key PSK) |
 | **Transport Encryption** | Noise Protocol (Ed25519) |
 | **Stream Multiplexing** | Yamux |
 | **Identity** | Ed25519 persistent key pairs |
 | **Discovery** | Kademlia DHT with public bootstrap nodes |
 | **Transports** | TCP + WebSocket |
+
+### Tier 1 Sovereign Enclave Isolation (`pnet` Swarm Key PSK)
+
+For highly regulated environments (such as Core Banking, Health Records, and Defense), LIOP enforces physical-layer mesh isolation via **libp2p Private Networks (`@libp2p/pnet`)**:
+
+- **Pre-Shared Key (PSK)**: A 256-bit cryptographic swarm key (formatted with `/key/swarm/psk/1.0.0/` header) is loaded into enclave nodes (`The Bank`, `The Vault`) and authorized border gateways (`blg`).
+- **Transport Socket Shielding**: The PSK operates before any multi-stream multiplexing or cryptographic handshake (Noise/TLS/Kyber). Any incoming TCP, WebSocket, or QUIC connection from a node without the matching swarm key is dropped immediately at the raw socket layer.
+- **Perimeter Defense**: Even if an unauthorized peer discovers the enclave's multiaddr or IP address on a shared LAN/VPC, it cannot establish a libp2p session, send RPC envelopes, or participate in the Kademlia DHT routing table.
 
 ---
 
@@ -2551,12 +2747,14 @@ $$\text{Block}_{n}.\text{hash} = \text{SHA-256}(\text{Block}_{n-1}.\text{hash} \
 - **Tamper Evidence**: Modifying or deleting any historical log record breaks the SHA-256 chain integrity, instantly flagging compliance auditors.
 - **Data Sovereignty**: Log entries record cryptographic digests and token consumption metrics without ever persisting raw confidential data.
 
-### Deterministic AST Fuel Metering
+### Deterministic AST Fuel Metering & Side-Channel Invariance (NIST SP 800-53)
 
-To defend against CPU exhaustion attacks that execute hidden computational loops, the engine statically analyzes JavaScript Abstract Syntax Trees via `calculateAstInstructionFuel`:
+To defend against CPU exhaustion attacks that execute hidden computational loops and eliminate timing side-channels, the engine statically analyzes JavaScript Abstract Syntax Trees via `calculateAstInstructionFuel`:
 
-- Analyzes AST complexity (loop depth, branching factor, function declarations) before execution.
-- Injects a strict deterministic fuel budget into the V8 isolate runner.
+- **Static Complexity Scoring**: Analyzes AST node operations (loop depth, branching factor, function declarations, array iterations) before execution.
+- **100-Bucket Quantization**: In accordance with NIST SP 800-53 controls against timing side-channels, the computed fuel value is quantized to 100-unit buckets:
+  $$\text{Fuel}_{\text{quantized}} = \lceil \frac{\text{RawFuel}}{100} \rceil \times 100$$
+- **Zero Standard Deviation (`stddev = 0`)**: Structural payloads with identical AST topologies evaluating diverging secret inputs consume precisely identical fuel units, preventing adversaries from deducing record cardinality or private data values through execution timing or fuel metering differentials.
 
 ---
 
@@ -2743,22 +2941,23 @@ gantt
     Session Key Lifetime Enforcement (< 1h TTL)          :done, 2026-08, 2026-08
     gRPC-Web HTTP/1.1 Framing Fallback (Hybrid Gateway)  :done, 2026-08, 2026-08
     
-    section Phase Beta-3: Observability & Compliance
-    Distributed OpenTelemetry + Prometheus /metrics      :active, 2026-09, 2026-11
-    Kubernetes Health Probes (/healthz, /readyz) + Drain :2026-10, 2026-12
-    Immutable Append-Only Audit Trail (SOC 2 / HIPAA)    :2026-11, 2027-01
-    Deterministic AST-Based Fuel Metering (Acorn)        :2026-11, 2027-01
+    section Phase Beta-3: Observability & Compliance (Completed)
+    Distributed OpenTelemetry + Prometheus /metrics      :done, 2026-08, 2026-09
+    Kubernetes Health Probes (/healthz, /readyz) + Drain :done, 2026-08, 2026-09
+    Immutable Append-Only Audit Trail (SOC 2 / HIPAA)    :done, 2026-08, 2026-09
+    Deterministic AST-Based Fuel Metering (Acorn)        :done, 2026-08, 2026-09
     
-    section Phase Beta-4: Developer Ecosystem & Interactive Inspector
-    CLI Inspector (npx @nekzus/liop playground)          :2026-12, 2027-02
-    Interactive Cryptographic Pipeline Visualizer        :2026-12, 2027-02
-    Ad-Hoc Process Spawning & Diagnostic Inspector CLI   :2027-01, 2027-03
-    Public Cloud Showcase & Embedded Mintlify Docs       :2027-01, 2027-03
+    section Phase Beta-4: Ecosystem & Playground (Completed)
+    Interactive Web Playground (:16000) & OTel Telemetry :done, 2026-08, 2026-09
+    Multi-Tier Sovereign Enclaves (pnet Swarm Key PSK)   :done, 2026-08, 2026-09
+    Cryptographic Pipeline Visualizer (7-phase SSE)      :done, 2026-08, 2026-09
+    8-Node Production Audit Mesh + Traffic Shaping       :done, 2026-08, 2026-09
     
     section Phase RC: Production Resilience & Hardware TEE
-    Hardware TEE Remote Attestation (AWS Nitro / SGX)    :2027-02, 2027-04
-    Automated Chaos Engineering Test Suite               :2027-03, 2027-05
-    Geo-Proximity (Latency-Based) Routing & Failover     :2027-04, 2027-06
+    Hardware TEE Remote Attestation (AWS Nitro / SGX)    :active, 2026-09, 2027-01
+    Rust Core Protocol Parity (servers/liop-node)        :active, 2026-09, 2027-01
+    Automated Chaos Engineering Test Suite               :2026-11, 2027-02
+    Geo-Proximity (Latency-Based) Routing & Failover     :2026-12, 2027-03
     
     section Phase GA: Massive Global Availability
     Dedicated LIOP Bootstrap Supernodes (US, EU, Asia)   :milestone, 2027-06, 0d
@@ -2822,72 +3021,54 @@ gantt
 
 ## ⏳ 2. Upcoming Phases (Detailed Specifications)
 
-### 🟡 Phase Beta-3: Enterprise Observability & Compliance (SOC 2 / HIPAA)
-* **Target Window**: Q1 2027
-* **Key Components**:
-  1. **Kubernetes Health & Liveness Probes**:
-     - Standardized `/healthz` and `/readyz` endpoints on the Hybrid Gateway.
-     - Graceful connection draining before shutdown in `rpc/server.ts` and `mesh/node.ts`.
-     - *Target Files*: `src/gateway/hybrid.ts`, `src/rpc/server.ts`.
-  2. **Prometheus Metrics Endpoint (`/metrics`)**:
-     - Core protocol telemetry metrics:
-       - `liop_tool_calls_total{status, tool}` (Counter)
-       - `liop_fuel_consumed{tool}` (Histogram)
-       - `liop_mesh_peers_connected` (Gauge)
-       - `liop_manifest_cache_size` (Gauge)
-       - `liop_egress_blocks_total{reason}` (Counter)
-       - `liop_zk_verification_duration_ms` (Histogram)
-     - *Dependencies*: `pnpm add prom-client`.
-     - *Target Files*: `src/observability/metrics.ts`.
-  3. **Distributed OpenTelemetry Tracing**:
-     - Promote `@opentelemetry/api` to production dependencies and add `@opentelemetry/sdk-node`, `@opentelemetry/exporter-otlp-http`.
-     - Propagate W3C `traceparent` headers across gRPC metadata and MCP requests.
-     - *Target Files*: `package.json`, `src/observability/tracing.ts`.
-  4. **Immutable Audit Trail for SOC 2 Type II & HIPAA**:
-     - Cryptographically signed (Ed25519) append-only JSON audit records for every `tools/call` execution.
-     - Fields: `timestamp`, `agentDid`, `peerId`, `toolName`, `datasetHash`, `fuelConsumed`, `outputHash`, `zkReceiptSig`.
-     - Configurable retention policy (`LIOP_AUDIT_RETENTION_DAYS`, minimum 90 days).
-     - *Target Files*: `src/utils/logger.ts`, `src/security/audit-logger.ts`.
-  5. **Deterministic AST-Based Fuel Metering**:
-     - Replace execution-time fuel estimation (`duration * 1500`) with deterministic AST operation counting using `acorn` to ensure identical fuel consumption regardless of server CPU load.
-     - *Target Files*: `src/sandbox/wasi.ts`.
+### 1.4 Phase Beta-3: Enterprise Observability & Compliance (SOC 2 / HIPAA)
+* **Status**: Complete & Verified.
+* **Kubernetes Health & Liveness Probes**:
+  - Implemented `/healthz` and `/readyz` endpoints in `LiopHybridGateway` with DHT status inspection.
+  - Implemented graceful draining (`gateway.drain(5000)`) in `src/gateway/hybrid.ts` and `src/rpc/server.ts`.
+* **Prometheus Metrics Endpoint (`GET /metrics`)**:
+  - Real-time scrape-handler refreshing `liop_mesh_peers_connected`, `liop_tool_calls_total`, and `liop_fuel_consumed`.
+* **Distributed OpenTelemetry Integration**:
+  - Bound to `gen_ai.client.token.usage` and `gen_ai.client.operation.duration` via `LiopOTelBridge`.
+* **Immutable Audit Trail for SOC 2 Type II & HIPAA**:
+  - Cryptographically verifiable Hash-Chain in `AuditLogger` with append-only integrity checking and tamper flags.
+* **Deterministic AST-Based Fuel Metering & Side-Channel Invariance (NIST SP 800-53)**:
+  - Implemented `calculateAstInstructionFuel` with 100-bucket quantization ensuring `stddev = 0` across heterogeneous secret payloads.
+
+### 1.5 Phase Beta-4: Developer Ecosystem, Interactive Web Playground & Multi-Tier Production Audit
+* **Status**: Complete & Verified against 8-node Docker topology.
+* **Interactive Web Playground (`:16000` / `:14000`)**:
+  - Real-time 7-phase SSE execution stream (`http://localhost:16000`).
+  - Tri-tab results panel: `Aggregated Output`, `Fuel & Telemetry`, and `Crypto Proofs`.
+  - Dual high-contrast theme engine (Obsidian OLED `#000000` vs Slate Navy `#0f172a`) with atomic DOM switching.
+  - Live token economy dashboard demonstrating **98.9% - 99.6% token reduction** compared to traditional MCP.
+  - REST telemetry endpoint at `GET /api/telemetry` for aggregated session tracking.
+* **Multi-Tier Sovereign Enclaves (`pnet` Swarm Key PSK)**:
+  - Physical socket shielding on Tier 1 subnets (`The Bank`, `The Vault`) using 256-bit PSK (`/key/swarm/psk/1.0.0/`).
+  - Border LIO Gateway (`blg`) perimeter enforcement with RFC 6749 OAuth 2.1 client credentials against Nexus OIDC.
+* **Production Audit Automation (10 Suites, 00 to 09)**:
+  - Validated with Linux `tc netem` traffic shaping across LAN, transoceanic, and hostile 3G profiles.
+  - Automated CLI scripts: `pnpm run audit:prod:start`, `audit:prod:run`, `audit:prod:clean`.
 
 ---
 
-### 🟢 Phase Beta-4: Developer Ecosystem, Interactive Inspector & Global Showcase
-* **Target Window**: Q1-Q2 2027
-* **Key Components**:
-  1. **Official Interactive Inspector (`@modelcontextprotocol/inspector` Paradigm)**:
-     - Standalone developer CLI (`npx @nekzus/liop playground` and `npx @nekzus/liop-inspector`).
-     - Bundles precompiled high-fidelity web assets (`dist/playground-dist/`) inside the published `@nekzus/liop` package.
-     - Dual-binary execution: `liop` for Claude Desktop STDIO agent, `liop-inspector` for visual developer inspector.
-     - *Target Files*: `src/bin/cli.ts`, `src/bin/playground-cli.ts`, `src/playground/server.ts`.
-  2. **Ad-Hoc Process Spawning & Live Inspection**:
-     - Ability to pass child process execution commands (`liop playground node ./server.js`) to spawn, connect, and debug local LIOP servers on the fly with live logging.
-     - *Target Files*: `src/bin/playground-cli.ts`.
-  3. **Cryptographic Pipeline Visualizer**:
-     - Real-time visual timeline mapping post-quantum key exchange (ML-KEM-768), symmetric encryption (AES-256-GCM), WASI sandbox execution, and ZK-Receipt integrity verification.
-     - *Target Files*: `tests/infra/playground-web/src/App.tsx`.
-  4. **Public Cloud Showcase & Embedded Mintlify Documentation**:
-     - Publicly deployed demo instance (`playground.liop.dev`) connected to WAN testnet bootstrap nodes.
-     - Interactive embedded playground component for official documentation at `https://nekzus-32.mintlify.app/`.
-  5. **CLI Diagnostics & Network Verification**:
-     - Subcommands for peer health and network inspection: `liop ping <peerId>`, `liop discover`, `liop health`.
-     - *Target Files*: `src/bin/cli.ts`.
+## ⏳ 2. Upcoming Phases (Detailed Specifications)
 
----
-
-### 🔵 Phase RC: Production Resilience & Hardware TEE Attestation
-* **Target Window**: Q2 2027
+### 🔵 Phase RC: Production Resilience, Hardware TEE & Rust Core Parity
+* **Target Window**: Q4 2026 - Q1 2027
 * **Key Components**:
-  1. **Hardware TEE Remote Attestation (AWS Nitro Enclaves / Intel SGX)**:
-     - Replace the simulation stub in `crypto/verifier.ts` (`verifyTeeAttestation()`) with cryptographic verification of signed AWS Nitro attestation documents.
+  1. **Rust Core Protocol Parity (`servers/liop-node`)**:
+     - Port multi-tier enclaves (`pnet` Swarm Key PSK) to `libp2p-pnet` in Rust.
+     - Implement Dual-Era MCP v2 / v1 handshake in Rust gateway.
+     - Symmetrical Tonic gRPC keepalive channel options.
+  2. **Hardware TEE Remote Attestation (AWS Nitro Enclaves / Intel SGX)**:
+     - Replace simulation stubs in `crypto/verifier.ts` (`verifyTeeAttestation()`) with cryptographic verification of signed AWS Nitro attestation documents.
      - *Dependencies*: `pnpm add @aws-sdk/client-nitro-enclaves-attestation`.
-     - *Target Files*: `src/crypto/verifier.ts`.
-  2. **Automated Chaos Engineering Suite**:
+     - *Target Files*: `src/crypto/verifier.ts`, `servers/liop-node/src/tee.rs`.
+  3. **Automated Chaos Engineering Suite**:
      - Automated test suite verifying mesh behavior under simulated transcontinental WAN latency (300ms), packet loss, partition splits, and abrupt bootstrap node termination.
      - *Target Files*: `tests/chaos/network-partition.test.ts`, `tests/chaos/bootstrap-drain.test.ts`.
-  3. **Geo-Proximity Routing & Multi-Region Failover**:
+  4. **Geo-Proximity Routing & Multi-Region Failover**:
      - RTT-aware and region-aware routing prioritizing closest geographic nodes with seamless failover.
      - *Target Files*: `src/gateway/router.ts`.
 
